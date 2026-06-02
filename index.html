@@ -261,7 +261,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <img class="ac-logo" id="lgAuthLogo" src="" alt="" onerror="this.style.display='none'">
       <div class="at">Einloggen</div>
       <div class="as">Willkommen zurück!</div>
-      <div class="fg"><label class="fl">Benutzername</label><input type="text" id="lgU" placeholder="dein_name" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="fg"><label class="fl">E-Mail</label><input type="email" id="lgU" placeholder="deine@email.at" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <div class="fg"><label class="fl">Passwort</label><input type="password" id="lgP" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <button class="btn bg bf" onclick="doLogin()">Einloggen</button>
       <div class="err" id="lgErr">❌ Falscher Benutzername oder Passwort</div>
@@ -647,7 +647,7 @@ async function doLogin(){
   const err=document.getElementById('lgErr');err.style.display='none';
   try{
     const h=await hashPw(pw);
-    const r=await sb(`users?username=eq.${encodeURIComponent(u)}&password_hash=eq.${h}&select=id,username,real_name,email,tipp_locked`);
+    const r=await sb(`users?email=eq.${encodeURIComponent(u)}&password_hash=eq.${h}&select=id,username,real_name,email,tipp_locked`);
     if(!r||!r.length){err.style.display='block';return;}
     CU=r[0];
     const w=localStorage.getItem('welcomed_'+CU.id);
