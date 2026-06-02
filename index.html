@@ -1263,22 +1263,31 @@ async function sendRem(){
 // ══════════════════════════════════════════════════════════
 // TESTMODUS
 // ══════════════════════════════════════════════════════════
-function initTestMode(){
+async function initTestMode(){
   const sel=document.getElementById('testMatchSel');
   if(!sel)return;
+  // Laad eerst live resultaten
+  await loadLR();
   sel.innerHTML='<option value="">— Spiel wählen —</option>';
   GROUPS.forEach(g=>{
     g.matches.forEach((m,i)=>{
       const key=`${g.l}_${i}`;
       const res=LR[key];
-      const st=res?.status==='FINISHED'?` ✅ (${res.score1}:${res.score2})`:'';
+      const st=res?.status==='FINISHED'?` ✅ (${res.score1}:${res.score2})`:(res?.is_test?' 🧪 Test':'');
       sel.innerHTML+=`<option value="${key}">[Gr.${g.l}] ${m[0]} – ${m[1]}${st}</option>`;
     });
   });
   sel.onchange=()=>{
     const key=sel.value;if(!key)return;
     const parts=key.split('_'),g=GROUPS.find(x=>x.l===parts[0]),m=g?.matches[parseInt(parts[1])];
-    if(m){document.getElementById('testT1').textContent=(FL[m[0]]||'')+' '+m[0];document.getElementById('testT2').textContent=(FL[m[1]]||'')+' '+m[1];}
+    if(m){
+      document.getElementById('testT1').textContent=(FL[m[0]]||'')+' '+m[0];
+      document.getElementById('testT2').textContent=(FL[m[1]]||'')+' '+m[1];
+      // Reset score inputs
+      document.getElementById('testS1').value='';
+      document.getElementById('testS2').value='';
+      document.getElementById('testResult').style.display='none';
+    }
   };
   loadTestList();
 }
