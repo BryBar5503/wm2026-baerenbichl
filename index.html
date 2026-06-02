@@ -135,6 +135,14 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 .pts-tbl td{padding:7px 9px;border-bottom:1px solid var(--border);font-size:12px;}
 .pts-tbl tr:last-child td{border-bottom:none;}
 .pts-tbl .p{font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);text-align:right;}
+/* CONFETTI */
+.confetti-piece{position:fixed;width:10px;height:10px;top:-10px;border-radius:2px;animation:confetti-fall linear forwards;z-index:9998;pointer-events:none;}
+@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+/* WELCOME TOAST */
+.welcome-msg{position:fixed;top:0;left:0;right:0;z-index:9997;background:linear-gradient(135deg,#1c2918,#0f120e);border-bottom:2px solid var(--gold);padding:16px 20px;text-align:center;transform:translateY(-100%);transition:transform .4s ease;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.welcome-msg.show{transform:translateY(0);}
+.welcome-msg-title{font-family:'Cinzel',serif;font-size:18px;color:var(--gold2);margin-bottom:4px;}
+.welcome-msg-sub{font-size:13px;color:var(--muted);}
 @media(min-width:580px){
   .groups-list{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
   .kl{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
@@ -143,6 +151,10 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 </head>
 <body>
 <div class="toast" id="toast"></div>
+<div class="welcome-msg" id="welcomeMsg">
+  <div class="welcome-msg-title" id="welcomeMsgTitle"></div>
+  <div class="welcome-msg-sub" id="welcomeMsgSub"></div>
+</div>
 
 <!-- APP WACHTWOORD (alleen voor registreren) -->
 <div class="screen" id="sAppPw">
@@ -1426,6 +1438,80 @@ async function clearTestData(){
     await loadLR();document.getElementById('testResult').style.display='none';
     loadTestList();buildGroups();buildKO();toast('🗑️ Testdaten gelöscht!','success');
   }catch(ex){toast('❌ '+ex.message,'error');}
+}
+
+// CONFETTI
+function launchConfetti(){
+  const colors=['#FFD700','#e8b84b','#c8922a','#4aaa57','#fff','#FF6B6B'];
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`
+      left:${Math.random()*100}vw;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${Math.random()*10+5}px;
+      height:${Math.random()*10+5}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation-duration:${Math.random()*2+2}s;
+      animation-delay:${Math.random()*1.5}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 4000);
+  }
+}
+
+// WELKOMSTBERICHT
+async function showWelcomeMessage(){
+  if(!CU) return;
+  try{
+    // Bereken huidige positie
+    const users=await sb('users?select=id&order=created_at.asc');
+    if(!users||!users.length) return;
+    await loadLR();
+    const scores=[];
+    for(const u of users){
+      let pts=0;
+      const gt=await sb(`group_tipps?user_id=eq.${u.id}&select=match_key,score1,score2`);
+      (gt||[]).forEach(t=>{
+        const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0,rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(tw===rw) pts+=(t.score1===res.score1&&t.score2===res.score2)?10:5;
+      });
+      const mp=await sb(`manual_points?user_id=eq.${u.id}&select=points`);
+      (mp||[]).forEach(p=>pts+=p.points);
+      scores.push({id:u.id,pts});
+    }
+    scores.sort((a,b)=>b.pts-a.pts);
+    const rank=scores.findIndex(s=>s.id===CU.id)+1;
+    const myScore=scores.find(s=>s.id===CU.id);
+    const pts=myScore?.pts||0;
+
+    // Check of er nieuwe punten zijn sinds laatste login
+    const lastPts=parseInt(localStorage.getItem('lastPts_'+CU.id)||'0');
+    const newPts=pts-lastPts;
+    localStorage.setItem('lastPts_'+CU.id, pts.toString());
+
+    const rankText=rank===1?'🥇 Du führst die Rangliste an!':
+                   rank===2?'🥈 Du liegst auf Platz 2!':
+                   rank===3?'🥉 Du liegst auf Platz 3!':
+                   `Du liegst auf Platz ${rank}`;
+
+    const msgEl=document.getElementById('welcomeMsg');
+    const titleEl=document.getElementById('welcomeMsgTitle');
+    const subEl=document.getElementById('welcomeMsgSub');
+
+    if(newPts>0){
+      titleEl.textContent=`Willkommen zurück, ${CU.username}! 🎉`;
+      subEl.textContent=`+${newPts} neue Punkte seit deinem letzten Besuch! ${rankText}`;
+      msgEl.classList.add('show');
+      launchConfetti();
+    } else {
+      titleEl.textContent=`Willkommen zurück, ${CU.username}! 👋`;
+      subEl.textContent=`Du hast ${pts} Punkte · ${rankText}`;
+      msgEl.classList.add('show');
+    }
+    setTimeout(()=>msgEl.classList.remove('show'),5000);
+  }catch{}
 }
 
 // TOAST
