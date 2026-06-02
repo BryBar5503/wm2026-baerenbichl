@@ -402,6 +402,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <button class="atb" onclick="aTab(2)">✅ Kontrolle</button>
       <button class="atb" onclick="aTab(3)">✏️ Override</button>
       <button class="atb" onclick="aTab(4)">⚙️ Einstellungen</button>
+      <button class="atb" onclick="aTab(5)">🧪 Testmodus</button>
     </div>
     <!-- TAB 0 -->
     <div class="ap active" id="ap0">
@@ -447,6 +448,32 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <div style="margin-top:22px;">
         <button class="btn bgh" onclick="showS('sAppPw')">← Abmelden</button>
       </div>
+
+    <!-- TAB 5: TESTMODUS -->
+    <div class="ap" id="ap5">
+      <div class="sd">Simuliere Spielergebnisse um die Punkteberechnung zu testen. Testdaten können danach wieder gelöscht werden.</div>
+      <div class="sb">
+        <div class="sbt">⚽ Gruppenspiel simulieren</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Wähle ein Spiel, trage ein Ergebnis ein und sieh sofort wer wie viele Punkte bekommt.</p>
+        <div class="fg"><label class="fl">Spiel wählen</label>
+          <select id="testMatchSel"><option value="">— Spiel wählen —</option></select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 50px 14px 50px 1fr;align-items:center;gap:6px;margin-bottom:12px;">
+          <div style="font-size:12px;font-weight:700;text-align:center;" id="testT1">Team 1</div>
+          <input type="number" id="testS1" min="0" max="20" placeholder="0" inputmode="numeric" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:20px;text-align:center;padding:8px;border-radius:6px;height:44px;-moz-appearance:textfield;"/>
+          <div style="text-align:center;color:var(--muted);font-weight:700;">–</div>
+          <input type="number" id="testS2" min="0" max="20" placeholder="0" inputmode="numeric" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:20px;text-align:center;padding:8px;border-radius:6px;height:44px;-moz-appearance:textfield;"/>
+          <div style="font-size:12px;font-weight:700;text-align:center;" id="testT2">Team 2</div>
+        </div>
+        <button class="btn bg bf" onclick="runTest()">&#9654;&#65039; Test ausführen</button>
+        <div id="testResult" style="display:none;margin-top:14px;"></div>
+      </div>
+      <div class="sb" style="margin-top:14px;">
+        <div class="sbt">&#128465;&#65039; Testdaten löschen</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Lösche alle Testergebnisse. Echte Tipps bleiben erhalten.</p>
+        <div id="testDataList" style="margin-bottom:12px;font-size:13px;color:var(--muted);">Keine Testdaten vorhanden.</div>
+        <button class="btn br" onclick="clearTestData()">&#128465;&#65039; Alle Testdaten löschen</button>
+      </div>
     </div>
   </main>
 </div>
@@ -456,7 +483,7 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const EDGE=SB_URL+'/functions/v1';
 const APP_PW='WMBaerenbichl2026';
 const FIRST_MATCH=new Date('2026-06-11T19:00:00Z');
-const LOGO_URL='https://brybar5503.github.io/wm2026-baerenbichl/logo.png';
+const LOGO_URL='https://brybar5503.github.io/wm2026-baerenbichl/Barenbichl.png';
 
 const FL={
   'Mexiko':'🇲🇽','Südafrika':'🇿🇦','Südkorea':'🇰🇷','Tschechien':'🇨🇿',
@@ -980,13 +1007,24 @@ async function loadLB(){
     const ww=scores.reduce((a,b)=>b.wPts>a.wPts?b:a,scores[0]);
     if(ww?.wPts>0)document.getElementById('wwEl').innerHTML=`<div class="ww"><div class="wwt">⭐ Wochenbester</div><div class="wwn">${ww.username}</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">${ww.wPts} Punkte diese Woche</div></div>`;
     const md=['🥇','🥈','🥉'];
+    const nc=['#FFD700','#C0C0C0','#CD7F32'];
     let h=`<div style="display:flex;flex-direction:column;gap:9px;">`;
     scores.forEach((s,i)=>{
       const me=CU&&s.id===CU.id;
-      h+=`<div class="le ${me?'me':''}"><div class="lrk">${md[i]||i+1}</div>
-        <div style="flex:1"><div class="lnm">${s.username}${me?' <span style="color:var(--gold);font-size:10px;">(Du)</span>':''}</div>
-        <div class="lmt">🏆 ${s.champ} · ⚡ ${s.ts} · 🎯 ${s.exact}x exakt</div></div>
-        <div style="text-align:right"><div class="lpt">${s.pts}</div><div class="lpl">Punkte</div></div></div>`;
+      const col=i<3?nc[i]:'var(--text)';
+      const brd=i<3?nc[i]:(me?'var(--gold)':'var(--border)');
+      const bg=i===0?'background:linear-gradient(135deg,#1a1500,#171d14);':'';
+      h+=`<div class="le" style="border-color:${brd};${bg}">
+        <div class="lrk" style="font-size:${i<3?'22':'18'}px">${md[i]||i+1}</div>
+        <div style="flex:1">
+          <div class="lnm" style="color:${col};font-size:${i===0?'16':'13'}px;">${s.username}${me?' <span style="color:var(--gold);font-size:10px;">(Du)</span>':''}</div>
+          <div class="lmt">🏆 ${s.champ} · ⚡ ${s.ts} · 🎯 ${s.exact}x exakt</div>
+        </div>
+        <div style="text-align:right">
+          <div class="lpt" style="color:${i<3?col:'var(--gold2)'};">${s.pts}</div>
+          <div class="lpl">Punkte</div>
+        </div>
+      </div>`;
     });
     h+=`</div>`;
     document.getElementById('lbEl').innerHTML=h;
@@ -1006,7 +1044,7 @@ async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DEL
 function aTab(n){
   document.querySelectorAll('.atb').forEach((t,i)=>t.classList.toggle('active',i===n));
   document.querySelectorAll('.ap').forEach((p,i)=>p.classList.toggle('active',i===n));
-  if(n===0)loadAUsers();if(n===1)loadAUSel();if(n===2)loadCtrl();if(n===3)loadOv();if(n===4)loadASettings();
+  if(n===0)loadAUsers();if(n===1)loadAUSel();if(n===2)loadCtrl();if(n===3)loadOv();if(n===4)loadASettings();if(n===5)initTestMode();
 }
 async function loadAdminData(){await loadAUsers();await loadASettings();}
 
@@ -1220,6 +1258,90 @@ async function sendRem(){
   toast('📧 Erinnerungen werden gesendet…','success');
   try{await edge('admin-data',{action:'send_reminders',password:ADM_PW});toast('📧 Fertig!','success');}
   catch(ex){toast('❌ '+ex.message,'error');}
+}
+
+// ══════════════════════════════════════════════════════════
+// TESTMODUS
+// ══════════════════════════════════════════════════════════
+function initTestMode(){
+  const sel=document.getElementById('testMatchSel');
+  if(!sel)return;
+  sel.innerHTML='<option value="">— Spiel wählen —</option>';
+  GROUPS.forEach(g=>{
+    g.matches.forEach((m,i)=>{
+      const key=`${g.l}_${i}`;
+      const res=LR[key];
+      const st=res?.status==='FINISHED'?` ✅ (${res.score1}:${res.score2})`:'';
+      sel.innerHTML+=`<option value="${key}">[Gr.${g.l}] ${m[0]} – ${m[1]}${st}</option>`;
+    });
+  });
+  sel.onchange=()=>{
+    const key=sel.value;if(!key)return;
+    const parts=key.split('_'),g=GROUPS.find(x=>x.l===parts[0]),m=g?.matches[parseInt(parts[1])];
+    if(m){document.getElementById('testT1').textContent=(FL[m[0]]||'')+' '+m[0];document.getElementById('testT2').textContent=(FL[m[1]]||'')+' '+m[1];}
+  };
+  loadTestList();
+}
+
+async function runTest(){
+  const sel=document.getElementById('testMatchSel'),key=sel.value;
+  const s1=parseInt(document.getElementById('testS1').value),s2=parseInt(document.getElementById('testS2').value);
+  if(!key){toast('❌ Bitte ein Spiel wählen!','error');return;}
+  if(isNaN(s1)||isNaN(s2)){toast('❌ Bitte Ergebnis eingeben!','error');return;}
+  const parts=key.split('_'),g=GROUPS.find(x=>x.l===parts[0]),m=g?.matches[parseInt(parts[1])];
+  if(!m)return;
+  const t1=m[0],t2=m[1],winner=s1>s2?t1:s2>s1?t2:'DRAW';
+  try{
+    await sb(`results?match_key=eq.${key}`,'DELETE');
+    await sb('results','POST',{match_key:key,team1:t1,team2:t2,score1:s1,score2:s2,winner,status:'FINISHED',is_test:true});
+    await loadLR();
+    toast('✅ Testergebnis gespeichert!','success');
+    const users=await sb('users?select=id,username');
+    const el=document.getElementById('testResult');el.style.display='block';
+    let h=`<div style="background:var(--bg3);border:1px solid var(--gold);border-radius:8px;padding:14px;">
+      <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);margin-bottom:10px;">
+        📊 ${FL[t1]||''} ${t1} ${s1}:${s2} ${FL[t2]||''} ${t2}
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Sieger: ${winner==='DRAW'?'Unentschieden':winner}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr>
+          <th style="text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);">Teilnehmer</th>
+          <th style="padding:5px 8px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);text-align:center;">Tipp</th>
+          <th style="text-align:right;padding:5px 8px;border-bottom:1px solid var(--border);font-size:10px;color:var(--muted);">Punkte</th>
+        </tr></thead><tbody>`;
+    for(const u of (users||[])){
+      const gt=await sb(`group_tipps?user_id=eq.${u.id}&match_key=eq.${key}&select=score1,score2`);
+      const tip=gt?.[0];
+      if(!tip){h+=`<tr><td style="padding:5px 8px;border-bottom:1px solid var(--border);">${u.username}</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:center;color:var(--muted);">kein Tipp</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right;color:var(--red);">0</td></tr>`;continue;}
+      const tw=tip.score1>tip.score2?t1:tip.score1<tip.score2?t2:'DRAW';
+      let pts=0,icon='❌';
+      if(tw===winner){pts=tip.score1===s1&&tip.score2===s2?10:5;icon=pts===10?'🎯':'✅';}
+      const pc=pts===10?'var(--gold2)':pts===5?'var(--greenlt)':'var(--red)';
+      h+=`<tr><td style="padding:5px 8px;border-bottom:1px solid var(--border);font-weight:700;">${u.username}</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:center;">${icon} ${tip.score1}:${tip.score2}</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:'Cinzel',serif;font-size:16px;color:${pc};">+${pts}</td></tr>`;
+    }
+    h+=`</tbody></table></div>`;
+    el.innerHTML=h;loadTestList();
+  }catch(ex){toast('❌ Fehler: '+ex.message,'error');}
+}
+
+async function loadTestList(){
+  const el=document.getElementById('testDataList');if(!el)return;
+  try{
+    const res=await sb('results?is_test=eq.true&select=match_key,team1,team2,score1,score2');
+    if(!res||!res.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;">Keine Testdaten vorhanden.</div>';return;}
+    let h='<div style="display:flex;flex-direction:column;gap:6px;">';
+    res.forEach(r=>{h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg3);border-radius:6px;font-size:12px;"><span>${r.team1||'?'} – ${r.team2||'?'}</span><span style="font-family:'Cinzel',serif;color:var(--gold2);">${r.score1}:${r.score2}</span><span style="color:var(--red);font-size:10px;">🧪 Test</span></div>`;});
+    h+='</div>';el.innerHTML=h;
+  }catch{el.innerHTML='<div style="color:var(--muted);font-size:13px;">Keine Testdaten vorhanden.</div>';}
+}
+
+async function clearTestData(){
+  if(!confirm('Alle Testdaten löschen?'))return;
+  try{
+    await sb('results?is_test=eq.true','DELETE');
+    await loadLR();document.getElementById('testResult').style.display='none';
+    loadTestList();buildGroups();buildKO();toast('🗑️ Testdaten gelöscht!','success');
+  }catch(ex){toast('❌ '+ex.message,'error');}
 }
 
 // TOAST
