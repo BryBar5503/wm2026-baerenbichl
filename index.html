@@ -135,6 +135,26 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 .pts-tbl td{padding:7px 9px;border-bottom:1px solid var(--border);font-size:12px;}
 .pts-tbl tr:last-child td{border-bottom:none;}
 .pts-tbl .p{font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);text-align:right;}
+/* TIPP REVEAL */
+.reveal-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:11px;padding:5px 10px;border-radius:5px;cursor:pointer;margin-top:6px;width:100%;font-family:'Lato',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+.reveal-btn:active{background:var(--border);}
+.reveal-panel{display:none;margin-top:8px;background:var(--bg);border-radius:7px;overflow:hidden;}
+.reveal-panel.open{display:block;}
+.reveal-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--border);font-size:12px;}
+.reveal-row:last-child{border-bottom:none;}
+.reveal-name{font-weight:700;flex:1;}
+.reveal-score{font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);}
+.reveal-pts{font-size:10px;margin-left:6px;}
+/* PUNTEN OVERZICHT */
+.pts-overview{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:13px;}
+.pts-overview-title{font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);margin-bottom:10px;}
+.pts-match-row{padding:8px 0;border-bottom:1px solid var(--border);}
+.pts-match-row:last-child{border-bottom:none;}
+.pts-match-name{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.pts-match-result{font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);margin-bottom:4px;}
+.pts-winners{display:flex;flex-wrap:wrap;gap:5px;}
+.pts-winner-tag{background:var(--bg3);border:1px solid var(--greenlt);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--greenlt);}
+.pts-winner-tag.exact{border-color:var(--gold2);color:var(--gold2);}
 /* CONFETTI */
 .confetti-piece{position:fixed;width:10px;height:10px;top:-10px;border-radius:2px;animation:confetti-fall linear forwards;z-index:9998;pointer-events:none;}
 @keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
@@ -373,6 +393,13 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <button class="btn bgh" onclick="doLogout()">🚪 Abmelden</button>
       </div>
     </div>
+    <!-- PUNTEN OVERZICHT -->
+    <div class="page" id="pg6">
+      <div class="st">Punkte-Übersicht</div>
+      <div class="sd">Pro abgeschlossenem Spiel siehst du wer Punkte verdient hat.</div>
+      <div id="ptsOverview"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+    </div>
+
     <!-- REGELN -->
     <div class="page" id="pg5">
       <div class="st">Regeln & Erklärung</div>
@@ -414,6 +441,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <button class="bb" onclick="goP(3);loadMTP();" id="bn3"><span class="ic">📋</span><span>Meine</span></button>
     <button class="bb" onclick="goP(4);loadLB();" id="bn4"><span class="ic">🥇</span><span>Rang</span></button>
     <button class="bb" onclick="goP(5)" id="bn5"><span class="ic">📖</span><span>Regeln</span></button>
+    <button class="bb" onclick="goP(6);loadPtsOverview();" id="bn6"><span class="ic">📊</span><span>Punkte</span></button>
   </nav>
 </div>
 
@@ -829,7 +857,7 @@ async function loadMyData(){
 function goP(n){
   document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n));
   document.querySelectorAll('.bb').forEach((b,i)=>b.classList.toggle('active',i===n));
-  document.getElementById('progBar').style.width=Math.round((n/5)*100)+'%';
+  document.getElementById('progBar').style.width=Math.round((n/6)*100)+'%';
   window.scrollTo(0,0);
 }
 
@@ -856,6 +884,7 @@ function buildGroups(){
       const lk=FROZEN||Date.now()>=mu;
       const live=res?.status==='IN_PLAY',fin=res?.status==='FINISHED';
       const row=document.createElement('div');row.className='mr'+(lk?' lk':'');
+      const revealId='reveal_'+key;
       row.innerHTML=`<div class="tn">${F(m[0])} ${m[0]}</div>
         <div class="si">
           <input type="number" class="sc" min="0" max="20" inputmode="numeric"
@@ -869,7 +898,11 @@ function buildGroups(){
             oninput="DR['${key}']=DR['${key}']||{};DR['${key}'].s2=this.value;chkFl('${g.l}')"/>
         </div>
         <div class="tn r">${F(m[1])} ${m[1]}</div>
-        <div class="mrd">${m[2]} · ${m[3]}${live?'<span class="lb">LIVE</span>':''}${fin?' ✅':''}</div>`;
+        <div class="mrd">${m[2]} · ${m[3]}${live?'<span class="lb">LIVE</span>':''}${fin?' ✅':''}</div>
+        ${lk?`<div style="grid-column:1/-1;">
+          <button class="reveal-btn" onclick="toggleReveal('${key}','${m[0]}','${m[1]}')">👁️ Alle Tipps anzeigen</button>
+          <div class="reveal-panel" id="${revealId}"><div class="ld" style="padding:10px;"><div class="sp" style="width:20px;height:20px;border-width:2px;"></div></div></div>
+        </div>`:''}`;
       body.appendChild(row);
     });
     chkFl(g.l);
@@ -1512,6 +1545,112 @@ async function showWelcomeMessage(){
     }
     setTimeout(()=>msgEl.classList.remove('show'),5000);
   }catch{}
+}
+
+// TIPP REVEAL
+async function toggleReveal(key, t1, t2){
+  const panel=document.getElementById('reveal_'+key);
+  if(!panel) return;
+  if(panel.classList.contains('open')){panel.classList.remove('open');return;}
+  panel.classList.add('open');
+  if(panel.dataset.loaded) return;
+  panel.dataset.loaded='1';
+  try{
+    const [gt, users, res] = await Promise.all([
+      sb(`group_tipps?match_key=eq.${key}&select=user_id,score1,score2`),
+      sb('users?select=id,username'),
+      sb(`results?match_key=eq.${key}&select=score1,score2,winner`),
+    ]);
+    const userMap={};
+    (users||[]).forEach(u=>userMap[u.id]=u.username);
+    const realRes=res?.[0];
+    let h='';
+    if(!gt||!gt.length){
+      panel.innerHTML='<div class="reveal-row" style="color:var(--muted);">Keine Tipps abgegeben</div>';
+      return;
+    }
+    // Sorteer: exact → correct → fout
+    const rows=(gt||[]).map(t=>{
+      const name=userMap[t.user_id]||'?';
+      const isMe=t.user_id===CU?.id;
+      let pts=0,icon='';
+      if(realRes){
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=realRes.score1>realRes.score2?1:realRes.score1<realRes.score2?-1:0;
+        if(tw===rw){pts=t.score1===realRes.score1&&t.score2===realRes.score2?10:5;icon=pts===10?'🎯':'✅';}
+        else{icon='❌';}
+      }
+      return {name,score:`${t.score1}:${t.score2}`,pts,icon,isMe};
+    }).sort((a,b)=>b.pts-a.pts);
+    rows.forEach(r=>{
+      const ptsColor=r.pts===10?'var(--gold2)':r.pts===5?'var(--greenlt)':'var(--red)';
+      h+=`<div class="reveal-row" style="${r.isMe?'background:var(--bg3);':''}">
+        <span class="reveal-name" style="${r.isMe?'color:var(--gold);':''}">${r.isMe?'👤 ':''} ${r.name}</span>
+        <span class="reveal-score">${r.score}</span>
+        ${realRes?`<span class="reveal-pts" style="color:${ptsColor};">${r.icon} ${r.pts>0?'+'+r.pts:'0'}</span>`:''}
+      </div>`;
+    });
+    panel.innerHTML=h||'<div class="reveal-row" style="color:var(--muted);">Keine Tipps</div>';
+  }catch(ex){
+    panel.innerHTML=`<div class="reveal-row" style="color:var(--red);">Fehler: ${ex.message}</div>`;
+  }
+}
+
+// PUNTEN OVERZICHT
+async function loadPtsOverview(){
+  const el=document.getElementById('ptsOverview');
+  if(!el) return;
+  el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
+  await loadLR();
+  const finished=[];
+  GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
+    const key=`${g.l}_${i}`,res=LR[key];
+    if(res&&res.status==='FINISHED') finished.push({key,t1:m[0],t2:m[1],date:m[2],time:m[3],res});
+  }));
+  KO.forEach(r=>r.matches.forEach(m=>{
+    const res=LR[m.key];
+    if(res&&res.status==='FINISHED') finished.push({key:m.key,t1:res.team1||m.t1,t2:res.team2||m.t2,date:m.date,res});
+  }));
+  if(!finished.length){
+    el.innerHTML=`<div class="empty">Noch keine abgeschlossenen Spiele.</div>`;
+    return;
+  }
+  try{
+    const [allGT, allKT, users]=await Promise.all([
+      sb('group_tipps?select=user_id,match_key,score1,score2'),
+      sb('ko_tipps?select=user_id,match_key,score1,score2,winner'),
+      sb('users?select=id,username'),
+    ]);
+    const userMap={};
+    (users||[]).forEach(u=>userMap[u.id]=u.username);
+    let h='';
+    // Meest recente eerst
+    [...finished].reverse().forEach(m=>{
+      const res=m.res;
+      const allTipps=[...(allGT||[]),...(allKT||[])].filter(t=>t.match_key===m.key);
+      const exact=[],correct=[],wrong=[];
+      allTipps.forEach(t=>{
+        const name=userMap[t.user_id]||'?';
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(t.score1===res.score1&&t.score2===res.score2) exact.push(name);
+        else if(tw===rw) correct.push(name);
+        else wrong.push(name);
+      });
+      h+=`<div class="pts-match-row">
+        <div class="pts-match-name">${m.t1} – ${m.t2} · ${m.date}</div>
+        <div class="pts-match-result">${F(m.t1)} ${res.score1} : ${res.score2} ${F(m.t2)}</div>
+        <div class="pts-winners">
+          ${exact.map(n=>`<span class="pts-winner-tag exact">🎯 ${n} +10</span>`).join('')}
+          ${correct.map(n=>`<span class="pts-winner-tag">✅ ${n} +5</span>`).join('')}
+          ${wrong.map(n=>`<span class="pts-winner-tag" style="border-color:var(--red);color:var(--red);">❌ ${n}</span>`).join('')}
+        </div>
+      </div>`;
+    });
+    el.innerHTML=`<div class="pts-overview"><div class="pts-overview-title">📊 Abgeschlossene Spiele</div>${h}</div>`;
+  }catch(ex){
+    el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;
+  }
 }
 
 // TOAST
