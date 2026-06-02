@@ -144,19 +144,18 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <body>
 <div class="toast" id="toast"></div>
 
-<!-- APP WACHTWOORD -->
-<div class="screen active" id="sAppPw">
+<!-- APP WACHTWOORD (alleen voor registreren) -->
+<div class="screen" id="sAppPw">
   <div class="fc">
     <div class="ac">
       <img class="ac-logo" id="lgAppPw" src="" alt="" onerror="this.style.display='none'">
       <div class="at">WM 2026 Tippspiel</div>
-      <div class="as">Gasthaus Bärenbichl<br>Bitte Zugangscode eingeben</div>
+      <div class="as">Gasthaus Bärenbichl<br>Bitte Zugangscode eingeben um dich zu registrieren</div>
       <div class="fg"><input type="password" id="appPwIn" placeholder="Zugangscode" onkeydown="if(event.key==='Enter')chkApp()"/></div>
       <button class="btn bg bf" onclick="chkApp()">Weiter →</button>
       <div class="err" id="appPwErr">❌ Falscher Zugangscode</div>
-      <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;">
-        <button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAdminPw')">🔐 Admin</button>
-        <button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sReset')">🔑 Passwort vergessen</button>
+      <div style="margin-top:14px;">
+        <button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAuth');togAuth(false)">← Zurück zum Login</button>
       </div>
     </div>
   </div>
@@ -255,17 +254,21 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 </div>
 
 <!-- LOGIN / REGISTER -->
-<div class="screen" id="sAuth">
+<div class="screen active" id="sAuth">
   <div class="fc">
     <div class="ac" id="lgCard">
       <img class="ac-logo" id="lgAuthLogo" src="" alt="" onerror="this.style.display='none'">
-      <div class="at">Einloggen</div>
-      <div class="as">Willkommen zurück!</div>
+      <div class="at">WM 2026 Tippspiel</div>
+      <div class="as">⚽ Gasthaus Bärenbichl</div>
       <div class="fg"><label class="fl">E-Mail</label><input type="email" id="lgU" placeholder="deine@email.at" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <div class="fg"><label class="fl">Passwort</label><input type="password" id="lgP" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <button class="btn bg bf" onclick="doLogin()">Einloggen</button>
-      <div class="err" id="lgErr">❌ Falscher Benutzername oder Passwort</div>
-      <div class="asw">Noch kein Konto? <a onclick="togAuth(true)">Jetzt registrieren</a></div>
+      <div class="err" id="lgErr">❌ Falsche E-Mail oder Passwort</div>
+      <div class="asw" style="margin-top:12px;">Noch kein Konto? <a onclick="showS('sAppPw')">Jetzt registrieren</a></div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;">
+        <button class="btn bgh" style="height:32px;font-size:10px;" onclick="showS('sReset')">🔑 Passwort vergessen</button>
+        <button class="btn bgh" style="height:32px;font-size:10px;" onclick="showS('sAdminPw')">🔐 Admin</button>
+      </div>
     </div>
     <div class="ac" id="rgCard" style="display:none;">
       <div class="at">✨ Registrieren</div>
@@ -446,7 +449,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <div id="stEl" style="font-size:13px;color:var(--muted);">Wird geladen…</div>
       </div>
       <div style="margin-top:22px;">
-        <button class="btn bgh" onclick="showS('sAppPw')">← Abmelden</button>
+        <button class="btn bgh" onclick="showS('sAuth');togAuth(false);">← Abmelden</button>
       </div>
 
     <!-- TAB 5: TESTMODUS -->
@@ -604,7 +607,7 @@ function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.r
 // AUTH
 function chkApp(){
   const v=document.getElementById('appPwIn').value;
-  if(v===APP_PW){document.getElementById('appPwErr').style.display='none';showS('sAuth');}
+  if(v===APP_PW){document.getElementById('appPwErr').style.display='none';showS('sAuth');togAuth(true);}
   else{document.getElementById('appPwErr').style.display='block';document.getElementById('appPwIn').value='';}
 }
 async function chkAdmin(){
@@ -664,7 +667,7 @@ async function afterLogin(welcome=false){
   startCD();setInterval(syncAPI,120000);
 }
 function finWelcome(){localStorage.setItem('welcomed_'+CU?.id,'true');showS('sApp');buildGroups();buildKO();loadSQ();}
-function doLogout(){CU=null;DR={};document.getElementById('appPwIn').value='';showS('sAppPw');}
+function doLogout(){CU=null;DR={};showS('sAuth');togAuth(false);}
 
 // RESET
 async function doReset(){
