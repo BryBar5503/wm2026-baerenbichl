@@ -209,7 +209,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
   <div style="min-height:100vh;background:var(--bg);overflow-y:auto;padding-bottom:90px;">
     <div style="background:linear-gradient(170deg,#1c2918 0%,#0f120e 70%);padding:36px 20px 28px;text-align:center;border-bottom:2px solid var(--gold);position:relative;">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(200,146,42,.2) 0%,transparent 70%);pointer-events:none;"></div>
-      <img id="lgWelcome" src="" alt="" style="width:90px;height:90px;object-fit:contain;border-radius:50%;border:3px solid var(--gold);margin:0 auto 14px;display:block;position:relative;z-index:1;box-shadow:0 0 30px rgba(200,146,42,.3);" onerror="this.style.display='none'">
+      <img id="lgWelcome" src="" alt="" style="width:120px;height:120px;object-fit:contain;border-radius:50%;border:4px solid var(--gold);margin:0 auto 14px;display:block;position:relative;z-index:1;box-shadow:0 0 40px rgba(200,146,42,.4);" onerror="this.style.display='none'">
       <div style="font-family:'Cinzel',serif;font-size:clamp(38px,12vw,70px);font-weight:900;color:var(--cream);line-height:.9;position:relative;z-index:1;">WM <span style="color:var(--gold2);">2026</span></div>
       <div style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:var(--gold);margin-top:8px;position:relative;z-index:1;">⚽ Gasthaus Bärenbichl ⚽</div>
       <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:6px;position:relative;z-index:1;">Tippspiel · 11. Juni – 19. Juli 2026</div>
@@ -257,7 +257,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <div class="screen active" id="sAuth">
   <div class="fc">
     <div class="ac" id="lgCard">
-      <img class="ac-logo" id="lgAuthLogo" src="" alt="" onerror="this.style.display='none'">
+      <img id="lgAuthLogo" src="" alt="" onerror="this.style.display='none'" style="width:80px;height:80px;object-fit:contain;border-radius:50%;border:3px solid var(--gold);margin:0 auto 12px;display:block;box-shadow:0 0 20px rgba(200,146,42,.3);">
       <div class="at">WM 2026 Tippspiel</div>
       <div class="as">⚽ Gasthaus Bärenbichl</div>
       <div class="fg"><label class="fl">E-Mail</label><input type="email" id="lgU" placeholder="deine@email.at" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"/></div>
@@ -287,8 +287,9 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <!-- MAIN APP -->
 <div class="screen" id="sApp">
   <header><div class="h-inner">
-    <img class="h-logo" id="lgHeader" src="" alt="" onerror="this.style.display='none'">
-    <div><div class="h-gasthof">Gasthaus Bärenbichl</div><h1>WM <em>2026</em></h1><div class="h-sub">11. Juni – 19. Juli 2026</div><div class="h-user" id="hUser"></div></div>
+    <img class="h-logo" id="lgHeader" src="" alt="" onerror="this.style.display='none'" style="width:64px;height:64px;">
+    <div style="flex:1"><div class="h-gasthof">Gasthaus Bärenbichl</div><h1>WM <em>2026</em></h1><div class="h-sub">11. Juni – 19. Juli 2026</div><div class="h-user" id="hUser"></div></div>
+    <img id="lgHeader2" src="" alt="" onerror="this.style.display='none'" style="width:64px;height:64px;object-fit:contain;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;">
   </div></header>
   <div class="prog"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
   <div class="cd" id="cdBar"></div>
@@ -310,7 +311,10 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     </div>
     <!-- SONDERFRAGEN -->
     <div class="page" id="pg2">
-      <div class="st">Sonderfragen</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+        <img id="lgSonder" src="" alt="" onerror="this.style.display='none'" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;">
+        <div class="st" style="margin-bottom:0;">Sonderfragen</div>
+      </div>
       <div class="sd">Werden am 11. Juni um 21:00 Uhr eingefroren — danach keine Änderungen mehr!</div>
       <div id="sqFrz" class="fn" style="display:none;">🔒 Sonderfragen sind gesperrt</div>
       <div class="sqc"><div class="sqt">🏆 Weltmeister 2026</div><div class="sqd">Welches Land wird Weltmeister bei der WM 2026?</div><div class="sqp">60 Punkte</div>
@@ -323,9 +327,15 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <div class="fg" style="margin:0"><label class="fl">Land</label><input type="text" id="sqFGC" placeholder="z. B. Norwegen"/></div></div>
       <div class="sqc"><div class="sqt">🇦🇹 Topscorer Österreich</div><div class="sqd">Welcher österreichische Spieler schießt die meisten Tore bei der WM 2026?</div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Name des Spielers</label><input type="text" id="sqAT" placeholder="z. B. Marcel Sabitzer"/></div></div>
-      <div class="sqc"><div class="sqt">🔢 Gesamttore Gruppenphase</div><div class="sqd">Wie viele Tore werden in der Gruppenphase (48 Spiele) erzielt? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div><div class="sqp">20 Punkte</div>
+      <div class="sqc"><div class="sqt">🔢 Gesamttore Gruppenphase</div><div class="sqd">Wie viele Tore werden in der Gruppenphase (48 Spiele) erzielt? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div>
+        <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
+          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim letzten WK 2022 (32 Teams, 48 Gruppenspiele) wurden <strong style="color:var(--text);">120 Tore</strong> in der Gruppenphase erzielt. Das WK 2026 hat ebenfalls 48 Gruppenspiele — aber mit 48 Teams insgesamt könnten die Partien ausgeglichener werden.
+        </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGG" placeholder="z. B. 140" min="50" max="300" inputmode="numeric"/></div></div>
-      <div class="sqc"><div class="sqt">🔢 Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div><div class="sqp">20 Punkte</div>
+      <div class="sqc"><div class="sqt">🔢 Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div>
+        <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
+          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim WK 2022 (32 Teams, 64 Spiele) wurden <strong style="color:var(--text);">172 Tore</strong> erzielt — ein Rekord für ein WK mit 32 Teams. Das WK 2026 hat <strong style="color:var(--text);">104 Spiele</strong> (40 mehr!), also sind deutlich mehr Tore zu erwarten. Hochgerechnet wären das ca. <strong style="color:var(--gold2);">279 Tore</strong> — aber der erste WK mit 48 Teams ist schwer vorherzusagen!
+        </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGT" placeholder="z. B. 250" min="100" max="500" inputmode="numeric"/></div></div>
       <div class="sqc" style="border-color:var(--gold)"><div class="sqt">🏆 WM-Finale</div><div class="sqd">Wer steht im Finale und wie endet es? Bei genauem Ergebnis gibt es 25 Bonuspunkte extra!</div><div class="sqp">10 + 25 Bonus Punkte</div>
         <div class="kr" style="margin-bottom:7px;"><input type="text" class="kt" id="sqFT1" placeholder="Finalist 1" oninput="updFS()"/><input type="number" class="ks" id="sqFS1" placeholder="0" min="0" max="20" inputmode="numeric"/></div>
@@ -341,6 +351,9 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <!-- RANGLISTE -->
     <div class="page" id="pg4">
       <div class="st">Live-Rangliste</div><div class="sd">Aktueller Stand aller Teilnehmer.</div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <img id="lgRang" src="" alt="" onerror="this.style.display='none'" style="width:60px;height:60px;object-fit:contain;border-radius:50%;border:2px solid var(--gold);box-shadow:0 0 20px rgba(200,146,42,.2);">
+      </div>
       <div id="wwEl"></div>
       <div id="lbEl"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
       <div class="nb">
@@ -567,7 +580,7 @@ let CU=null,ADM_PW=null,FROZEN=false,SQ_FRZ=false,LR={},DR={},RESET_TOKEN=null;
 
 // LOGOS
 function initLogos(){
-  ['lgAppPw','lgWelcome','lgAuthLogo','lgHeader','lgAdmin'].forEach(id=>{
+  ['lgAppPw','lgWelcome','lgAuthLogo','lgHeader','lgHeader2','lgAdmin','lgRang','lgSonder'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.src=LOGO_URL;
   });
