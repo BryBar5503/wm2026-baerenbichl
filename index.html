@@ -582,10 +582,17 @@ let CU=null,ADM_PW=null,FROZEN=false,SQ_FRZ=false,LR={},DR={},RESET_TOKEN=null;
 function initLogos(){
   ['lgAppPw','lgWelcome','lgAuthLogo','lgHeader','lgHeader2','lgAdmin','lgRang','lgSonder'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.src=LOGO_URL;
+    if(el){
+      el.src=LOGO_URL;
+      el.style.display='block';
+    }
   });
 }
-window.addEventListener('load',initLogos);
+// Meerdere momenten proberen
+document.addEventListener('DOMContentLoaded', initLogos);
+window.addEventListener('load', initLogos);
+setTimeout(initLogos, 500);
+setTimeout(initLogos, 1500);
 
 // Check reset token in URL
 window.addEventListener('load',()=>{
