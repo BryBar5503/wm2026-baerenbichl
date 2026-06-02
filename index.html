@@ -135,6 +135,24 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 .pts-tbl td{padding:7px 9px;border-bottom:1px solid var(--border);font-size:12px;}
 .pts-tbl tr:last-child td{border-bottom:none;}
 .pts-tbl .p{font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);text-align:right;}
+/* GRUPPENSTAND */
+.stand-btn{background:var(--bg3);border:1px solid var(--gold);color:var(--gold2);font-size:12px;padding:10px 16px;border-radius:8px;cursor:pointer;width:100%;font-family:'Cinzel',serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;-webkit-tap-highlight-color:transparent;transition:all .2s;}
+.stand-btn:active{background:var(--bg2);}
+.stand-panel{display:none;margin-bottom:16px;}
+.stand-panel.open{display:block;}
+.stand-group{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.stand-group-header{background:var(--bg3);padding:9px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.stand-group-letter{font-family:'Cinzel',serif;font-size:22px;color:var(--gold);line-height:1;}
+.stand-group-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.stand-table{width:100%;border-collapse:collapse;}
+.stand-table th{padding:6px 8px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center;}
+.stand-table th:first-child{text-align:left;padding-left:12px;}
+.stand-table td{padding:7px 8px;font-size:12px;border-bottom:1px solid var(--border);text-align:center;}
+.stand-table td:first-child{text-align:left;padding-left:12px;font-weight:700;}
+.stand-table tr:last-child td{border-bottom:none;}
+.stand-table tr:nth-child(1) td,.stand-table tr:nth-child(2) td{background:rgba(42,64,53,.4);}
+.stand-pos{font-family:'Cinzel',serif;font-size:13px;color:var(--muted);width:20px;text-align:center;margin-right:6px;}
+.stand-loading{text-align:center;padding:20px;color:var(--muted);font-size:13px;}
 /* TIPP REVEAL */
 .reveal-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:11px;padding:5px 10px;border-radius:5px;cursor:pointer;margin-top:6px;width:100%;font-family:'Lato',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
 .reveal-btn:active{background:var(--border);}
@@ -331,6 +349,10 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <div class="st">Gruppenphase</div>
       <div class="sd">Tippe alle 48 Gruppenspiele. Jede Partie wird beim Anpfiff gesperrt.</div>
       <div id="fbBanner" style="display:none;"><div class="fb"><div class="fbt">🔒 Tippspiel gesperrt</div><div id="fbMsg" style="font-size:13px;color:var(--muted);"></div></div></div>
+      <button class="stand-btn" onclick="toggleStand()">🏟️ Gruppenstand anzeigen</button>
+      <div class="stand-panel" id="standPanel">
+        <div id="standContent"><div class="stand-loading"><div class="sp" style="width:24px;height:24px;border-width:2px;margin:0 auto 8px;"></div>Wird geladen…</div></div>
+      </div>
       <div class="groups-list" id="glst"></div>
       <div class="nb"><button class="btn bg" onclick="saveTipps().then(()=>toast('💾 Gespeichert!','success'))">💾 Speichern</button></div>
     </div>
@@ -1545,6 +1567,84 @@ async function showWelcomeMessage(){
     }
     setTimeout(()=>msgEl.classList.remove('show'),5000);
   }catch{}
+}
+
+// GRUPPENSTAND
+async function toggleStand(){
+  const panel=document.getElementById('standPanel');
+  const btn=document.querySelector('.stand-btn');
+  const isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open');
+  btn.textContent=isOpen?'🏟️ Gruppenstand anzeigen':'🏟️ Gruppenstand verbergen';
+  if(!isOpen && !panel.dataset.loaded){
+    panel.dataset.loaded='1';
+    await loadStand();
+  }
+}
+
+async function loadStand(){
+  const el=document.getElementById('standContent');
+  try{
+    // Bereken stand uit de gespeelde wedstrijden
+    await loadLR();
+    let h='';
+    GROUPS.forEach(g=>{
+      // Bereken stand voor deze groep
+      const teams={};
+      g.teams.forEach(t=>{
+        teams[t]={name:t,gs:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
+      });
+      g.matches.forEach((m,i)=>{
+        const key=`${g.l}_${i}`;
+        const res=LR[key];
+        if(!res||res.status!=='FINISHED') return;
+        const t1=m[0],t2=m[1];
+        const s1=res.score1,s2=res.score2;
+        if(!teams[t1]||!teams[t2]) return;
+        teams[t1].gs++; teams[t2].gs++;
+        teams[t1].gf+=s1; teams[t1].ga+=s2;
+        teams[t2].gf+=s2; teams[t2].ga+=s1;
+        if(s1>s2){teams[t1].w++;teams[t1].pts+=3;teams[t2].l++;}
+        else if(s2>s1){teams[t2].w++;teams[t2].pts+=3;teams[t1].l++;}
+        else{teams[t1].d++;teams[t1].pts+=1;teams[t2].d++;teams[t2].pts+=1;}
+      });
+      const sorted=Object.values(teams).sort((a,b)=>
+        b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf
+      );
+      const hasGames=sorted.some(t=>t.gs>0);
+      h+=`<div class="stand-group">
+        <div class="stand-group-header">
+          <div class="stand-group-letter">${g.l}</div>
+          <div class="stand-group-label">Gruppe ${g.l}</div>
+          ${!hasGames?'<span style="font-size:10px;color:var(--muted);margin-left:auto;">Noch keine Spiele</span>':''}
+        </div>
+        <table class="stand-table">
+          <thead><tr>
+            <th>#</th><th style="text-align:left;">Land</th>
+            <th>GS</th><th>S</th><th>U</th><th>N</th>
+            <th>Tore</th><th style="color:var(--gold2);">Pkt</th>
+          </tr></thead>
+          <tbody>`;
+      sorted.forEach((t,i)=>{
+        const diff=t.gf-t.ga;
+        const diffStr=diff>0?'+'+diff:diff;
+        h+=`<tr>
+          <td><span class="stand-pos">${i+1}</span></td>
+          <td>${F(t.name)} ${t.name}</td>
+          <td>${t.gs}</td>
+          <td>${t.w}</td>
+          <td>${t.d}</td>
+          <td>${t.l}</td>
+          <td style="font-size:11px;">${t.gf}:${t.ga} <span style="color:${diff>0?'var(--greenlt)':diff<0?'var(--red)':'var(--muted)'};font-size:10px;">(${diffStr})</span></td>
+          <td style="font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);font-weight:700;">${t.pts}</td>
+        </tr>`;
+      });
+      h+=`</tbody></table></div>`;
+    });
+    el.innerHTML=h;
+  }catch(ex){
+    el.innerHTML=`<div class="stand-loading">Fehler: ${ex.message}</div>`;
+  }
 }
 
 // TIPP REVEAL
