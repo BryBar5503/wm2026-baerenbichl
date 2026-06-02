@@ -1021,7 +1021,7 @@ async function loadLB(){
         <div class="lrk" style="font-size:${i<3?'22':'18'}px">${md[i]||i+1}</div>
         <div style="flex:1">
           <div class="lnm" style="color:${col};font-size:${i===0?'16':'13'}px;">${s.username}${me?' <span style="color:var(--gold);font-size:10px;">(Du)</span>':''}</div>
-          <div class="lmt">🏆 ${s.champ} · ⚡ ${s.ts} · 🎯 ${s.exact}x exakt</div>
+          ${me?`<div class="lmt">🏆 ${s.champ} · ⚡ ${s.ts} · 🎯 ${s.exact}x exakt</div>`:''}
         </div>
         <div style="text-align:right">
           <div class="lpt" style="color:${i<3?col:'var(--gold2)'};">${s.pts}</div>
