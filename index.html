@@ -683,7 +683,7 @@ async function doNewPw(){
   if(p1!==p2){err.textContent='❌ Passwörter stimmen nicht überein!';err.style.display='block';return;}
   btn.textContent='Wird gespeichert…';btn.disabled=true;
   try{
-    const r=await edge('send-mail',{type:'handle_reset',token:RESET_TOKEN,newPassword:p1});
+    const r=await edge('admin-data',{action:'reset_password',password:'__public__',token:RESET_TOKEN,newPassword:p1});
     if(r.ok){toast('✅ Passwort gespeichert! Bitte einloggen.','success');setTimeout(()=>showS('sAuth'),2000);}
     else{err.textContent='❌ '+(r.error||'Fehler');err.style.display='block';}
   }catch(ex){err.textContent='❌ '+ex.message;err.style.display='block';}
