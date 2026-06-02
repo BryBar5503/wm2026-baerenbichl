@@ -713,16 +713,68 @@ async function chkFrozen(){
   }catch{}
 }
 
-// COUNTDOWN
+// COUNTDOWN — altijd naar volgende wedstrijd
+function getAllMatches(){
+  const all=[];
+  GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
+    const dp=m[2].trim().split('.');
+    const ts=m[3].split('·')[0].trim().split(':').map(Number);
+    const utc=new Date(Date.UTC(2026,5,parseInt(dp[0]),ts[0]-2,ts[1]||0));
+    all.push({key:`${g.l}_${i}`,t1:m[0],t2:m[1],date:m[2],time:m[3],utc});
+  }));
+  KO.forEach(r=>r.matches.forEach(m=>{
+    // KO tijden zijn al in het data object
+    const parts=m.date.split('·')[0].trim().split(' ');
+    const day=parseInt(parts[0]);
+    const month=parts[1]==='Juni'?5:6; // Juli=6
+    const ts=parts[2]?.split(':').map(Number)||[0,0];
+    const utc=new Date(Date.UTC(2026,month,day,ts[0]-2,ts[1]||0));
+    all.push({key:m.key,t1:m.t1,t2:m.t2,date:m.date,utc});
+  }));
+  return all.sort((a,b)=>a.utc-b.utc);
+}
+
 function startCD(){
   function up(){
     const bar=document.getElementById('cdBar');if(!bar)return;
-    const d=FIRST_MATCH-new Date();
-    if(d<=0){bar.textContent='⚽ Die Gruppenphase läuft!';bar.className='cd frozen';return;}
-    const days=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);
-    bar.innerHTML=`⏰ Noch <strong>${days}T ${h}h ${m}m ${s}s</strong> bis zum ersten Spiel`;
+    const now=new Date();
+    const all=getAllMatches();
+
+    // Zoek lopende wedstrijd (begonnen maar <110 min geleden)
+    const live=all.find(m=>{
+      const diff=(now-m.utc)/60000;
+      return diff>=0&&diff<110;
+    });
+    // Zoek volgende wedstrijd
+    const next=all.find(m=>m.utc>now);
+
+    // Live score van lopende wedstrijd
+    const liveRes=live?LR[live.key]:null;
+    const liveScore=liveRes&&liveRes.status==='IN_PLAY'
+      ?` <span style="color:var(--red);font-weight:700;animation:pu 1s infinite;display:inline-block;">● LIVE</span> ${F(liveRes.team1||live.t1)} ${liveRes.team1||live.t1} <span style="font-family:'Cinzel',serif;color:var(--gold2)">${liveRes.score1??'–'}:${liveRes.score2??'–'}</span> ${liveRes.team2||live.t2} ${F(liveRes.team2||live.t2)}`
+      :live?` <span style="color:var(--gold2);">⚽ ${F(live.t1)} ${live.t1} – ${F(live.t2)} ${live.t2}</span>`
+      :'';
+
+    if(!next&&!live){
+      bar.innerHTML='🏆 Das WK 2026 ist beendet!';
+      bar.className='cd frozen';
+      return;
+    }
+
+    if(next){
+      const d=next.utc-now;
+      const days=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m2=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);
+      const timeStr=days>0?`${days}T ${h}h ${m2}m ${s}s`:`${h}h ${m2}m ${s}s`;
+      bar.innerHTML=`⏰ <strong>${timeStr}</strong> bis: ${F(next.t1)} ${next.t1} – ${F(next.t2)} ${next.t2}${liveScore?` &nbsp;|&nbsp; ${liveScore}`:''}`;
+      bar.className='cd'+(liveScore?' frozen':'');
+    } else if(live){
+      bar.innerHTML=liveScore;
+      bar.className='cd frozen';
+    }
   }
   up();setInterval(up,1000);
+  // Ververs live scores elke 60 seconden
+  setInterval(async()=>{await loadLR();up();},60000);
 }
 
 // LIVE RESULTS
