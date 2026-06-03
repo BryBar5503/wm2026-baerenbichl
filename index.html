@@ -504,6 +504,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <button class="atb" onclick="aTab(3)">✏️ Override</button>
       <button class="atb" onclick="aTab(4)">⚙️ Einstellungen</button>
       <button class="atb" onclick="aTab(5)">🧪 Testmodus</button>
+      <button class="atb" onclick="aTab(6);loadSQOverview();">📊 Sonder-Übersicht</button>
     </div>
     <!-- TAB 0 -->
     <div class="ap active" id="ap0">
@@ -549,6 +550,12 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <div style="margin-top:22px;">
         <button class="btn bgh" onclick="showS('sAuth');togAuth(false);">← Abmelden</button>
       </div>
+
+    <!-- TAB 6: SONDER ÜBERSICHT -->
+    <div class="ap" id="ap6">
+      <div class="sd">Alle Teilnehmer und ihre Sonderfragen-Antworten auf einen Blick.</div>
+      <div id="sqOverview"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+    </div>
 
     <!-- TAB 5: TESTMODUS -->
     <div class="ap" id="ap5">
@@ -1132,10 +1139,10 @@ async function loadMTP(){
     // Sonderfragen
     const sq=ft?.[0];
     if(sq){h+=`<div class="sb"><div class="sbt">⭐ Sonderfragen</div>
-      <div class="sr"><span>🏆 Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'—'}</span></div>
-      <div class="sr"><span>⚡ Torschütze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'})</span></div>
-      <div class="sr"><span>⚽ Erster Torschütze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'—'}</span></div>
-      <div class="sr"><span>🇦🇹 Topscorer Österreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'—'}</span></div>
+      <div class="sr"><span>🏆 Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'—'} ${LR['finale']?.status==='FINISHED'?(fuzzyMatch(sq.champion,LR['finale']?.winner)?'✅':'❌'):''}</span></div>
+      <div class="sr"><span>⚡ Torschütze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'}) ${LR['finale']?.topscorer?(fuzzyMatch(sq.topscorer_name,LR['finale']?.topscorer)?'✅':'❌'):''}</span></div>
+      <div class="sr"><span>⚽ Erster Torschütze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'—'} ${LR['finale']?.first_goal?(fuzzyMatch(sq.first_goal_name,LR['finale']?.first_goal)?'✅':'❌'):''}</span></div>
+      <div class="sr"><span>🇦🇹 Topscorer Österreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'—'} ${LR['finale']?.austria_topscorer?(fuzzyMatch(sq.austria_topscorer,LR['finale']?.austria_topscorer)?'✅':'❌'):''}</span></div>
       <div class="sr"><span>🔢 Tore Gruppe (20 Pkt)</span><span class="ss">${sq.goals_group||'—'}</span></div>
       <div class="sr"><span>🔢 Tore WK (20 Pkt)</span><span class="ss">${sq.goals_total||'—'}</span></div>
       <div class="sr"><span>🏆 Finale</span><span class="ss">${sq.team1||'?'} ${sq.score1||0}:${sq.score2||0} ${sq.team2||'?'}</span></div>
@@ -1177,14 +1184,17 @@ async function loadLB(){
       const fq=ft?.[0],fr=LR['finale'];
       if(fq&&fr?.status==='FINISHED'){
         if(fq.winner&&fq.winner===fr.winner)pts+=(fq.score1===fr.score1&&fq.score2===fr.score2)?35:10;
-        if(fq.champion&&fr.winner&&fq.champion.toLowerCase()===fr.winner.toLowerCase())pts+=60;
-        if(fq.topscorer_name&&fr.topscorer&&fq.topscorer_name.toLowerCase()===fr.topscorer.toLowerCase())pts+=50;
-        if(fq.first_goal_name&&fr.first_goal&&fq.first_goal_name.toLowerCase()===fr.first_goal.toLowerCase())pts+=30;
-        if(fq.austria_topscorer&&fr.austria_topscorer&&fq.austria_topscorer.toLowerCase()===fr.austria_topscorer.toLowerCase())pts+=20;
+        if(fuzzyMatch(fq.champion,fr.winner))pts+=60;
+        if(fuzzyMatch(fq.topscorer_name,fr.topscorer))pts+=50;
+        if(fuzzyMatch(fq.first_goal_name,fr.first_goal))pts+=30;
+        if(fuzzyMatch(fq.austria_topscorer,fr.austria_topscorer))pts+=20;
       }
       // Handmatige punten
       const mp=await sb(`manual_points?user_id=eq.${u.id}&select=points`);
       (mp||[]).forEach(p=>pts+=p.points);
+      // Sonderfragen goedkeuringen door admin
+      const sqAppr=await sb(`admin_approvals?user_id=eq.${u.id}&match_key=like.sq_%&approved=eq.true&select=override_points`);
+      (sqAppr||[]).forEach(a=>{if(a.override_points) pts+=a.override_points;});
       const sqData=fq;
       scores.push({id:u.id,username:u.username,pts,exact,wPts,champ:sqData?.champion||'—',ts:sqData?.topscorer_name||'—'});
     }
@@ -1230,7 +1240,7 @@ async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DEL
 function aTab(n){
   document.querySelectorAll('.atb').forEach((t,i)=>t.classList.toggle('active',i===n));
   document.querySelectorAll('.ap').forEach((p,i)=>p.classList.toggle('active',i===n));
-  if(n===0)loadAUsers();if(n===1)loadAUSel();if(n===2)loadCtrl();if(n===3)loadOv();if(n===4)loadASettings();if(n===5)initTestMode();
+  if(n===0)loadAUsers();if(n===1)loadAUSel();if(n===2)loadCtrl();if(n===3)loadOv();if(n===4)loadASettings();if(n===5)initTestMode();if(n===6)loadSQOverview();
 }
 async function loadAdminData(){await loadAUsers();await loadASettings();}
 
@@ -1311,16 +1321,99 @@ async function loadUTipps(uid){
     // Sonderfragen
     const sq=ft?.[0];
     if(sq){h+=`<div class="sb"><div class="sbt">⭐ Sonderfragen</div>
-      <div class="sr"><span>🏆 Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'—'}</span></div>
-      <div class="sr"><span>⚡ Torschütze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'})</span></div>
-      <div class="sr"><span>⚽ Erster Torschütze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'—'}</span></div>
-      <div class="sr"><span>🇦🇹 Topscorer Österreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'—'}</span></div>
+      <div class="sr"><span>🏆 Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'—'} ${LR['finale']?.status==='FINISHED'?(fuzzyMatch(sq.champion,LR['finale']?.winner)?'✅':'❌'):''}</span></div>
+      <div class="sr"><span>⚡ Torschütze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'}) ${LR['finale']?.topscorer?(fuzzyMatch(sq.topscorer_name,LR['finale']?.topscorer)?'✅':'❌'):''}</span></div>
+      <div class="sr"><span>⚽ Erster Torschütze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'—'} ${LR['finale']?.first_goal?(fuzzyMatch(sq.first_goal_name,LR['finale']?.first_goal)?'✅':'❌'):''}</span></div>
+      <div class="sr"><span>🇦🇹 Topscorer Österreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'—'} ${LR['finale']?.austria_topscorer?(fuzzyMatch(sq.austria_topscorer,LR['finale']?.austria_topscorer)?'✅':'❌'):''}</span></div>
       <div class="sr"><span>🔢 Tore Gruppe (20 Pkt)</span><span class="ss">${sq.goals_group||'—'}</span></div>
       <div class="sr"><span>🔢 Tore WK (20 Pkt)</span><span class="ss">${sq.goals_total||'—'}</span></div>
       <div class="sr"><span>🏆 Finale</span><span class="ss">${sq.team1||'?'} ${sq.score1||0}:${sq.score2||0} ${sq.team2||'?'}</span></div>
     </div>`;}
     document.getElementById('uTView').innerHTML=h;
   }catch(ex){document.getElementById('uTView').innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
+}
+
+async function loadSQOverview(){
+  const el=document.getElementById('sqOverview');
+  if(!el)return;
+  el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
+  try{
+    const users=await edge('admin-data',{action:'get_users',password:ADM_PW});
+    if(!users||users.error){el.innerHTML=`<div class="empty">Fehler</div>`;return;}
+
+    const sqFields=[
+      {key:'champion',label:'🏆 Weltmeister',pts:60},
+      {key:'topscorer',label:'⚡ Torschütze',pts:50},
+      {key:'first_goal',label:'⚽ Erster Torschütze',pts:30},
+      {key:'austria',label:'🇦🇹 Topscorer AUT',pts:20},
+      {key:'goals_group',label:'🔢 Tore Gruppe',pts:20},
+      {key:'goals_total',label:'🔢 Tore WK',pts:20},
+    ];
+
+    // Haal alle finale tipps op
+    const allFT=await sb('finale_tipps?select=user_id,champion,topscorer_name,topscorer_country,first_goal_name,first_goal_country,austria_topscorer,goals_group,goals_total,team1,team2,score1,score2,winner');
+    const ftMap={};(allFT||[]).forEach(f=>ftMap[f.user_id]=f);
+
+    // Haal alle goedkeuringen op
+    const allAppr=await sb('admin_approvals?match_key=like.sq_%&approved=eq.true&select=user_id,match_key,override_points');
+    const apprMap={};
+    (allAppr||[]).forEach(a=>{
+      if(!apprMap[a.user_id])apprMap[a.user_id]={};
+      apprMap[a.user_id][a.match_key]=a.override_points;
+    });
+
+    let h=`<div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px;">
+        <thead><tr style="background:var(--bg3);">
+          <th style="padding:8px;text-align:left;border-bottom:2px solid var(--border);font-size:10px;letter-spacing:2px;color:var(--gold2);">Teilnehmer</th>`;
+    sqFields.forEach(f=>h+=`<th style="padding:8px;text-align:center;border-bottom:2px solid var(--border);font-size:10px;letter-spacing:1px;color:var(--muted);white-space:nowrap;">${f.label}<br><span style="color:var(--gold2);">${f.pts}Pkt</span></th>`);
+    h+=`<th style="padding:8px;text-align:center;border-bottom:2px solid var(--border);font-size:10px;color:var(--muted);">🏆 Finale</th>
+        </tr></thead><tbody>`;
+
+    users.forEach(u=>{
+      const ft=ftMap[u.id];
+      const appr=apprMap[u.id]||{};
+      const vals=[
+        ft?.champion,
+        ft?.topscorer_name?(ft.topscorer_name+(ft.topscorer_country?' ('+ft.topscorer_country+')':'')):null,
+        ft?.first_goal_name,
+        ft?.austria_topscorer,
+        ft?.goals_group,
+        ft?.goals_total,
+      ];
+      const keys=['sq_weltmeister','sq_topscorer','sq_firstgoal','sq_austria','sq_goals_group','sq_goals_total'];
+      h+=`<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px;font-weight:700;">${u.username}<div style="font-size:10px;color:var(--muted);">${u.real_name}</div></td>`;
+      vals.forEach((v,i)=>{
+        const approved=appr[keys[i]];
+        const bg=approved?'rgba(74,170,87,.15)':'';
+        const icon=approved?'✅ ':'';
+        h+=`<td style="padding:8px;text-align:center;background:${bg};">
+          <div style="font-size:12px;">${icon}${v||'<span style="color:var(--muted);">—</span>'}</div>
+        </td>`;
+      });
+      // Finale
+      const finApprW=appr['sq_final_winner'];
+      const finApprE=appr['sq_final_exact'];
+      h+=`<td style="padding:8px;text-align:center;font-size:11px;">
+        ${ft?`<div>${ft.team1||'?'} ${ft.score1||0}:${ft.score2||0} ${ft.team2||'?'}</div>
+        <div style="color:var(--muted);">Sieger: ${ft.winner||'—'}</div>
+        <div style="margin-top:3px;">${finApprW?'✅ Sieger':''} ${finApprE?'✅ Exakt':''}</div>`:'<span style="color:var(--muted);">—</span>'}
+      </td>`;
+      h+=`</tr>`;
+    });
+    h+=`</tbody></table></div>`;
+    el.innerHTML=h;
+  }catch(ex){el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
+}
+
+async function saveSQApproval(uid, sqKey, pts, checked){
+  try{
+    await edge('admin-data',{action:'approve_match',password:ADM_PW,userId:uid,matchKey:sqKey,approved:checked,overridePoints:checked?pts:0,note:'Admin goedgekeurd'});
+    const stEl=document.getElementById(`sqst_${uid}_${sqKey}`);
+    if(stEl) stEl.innerHTML=checked?`<span style="color:var(--greenlt);font-size:11px;">+${pts} Pkt vergeben</span>`:'';
+    toast(checked?`✅ +${pts} Punkte vergeben!`:'↩️ Punkte zurückgenommen','success');
+  }catch(ex){toast('❌ '+ex.message,'error');}
 }
 
 async function saveApproval(uid,matchKey){
@@ -1795,6 +1888,49 @@ async function loadPtsOverview(){
   }catch(ex){
     el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;
   }
+}
+
+// FUZZY MATCHING
+function normalize(str){
+  if(!str) return '';
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'') // verwijder accenten: é→e, ü→u
+    .replace(/[^a-z0-9\s]/g,'') // verwijder speciale tekens
+    .replace(/\s+/g,' ').trim();
+}
+
+function fuzzyMatch(tipp, real){
+  if(!tipp||!real) return false;
+  const t=normalize(tipp);
+  const r=normalize(real);
+  if(!t||!r) return false;
+  // Exact match
+  if(t===r) return true;
+  // Bevat de echte naam de tipp of andersom
+  if(r.includes(t)||t.includes(r)) return true;
+  // Achternaam vergelijking - laatste woord
+  const tLast=t.split(' ').pop();
+  const rLast=r.split(' ').pop();
+  if(tLast&&rLast&&tLast===rLast&&tLast.length>3) return true;
+  // Eerste woord vergelijking
+  const tFirst=t.split(' ')[0];
+  const rFirst=r.split(' ')[0];
+  if(tFirst&&rFirst&&tFirst===rFirst&&tFirst.length>3) return true;
+  // Levenshtein afstand voor kleine typfouten
+  if(Math.abs(t.length-r.length)<=2){
+    const dist=levenshtein(t,r);
+    const maxLen=Math.max(t.length,r.length);
+    if(dist<=2||(dist/maxLen)<0.2) return true;
+  }
+  return false;
+}
+
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
 }
 
 // MELDUNG
