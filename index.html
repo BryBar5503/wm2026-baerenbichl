@@ -1182,21 +1182,62 @@ async function loadLB(){
       });
       const ft=await sb(`finale_tipps?user_id=eq.${u.id}&select=*`);
       const fq=ft?.[0],fr=LR['finale'];
+      // Finale wedstrijd punten (automatisch via uitslag)
       if(fq&&fr?.status==='FINISHED'){
         if(fq.winner&&fq.winner===fr.winner)pts+=(fq.score1===fr.score1&&fq.score2===fr.score2)?35:10;
+      }
+      // Handmatige punten
+      const mp=await sb(`manual_points?user_id=eq.${u.id}&select=points`);
+      (mp||[]).forEach(p=>pts+=p.points);
+      // Sonderfragen: ALLEEN via admin vinkjes (voorkomt dubbel tellen)
+      // Als admin nog niets heeft aangevinkt → automatisch berekenen via fuzzyMatch
+      const sqAppr=await sb(`admin_approvals?user_id=eq.${u.id}&match_key=like.sq_%&select=match_key,approved,override_points`);
+      const sqApprMap={};(sqAppr||[]).forEach(a=>sqApprMap[a.match_key]=a);
+      const sqChecked=sqAppr&&sqAppr.length>0;
+      if(sqChecked){
+        // Admin heeft handmatig beoordeeld - gebruik admin vinkjes
+        (sqAppr||[]).forEach(a=>{if(a.approved&&a.override_points) pts+=a.override_points;});
+      } else if(fq&&fr?.status==='FINISHED'){
+        // Geen admin beoordeling - automatisch berekenen
         if(fuzzyMatch(fq.champion,fr.winner))pts+=60;
         if(fuzzyMatch(fq.topscorer_name,fr.topscorer))pts+=50;
         if(fuzzyMatch(fq.first_goal_name,fr.first_goal))pts+=30;
         if(fuzzyMatch(fq.austria_topscorer,fr.austria_topscorer))pts+=20;
       }
-      // Handmatige punten
-      const mp=await sb(`manual_points?user_id=eq.${u.id}&select=points`);
-      (mp||[]).forEach(p=>pts+=p.points);
-      // Sonderfragen goedkeuringen door admin
-      const sqAppr=await sb(`admin_approvals?user_id=eq.${u.id}&match_key=like.sq_%&approved=eq.true&select=override_points`);
-      (sqAppr||[]).forEach(a=>{if(a.override_points) pts+=a.override_points;});
+      // ── GESAMTTORE: dichtstbij wint ──────────────────
+      // Wordt berekend na alle scores verzameld zijn (zie onder)
       const sqData=fq;
       scores.push({id:u.id,username:u.username,pts,exact,wPts,champ:sqData?.champion||'—',ts:sqData?.topscorer_name||'—'});
+    }
+    // ── GESAMTTORE: dichtstbij wint 20 punten ──────────
+    const frGoals=LR['goals_result'];
+    if(frGoals&&frGoals.status==='FINISHED'){
+      const realGroup=frGoals.goals_group_total;
+      const realTotal=frGoals.goals_wk_total;
+      // Haal goals tipps op voor alle users
+      const allFT=await sb('finale_tipps?select=user_id,goals_group,goals_total');
+      if(realGroup&&allFT){
+        // Dichtstbij groepsfase
+        const diffs=scores.map(s=>{
+          const ft=(allFT||[]).find(f=>f.user_id===s.id);
+          return {id:s.id,diff:ft?.goals_group!=null?Math.abs(ft.goals_group-realGroup):999};
+        });
+        const minDiff=Math.min(...diffs.map(d=>d.diff));
+        const winners=diffs.filter(d=>d.diff===minDiff);
+        const ptsEach=Math.round(20/winners.length);
+        winners.forEach(w=>{const s=scores.find(x=>x.id===w.id);if(s)s.pts+=ptsEach;});
+      }
+      if(realTotal&&allFT){
+        // Dichtstbij totaal WK
+        const diffs=scores.map(s=>{
+          const ft=(allFT||[]).find(f=>f.user_id===s.id);
+          return {id:s.id,diff:ft?.goals_total!=null?Math.abs(ft.goals_total-realTotal):999};
+        });
+        const minDiff=Math.min(...diffs.map(d=>d.diff));
+        const winners=diffs.filter(d=>d.diff===minDiff);
+        const ptsEach=Math.round(20/winners.length);
+        winners.forEach(w=>{const s=scores.find(x=>x.id===w.id);if(s)s.pts+=ptsEach;});
+      }
     }
     scores.sort((a,b)=>b.pts-a.pts||b.exact-a.exact);
     // Week winnaar
@@ -1232,7 +1273,42 @@ function getWS(){const n=new Date(),d=n.getDay(),diff=n.getDate()-d+(d===0?-6:1)
 const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südkorea','Czechia':'Tschechien','Canada':'Kanada','Bosnia and Herzegovina':'Bosnien & H.','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'Haïti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'Türkei','Germany':'Deutschland','Curaçao':'Curaçao','Ivory Coast':'Elfenbeinküste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ägypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'Kaapverdië','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Österreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
 const NT=t=>TM[t]||t;
 function findKey(h,a){const nh=NT(h),na=NT(a);for(const g of GROUPS){for(let j=0;j<g.matches.length;j++){const m=g.matches[j];if((m[0]===nh&&m[1]===na)||(m[0]===na&&m[1]===nh))return `${g.l}_${j}`;}}for(const r of KO){for(const m of r.matches){const res=LR[m.key];if(res&&((res.team1===nh&&res.team2===na)||(res.team1===na&&res.team2===nh)))return m.key;}}return null;}
-function procAPI(data){if(!data?.matches)return;data.matches.forEach(async match=>{const h=NT(match.homeTeam?.name||''),a=NT(match.awayTeam?.name||''),st=match.status,s1=match.score?.fullTime?.home,s2=match.score?.fullTime?.away,w=s1>s2?h:s2>s1?a:'DRAW',key=findKey(h,a);if(!key)return;try{await sb(`results?match_key=eq.${key}`,'DELETE');await sb('results','POST',{match_key:key,match_id:match.id,score1:s1,score2:s2,winner:w,team1:h,team2:a,status:st,starts_at:match.utcDate});}catch{}});loadLR().then(()=>{buildGroups();buildKO();});}
+function procAPI(data){
+  if(!data?.matches)return;
+  let groupGoals=0,totalGoals=0,groupDone=0,totalDone=0;
+  const totalMatches=104,groupMatches=48;
+  data.matches.forEach(async match=>{
+    const h=NT(match.homeTeam?.name||''),a=NT(match.awayTeam?.name||'');
+    const st=match.status,s1=match.score?.fullTime?.home,s2=match.score?.fullTime?.away;
+    const w=s1>s2?h:s2>s1?a:'DRAW',key=findKey(h,a);
+    if(!key)return;
+    // Tel doelpunten op
+    if(s1!=null&&s2!=null&&st==='FINISHED'){
+      totalGoals+=s1+s2;totalDone++;
+      if(key.match(/^[A-L]_/)){groupGoals+=s1+s2;groupDone++;}
+    }
+    try{
+      await sb(`results?match_key=eq.${key}`,'DELETE');
+      await sb('results','POST',{match_key:key,match_id:match.id,score1:s1,score2:s2,winner:w,team1:h,team2:a,status:st,starts_at:match.utcDate});
+    }catch{}
+  });
+  // Sla gesamttore op als er gespeelde wedstrijden zijn
+  setTimeout(async()=>{
+    if(totalDone>0){
+      try{
+        await sb('results?match_key=eq.goals_result','DELETE');
+        await sb('results','POST',{
+          match_key:'goals_result',
+          goals_group_total:groupDone>=groupMatches?groupGoals:null,
+          goals_wk_total:totalDone>=totalMatches?totalGoals:null,
+          status:totalDone>=totalMatches?'FINISHED':(groupDone>=groupMatches?'IN_PLAY':'SCHEDULED'),
+          score1:groupGoals, score2:totalGoals
+        });
+      }catch{}
+    }
+    loadLR().then(()=>{buildGroups();buildKO();});
+  },2000);
+}
 async function syncAPI(){try{const d=await edge('football-api',{});if(d&&!d.error)procAPI(d);}catch{}}
 async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DELETE').catch(()=>{});await syncAPI();toast('🔄 Synchronisiert!','success');}
 
@@ -1269,44 +1345,129 @@ async function loadUTipps(uid){
   try{
     const data=await edge('admin-data',{action:'get_user_tipps',password:ADM_PW,userId:uid});
     const {user,group_tipps:gt,ko_tipps:kt,finale_tipps:ft,manual_points:mp,approvals:ap}=data;
-    let h=`<div style="padding:11px;background:var(--bg3);border-radius:8px;margin-bottom:12px;font-size:13px;">
+    let h=`<div style="padding:11px;background:var(--bg3);border-radius:8px;margin-bottom:14px;font-size:13px;">
       <strong>${user?.username}</strong> · ${user?.real_name}<br>
       <a href="mailto:${user?.email}" style="color:var(--gold);font-size:12px;">${user?.email}</a>
     </div>`;
-    // Groepsfase met goedkeuren
-    h+=`<div class="sb"><div class="sbt">⚽ Gruppenphase</div>`;
+
+    const apprMap={};(ap||[]).forEach(a=>apprMap[a.match_key]=a);
+
+    // ── GROEPSWEDSTRIJDEN ───────────────────────────────
+    h+=`<div class="sb"><div class="sbt">⚽ Gruppenphase</div>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;">SPIEL</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>✅ 5Pkt</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>🎯 10Pkt</div>
+      </div>`;
     (gt||[]).forEach(t=>{
-      const pts2=t.match_key.split('_'),g=GROUPS.find(x=>x.l===pts2[0]),m=g?.matches[parseInt(pts2[1])];
+      const parts=t.match_key.split('_');
+      const g=GROUPS.find(x=>x.l===parts[0]);
+      const m=g?.matches[parseInt(parts[1])];
+      if(!m)return;
       const res=LR[t.match_key];
-      const appr=(ap||[]).find(a=>a.match_key===t.match_key);
-      let autoPts='⏳';let autoP=0;
+      const appr=apprMap[t.match_key]||{};
+      const chkW=appr.approved&&appr.override_points===5?'checked':'';
+      const chkE=appr.approved&&appr.override_points===10?'checked':'';
+      // Auto berekening
+      let autoW=false,autoE=false;
       if(res?.status==='FINISHED'){
-        if(t.score1===res.score1&&t.score2===res.score2){autoPts='🎯 +10';autoP=10;}
-        else{const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0,rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;if(tw===rw){autoPts='✅ +5';autoP=5;}else autoPts='❌ 0';}
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(tw===rw){autoW=true;if(t.score1===res.score1&&t.score2===res.score2)autoE=true;}
       }
-      const finalPts=appr?.override_points!=null?appr.override_points:autoP;
-      if(m)h+=`<div class="cm">
-        <div class="cmh">${m[0]} – ${m[1]}</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-family:'Cinzel',serif;font-size:16px;">${t.score1}:${t.score2}</span>
-          <span style="font-size:12px;">${autoPts}</span>
+      const autoIcon=autoE?'🎯':autoW?'✅':'';
+      h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:12px;font-weight:700;">${F(m[0])} ${m[0]} – ${F(m[1])} ${m[1]}</div>
+          <div style="font-size:11px;color:var(--gold2);font-family:'Cinzel',serif;">${t.score1}:${t.score2} <span style="color:var(--muted);font-family:'Lato',sans-serif;">${autoIcon?'Auto: '+autoIcon:'⏳'}</span></div>
         </div>
-        ${res?.status==='FINISHED'?`
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-          <select id="ap_sel_${t.match_key.replace(/[^a-z0-9]/gi,'_')}" style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px;border-radius:6px;font-size:12px;min-height:36px;">
-            <option value="">Auto (${autoP} Pkt)</option>
-            <option value="0" ${appr?.override_points===0?'selected':''}>0 Punkte</option>
-            <option value="5" ${appr?.override_points===5?'selected':''}>5 Punkte</option>
-            <option value="10" ${appr?.override_points===10?'selected':''}>10 Punkte</option>
-          </select>
-          <input type="text" placeholder="Notiz…" id="ap_note_${t.match_key.replace(/[^a-z0-9]/gi,'_')}" value="${appr?.note||''}" style="flex:2;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px;border-radius:6px;font-size:12px;min-height:36px;" />
-          <button class="btn bg" style="height:36px;font-size:10px;padding:0 12px;" onclick="saveApproval('${uid}','${t.match_key}')">✓</button>
-        </div>`:''}
-        ${appr?.note?`<div style="font-size:11px;color:var(--muted);margin-top:5px;">📝 ${appr.note}</div>`:''}
+        <div style="text-align:center;width:70px;">
+          <input type="checkbox" ${chkW||autoW?'checked':''} 
+            style="width:24px;height:24px;cursor:pointer;accent-color:var(--greenlt);"
+            onchange="saveMatchAppr('${uid}','${t.match_key}',5,this.checked,'Sieger korrekt')" />
+        </div>
+        <div style="text-align:center;width:70px;">
+          <input type="checkbox" ${chkE||autoE?'checked':''} 
+            style="width:24px;height:24px;cursor:pointer;accent-color:var(--gold2);"
+            onchange="saveMatchAppr('${uid}','${t.match_key}',10,this.checked,'Exaktes Ergebnis')" />
+        </div>
       </div>`;
     });
+    if(!(gt||[]).length)h+=`<div class="empty">Keine Gruppenspiele eingetragen</div>`;
     h+=`</div>`;
-    // Handmatige punten toevoegen
+
+    // ── KO TIPPS ────────────────────────────────────────
+    h+=`<div class="sb"><div class="sbt">🥊 K.O.-Runde</div>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;">DUEL</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>✅ 5Pkt</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>🎯 10Pkt</div>
+      </div>`;
+    (kt||[]).forEach(t=>{
+      const res=LR[t.match_key];
+      const appr=apprMap[t.match_key]||{};
+      let autoW=false,autoE=false;
+      if(res?.status==='FINISHED'&&t.winner){
+        if(t.winner===res.winner){autoW=true;if(t.score1===res.score1&&t.score2===res.score2)autoE=true;}
+      }
+      const autoIcon=autoE?'🎯':autoW?'✅':'';
+      h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:12px;font-weight:700;">${F(t.team1||'')} ${t.team1||'?'} – ${F(t.team2||'')} ${t.team2||'?'}</div>
+          <div style="font-size:11px;color:var(--gold2);font-family:'Cinzel',serif;">${t.score1||0}:${t.score2||0} · Sieger: ${t.winner||'—'} <span style="color:var(--muted);font-family:'Lato',sans-serif;">${autoIcon?'Auto: '+autoIcon:'⏳'}</span></div>
+        </div>
+        <div style="text-align:center;width:70px;">
+          <input type="checkbox" ${apprMap[t.match_key]?.override_points===5||autoW?'checked':''} 
+            style="width:24px;height:24px;cursor:pointer;accent-color:var(--greenlt);"
+            onchange="saveMatchAppr('${uid}','${t.match_key}',5,this.checked,'Sieger korrekt')" />
+        </div>
+        <div style="text-align:center;width:70px;">
+          <input type="checkbox" ${apprMap[t.match_key]?.override_points===10||autoE?'checked':''} 
+            style="width:24px;height:24px;cursor:pointer;accent-color:var(--gold2);"
+            onchange="saveMatchAppr('${uid}','${t.match_key}',10,this.checked,'Exaktes Ergebnis')" />
+        </div>
+      </div>`;
+    });
+    if(!(kt||[]).length)h+=`<div class="empty">Keine K.O.-Tipps</div>`;
+    h+=`</div>`;
+
+    // ── SONDERFRAGEN ────────────────────────────────────
+    const sq=ft?.[0];
+    if(sq){
+      const sqFields=[
+        {key:'sq_weltmeister',label:'🏆 Weltmeister',pts:60,val:sq.champion||'—'},
+        {key:'sq_topscorer',label:'⚡ Torschützenkönig',pts:50,val:`${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'})`},
+        {key:'sq_firstgoal',label:'⚽ Erster Torschütze',pts:30,val:`${sq.first_goal_name||'—'} (${sq.first_goal_country||'—'})`},
+        {key:'sq_austria',label:'🇦🇹 Topscorer Österreich',pts:20,val:sq.austria_topscorer||'—'},
+        {key:'sq_goals_group',label:'🔢 Tore Gruppenphase',pts:20,val:sq.goals_group||'—'},
+        {key:'sq_goals_total',label:'🔢 Tore ganzes WK',pts:20,val:sq.goals_total||'—'},
+        {key:'sq_final_winner',label:'🏆 Finale – Richtiger Sieger',pts:10,val:`${sq.team1||'?'} – ${sq.team2||'?'} · Sieger: ${sq.winner||'—'}`},
+        {key:'sq_final_exact',label:'🏆 Finale – Genauer Endstand',pts:25,val:`${sq.score1||0}:${sq.score2||0}`},
+      ];
+      h+=`<div class="sb"><div class="sbt">⭐ Sonderfragen</div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;">FRAGE & ANTWORT</div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:80px;">RICHTIG ✅</div>
+        </div>`;
+      sqFields.forEach(f=>{
+        const appr=apprMap[f.key];
+        const checked=appr?.approved?'checked':'';
+        h+=`<div style="display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:11px;color:var(--muted);">${f.label} <span style="color:var(--gold2);font-weight:700;">+${f.pts} Pkt</span></div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-top:2px;">${f.val}</div>
+          </div>
+          <div style="text-align:center;width:80px;">
+            <input type="checkbox" ${checked}
+              style="width:26px;height:26px;cursor:pointer;accent-color:var(--greenlt);"
+              onchange="saveSQApproval('${uid}','${f.key}',${f.pts},this.checked)" />
+          </div>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+
+    // ── HANDMATIGE PUNTEN ───────────────────────────────
     h+=`<div class="sb"><div class="sbt">✏️ Manuelle Punkte</div>`;
     if(mp&&mp.length){mp.forEach(p=>{h+=`<div class="sr"><span class="st2">${p.reason}</span>
       <span style="display:flex;align-items:center;gap:6px;">
@@ -1314,23 +1475,20 @@ async function loadUTipps(uid){
         <button onclick="delMP('${p.id}','${uid}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;">🗑️</button>
       </span></div>`;});}
     h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;margin-top:10px;">
-      <input type="text" id="mpReason_${uid}" placeholder="Grund für Punkte…" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:13px;min-height:40px;" />
+      <input type="text" id="mpReason_${uid}" placeholder="Grund…" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:13px;min-height:40px;" />
       <input type="number" id="mpPts_${uid}" placeholder="Pkt" style="width:60px;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;text-align:center;font-size:14px;min-height:40px;" />
-      <button class="btn bg" style="height:40px;font-size:10px;padding:0 12px;" onclick="addMP('${uid}')">+ Hinzufügen</button>
+      <button class="btn bg" style="height:40px;font-size:10px;padding:0 12px;" onclick="addMP('${uid}')">+</button>
     </div></div>`;
-    // Sonderfragen
-    const sq=ft?.[0];
-    if(sq){h+=`<div class="sb"><div class="sbt">⭐ Sonderfragen</div>
-      <div class="sr"><span>🏆 Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'—'} ${LR['finale']?.status==='FINISHED'?(fuzzyMatch(sq.champion,LR['finale']?.winner)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>⚡ Torschütze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'}) ${LR['finale']?.topscorer?(fuzzyMatch(sq.topscorer_name,LR['finale']?.topscorer)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>⚽ Erster Torschütze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'—'} ${LR['finale']?.first_goal?(fuzzyMatch(sq.first_goal_name,LR['finale']?.first_goal)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>🇦🇹 Topscorer Österreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'—'} ${LR['finale']?.austria_topscorer?(fuzzyMatch(sq.austria_topscorer,LR['finale']?.austria_topscorer)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>🔢 Tore Gruppe (20 Pkt)</span><span class="ss">${sq.goals_group||'—'}</span></div>
-      <div class="sr"><span>🔢 Tore WK (20 Pkt)</span><span class="ss">${sq.goals_total||'—'}</span></div>
-      <div class="sr"><span>🏆 Finale</span><span class="ss">${sq.team1||'?'} ${sq.score1||0}:${sq.score2||0} ${sq.team2||'?'}</span></div>
-    </div>`;}
+
     document.getElementById('uTView').innerHTML=h;
   }catch(ex){document.getElementById('uTView').innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
+}
+
+async function saveMatchAppr(uid, matchKey, pts, checked, note){
+  try{
+    await edge('admin-data',{action:'approve_match',password:ADM_PW,userId:uid,matchKey,approved:checked,overridePoints:checked?pts:0,note});
+    toast(checked?`✅ +${pts} Pkt vergeben!`:`↩️ Zurückgenommen`,'success');
+  }catch(ex){toast('❌ '+ex.message,'error');}
 }
 
 async function loadSQOverview(){
@@ -1465,9 +1623,43 @@ async function loadCtrl(){
   el.innerHTML=h;
 }
 
+async function saveGoalsResult(groupGoals, totalGoals){
+  try{
+    await sb('results?match_key=eq.goals_result','DELETE');
+    await sb('results','POST',{
+      match_key:'goals_result',
+      goals_group_total:parseInt(groupGoals)||null,
+      goals_wk_total:parseInt(totalGoals)||null,
+      status:'FINISHED'
+    });
+    toast('✅ Gesamttore gespeichert!','success');
+    await loadLR();
+  }catch(ex){toast('❌ '+ex.message,'error');}
+}
+
 async function loadOv(){
   const cont=document.getElementById('ovEl');cont.innerHTML=`<div class="ld"><div class="sp"></div></div>`;
   await loadLR();let h='';
+  // Gesamttore invoer voor admin
+  const goalsRes=LR['goals_result']||{};
+  h+=`<div style="background:var(--bg2);border:1px solid var(--gold);border-radius:var(--r);padding:14px;margin-bottom:20px;">
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);margin-bottom:12px;">🔢 Gesamttore eintragen</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:4px;">Tore Gruppenphase (48 Spiele)</label>
+        <input type="number" id="goalsGroup" value="${goalsRes.goals_group_total||''}" placeholder="z.B. 140"
+          style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:16px;min-height:44px;" />
+      </div>
+      <div>
+        <label style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:4px;">Tore ganzes WK (104 Spiele)</label>
+        <input type="number" id="goalsTotal" value="${goalsRes.goals_wk_total||''}" placeholder="z.B. 250"
+          style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:16px;min-height:44px;" />
+      </div>
+    </div>
+    <button class="btn bg" onclick="saveGoalsResult(document.getElementById('goalsGroup').value,document.getElementById('goalsTotal').value)">
+      💾 Gesamttore speichern
+    </button>
+  </div>`;
   KO.forEach(round=>{
     h+=`<div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold2);margin:14px 0 7px;">${round.name}</div>`;
     round.matches.forEach(m=>{
