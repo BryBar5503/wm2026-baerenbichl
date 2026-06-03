@@ -656,11 +656,18 @@ window.addEventListener('load', initLogos);
 setTimeout(initLogos, 500);
 setTimeout(initLogos, 1500);
 
-// Check reset token in URL
+// Check URL parameters on load
 window.addEventListener('load',()=>{
   const p=new URLSearchParams(window.location.search);
+  // Reset token
   const t=p.get('reset');
-  if(t){RESET_TOKEN=t;showS('sNewPw');}
+  if(t){RESET_TOKEN=t;showS('sNewPw');return;}
+  // QR code scan - skip password, go direct to register
+  const qr=p.get('qr');
+  if(qr==='bb4a1f941373cfc10b1663fc2b60383fd382c9b5aea2b2e021ea2102fbcc68cd'){
+    showS('sAuth');
+    togAuth(true);
+  }
 });
 
 // SB HELPER
