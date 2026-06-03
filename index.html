@@ -135,6 +135,13 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 .pts-tbl td{padding:7px 9px;border-bottom:1px solid var(--border);font-size:12px;}
 .pts-tbl tr:last-child td{border-bottom:none;}
 .pts-tbl .p{font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);text-align:right;}
+/* MELDUNG */
+.notice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9990;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .3s ease;}
+.notice-card{background:var(--bg2);border:2px solid var(--gold);border-radius:14px;padding:28px 24px;max-width:420px;width:100%;text-align:center;}
+.notice-icon{font-size:48px;margin-bottom:12px;}
+.notice-title{font-family:'Cinzel',serif;font-size:20px;color:var(--red);margin-bottom:14px;}
+.notice-text{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:20px;}
+.notice-text strong{color:var(--gold2);}
 /* GRUPPENSTAND */
 .stand-btn{background:var(--bg3);border:1px solid var(--gold);color:var(--gold2);font-size:12px;padding:10px 16px;border-radius:8px;cursor:pointer;width:100%;font-family:'Cinzel',serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;-webkit-tap-highlight-color:transparent;transition:all .2s;}
 .stand-btn:active{background:var(--bg2);}
@@ -189,6 +196,22 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 </head>
 <body>
 <div class="toast" id="toast"></div>
+<!-- MELDUNG OVERLAY -->
+<div class="notice-overlay" id="noticeOverlay" style="display:none;">
+  <div class="notice-card">
+    <div class="notice-icon">⚠️</div>
+    <div class="notice-title">Wichtiger Hinweis!</div>
+    <div class="notice-text">
+      Die Teilnahme am WM 2026 Tippspiel kostet <strong>10 Euro</strong>.<br><br>
+      Dieser Betrag fließt vollständig in den <strong>Preistopf</strong> ein.<br><br>
+      Bitte bezahle beim Gasthaus Bärenbichl bevor du tippst! 🍺🐻
+    </div>
+    <button class="btn bg bf" onclick="closeNotice()">✅ Verstanden – Weiter</button>
+    <div style="margin-top:10px;">
+      <button class="btn bgh" style="height:36px;font-size:11px;" onclick="closeNoticeCancel()">Abbrechen</button>
+    </div>
+  </div>
+</div>
 <div class="welcome-msg" id="welcomeMsg">
   <div class="welcome-msg-title" id="welcomeMsgTitle"></div>
   <div class="welcome-msg-sub" id="welcomeMsgSub"></div>
@@ -665,8 +688,11 @@ window.addEventListener('load',()=>{
   // QR code scan - skip password, go direct to register
   const qr=p.get('qr');
   if(qr==='bb4a1f941373cfc10b1663fc2b60383fd382c9b5aea2b2e021ea2102fbcc68cd'){
-    showS('sAuth');
-    togAuth(true);
+    // Toon melding direct, daarna pas registreren
+    showNotice(()=>{
+      showS('sAuth');
+      togAuth(true, true);
+    });
   }
 });
 
@@ -710,7 +736,18 @@ async function chkAdmin(){
   }catch{document.getElementById('adminPwErr').style.display='block';}
   btn.textContent='Einloggen';btn.disabled=false;
 }
-function togAuth(r){document.getElementById('lgCard').style.display=r?'none':'block';document.getElementById('rgCard').style.display=r?'block':'none';}
+function togAuth(r, skipNotice=false){
+  if(r && !skipNotice){
+    // Toon melding voor registreren
+    showNotice(()=>{
+      document.getElementById('lgCard').style.display='none';
+      document.getElementById('rgCard').style.display='block';
+    });
+  } else {
+    document.getElementById('lgCard').style.display=r?'none':'block';
+    document.getElementById('rgCard').style.display=r?'block':'none';
+  }
+}
 
 async function doReg(){
   const u=document.getElementById('rgU').value.trim(),pw=document.getElementById('rgP').value,
@@ -1758,6 +1795,19 @@ async function loadPtsOverview(){
   }catch(ex){
     el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;
   }
+}
+
+// MELDUNG
+function showNotice(onConfirm){
+  window._noticeConfirm=onConfirm;
+  document.getElementById('noticeOverlay').style.display='flex';
+}
+function closeNotice(){
+  document.getElementById('noticeOverlay').style.display='none';
+  if(window._noticeConfirm) window._noticeConfirm();
+}
+function closeNoticeCancel(){
+  document.getElementById('noticeOverlay').style.display='none';
 }
 
 // TOAST
