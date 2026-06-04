@@ -377,14 +377,14 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <div id="standContent"><div class="stand-loading"><div class="sp" style="width:24px;height:24px;border-width:2px;margin:0 auto 8px;"></div>Wird geladen…</div></div>
       </div>
       <div class="groups-list" id="glst"></div>
-      <div class="nb"><button class="btn bg" onclick="saveTipps().then(()=>toast('💾 Gespeichert!','success'))">💾 Speichern</button></div>
+      <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
     </div>
     <!-- KO -->
     <div class="page" id="pg1">
       <div class="st">K.O.-Runde</div>
       <div class="sd">Teams werden automatisch eingetragen sobald die Gruppenphase bekannt ist.</div>
       <div id="koRds"></div>
-      <div class="nb"><button class="btn bg" onclick="saveTipps().then(()=>toast('💾 Gespeichert!','success'))">💾 Speichern</button></div>
+      <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
     </div>
     <!-- SONDERFRAGEN -->
     <div class="page" id="pg2">
@@ -550,12 +550,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <div style="margin-top:22px;">
         <button class="btn bgh" onclick="showS('sAuth');togAuth(false);">← Abmelden</button>
       </div>
-
-    <!-- TAB 6: SONDER ÜBERSICHT -->
-    <div class="ap" id="ap6">
-      <div class="sd">Alle Teilnehmer und ihre Sonderfragen-Antworten auf einen Blick.</div>
-      <div id="sqOverview"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
-    </div>
+    </div><!-- end ap4 -->
 
     <!-- TAB 5: TESTMODUS -->
     <div class="ap" id="ap5">
@@ -583,6 +578,13 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <button class="btn br" onclick="clearTestData()">&#128465;&#65039; Alle Testdaten löschen</button>
       </div>
     </div>
+
+    <!-- TAB 6: SONDER ÜBERSICHT -->
+    <div class="ap" id="ap6">
+      <div class="sd">Übersicht aller Sonderfragen-Tipps aller Teilnehmer auf einen Blick.</div>
+      <div id="sqOverview"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+    </div>
+
   </main>
 </div>
 <script>
@@ -756,6 +758,61 @@ function togAuth(r, skipNotice=false){
   }
 }
 
+
+// LIVE RESULTS
+async function saveTipps(){
+  if(!CU)return;
+  if(FROZEN){toast('🔒 Tippspiel ist gesperrt!','error');throw new Error('frozen');}
+  const now=Date.now();
+
+  // Groepsfase: upsert per wedstrijd zodat locked tips niet worden gewist
+  for(const g of GROUPS){
+    for(let i=0;i<g.matches.length;i++){
+      const m=g.matches[i];
+      const k=`${g.l}_${i}`;
+      const sv=DR[k];
+      if(!sv||sv.s1===''||sv.s1===null) continue;
+      // Controleer aftraptijd
+      const dp=m[2].trim().split('.');
+      const tsParts=m[3].split('·')[0].trim().split(':').map(Number);
+      const mu=new Date(Date.UTC(2026,5,parseInt(dp[0]),tsParts[0]-2,tsParts[1]||0));
+      if(now>=mu) continue; // Wedstrijd al begonnen - overslaan maar NIET verwijderen
+      try{
+        await sb(`group_tipps?user_id=eq.${CU.id}&match_key=eq.${k}`,'DELETE');
+        await sb('group_tipps','POST',{user_id:CU.id,match_key:k,score1:parseInt(sv.s1)||0,score2:parseInt(sv.s2)||0});
+      }catch(e){console.log('GT error:',k,e);}
+    }
+  }
+
+  // KO tipps: upsert per duel, check API status en aftraptijd
+  for(const r of KO){
+    for(const m of r.matches){
+      const sv=DR[m.key];
+      const res=LR[m.key];
+      if(!sv||(sv.s1===''||sv.s1===null)) continue;
+      // Overslaan als al begonnen via API
+      if(res&&(res.status==='IN_PLAY'||res.status==='FINISHED')) continue;
+      // Controleer aftraptijd via datum string
+      try{
+        const dp2=m.date.split('·')[0].trim().split(' ');
+        const day=parseInt(dp2[0]);
+        const mon=dp2[1].includes('Juni')?5:6;
+        const koTs=dp2[2]?.split(':').map(Number)||[0,0];
+        const koMu=new Date(Date.UTC(2026,mon,day,koTs[0]-2,koTs[1]||0));
+        if(now>=koMu) continue; // Al begonnen
+      }catch{}
+      const t1=res?.team1||sv?.t1||'';
+      const t2=res?.team2||sv?.t2||'';
+      try{
+        await sb(`ko_tipps?user_id=eq.${CU.id}&match_key=eq.${m.key}`,'DELETE');
+        await sb('ko_tipps','POST',{user_id:CU.id,match_key:m.key,team1:t1,team2:t2,score1:parseInt(sv.s1)||0,score2:parseInt(sv.s2)||0,winner:sv.winner||''});
+      }catch(e){console.log('KO error:',m.key,e);}
+    }
+  }
+
+  localStorage.setItem('draft_'+CU.id,JSON.stringify(DR));
+}
+
 async function doReg(){
   const u=document.getElementById('rgU').value.trim(),pw=document.getElementById('rgP').value,
     n=document.getElementById('rgN').value.trim(),e=document.getElementById('rgE').value.trim();
@@ -796,8 +853,10 @@ async function afterLogin(welcome=false){
   await chkFrozen();await loadLR();await loadMyData();
   document.getElementById('hUser').textContent='👤 '+CU.username;
   if(welcome){showS('sWelcome');}
-  else{showS('sApp');buildGroups();buildKO();loadSQ();}
-  startCD();setInterval(syncAPI,120000);
+  else{showS('sApp');buildGroups();buildKO();loadSQ();setTimeout(showWelcomeMessage,1500);}
+  startCD();
+  if(_syncInterval) clearInterval(_syncInterval);
+  _syncInterval=setInterval(syncAPI,120000);
 }
 function finWelcome(){localStorage.setItem('welcomed_'+CU?.id,'true');showS('sApp');buildGroups();buildKO();loadSQ();}
 function doLogout(){CU=null;DR={};showS('sAuth');togAuth(false);}
@@ -867,7 +926,12 @@ function getAllMatches(){
   return all.sort((a,b)=>a.utc-b.utc);
 }
 
+let _cdInterval=null;
+let _syncInterval=null;
+let _liveInterval=null;
 function startCD(){
+  if(_cdInterval) clearInterval(_cdInterval);
+  if(_liveInterval) clearInterval(_liveInterval);
   function up(){
     const bar=document.getElementById('cdBar');if(!bar)return;
     const now=new Date();
@@ -905,9 +969,9 @@ function startCD(){
       bar.className='cd frozen';
     }
   }
-  up();setInterval(up,1000);
+  up(); _cdInterval=setInterval(up,1000);
   // Ververs live scores elke 60 seconden
-  setInterval(async()=>{await loadLR();up();},60000);
+  _liveInterval=setInterval(async()=>{await loadLR();up();},60000);
 }
 
 // LIVE RESULTS
@@ -1048,12 +1112,17 @@ async function loadSQ(){
     document.getElementById('sqFT2').value=q.team2||'';
     document.getElementById('sqFS1').value=q.score1||'';
     document.getElementById('sqFS2').value=q.score2||'';
-    document.getElementById('sqFW').value=q.winner||'';
+    // Eerst updFS() bouwen, dan waarde zetten
     updFS();
+    document.getElementById('sqFW').value=q.winner||'';
   }catch{}
 }
 async function saveSQ(){
-  if(!CU||SQ_FRZ)return;
+  if(!CU)return;
+  // Check bevriezing zowel lokaal als server-side
+  if(SQ_FRZ||Date.now()>=FIRST_MATCH){
+    toast('🔒 Sonderfragen sind gesperrt!','error');return;
+  }
   const btn=document.getElementById('saveSQBtn');btn.textContent='Wird gespeichert…';btn.disabled=true;
   try{
     const d={user_id:CU.id,
@@ -1083,24 +1152,6 @@ async function saveSQ(){
 }
 
 // SAVE TIPPS
-async function saveTipps(){
-  if(!CU)return;
-  const gt=[];
-  GROUPS.forEach(g=>g.matches.forEach((_,i)=>{
-    const k=`${g.l}_${i}`,sv=DR[k];
-    if(sv&&sv.s1!==''&&sv.s1!==null) gt.push({user_id:CU.id,match_key:k,score1:parseInt(sv.s1)||0,score2:parseInt(sv.s2)||0});
-  }));
-  if(gt.length){await sb(`group_tipps?user_id=eq.${CU.id}`,'DELETE');await sb('group_tipps','POST',gt);}
-  const kt=[];
-  KO.forEach(r=>r.matches.forEach(m=>{
-    const sv=DR[m.key];
-    if(sv&&sv.s1!==''&&sv.s1!==null) kt.push({user_id:CU.id,match_key:m.key,team1:sv.t1||'',team2:sv.t2||'',score1:parseInt(sv.s1)||0,score2:parseInt(sv.s2)||0,winner:sv.winner||''});
-  }));
-  if(kt.length){await sb(`ko_tipps?user_id=eq.${CU.id}`,'DELETE');await sb('ko_tipps','POST',kt);}
-  localStorage.setItem('draft_'+CU.id,JSON.stringify(DR));
-}
-
-// MEINE TIPPS
 async function loadMTP(){
   if(!CU)return;
   const el=document.getElementById('mtp');el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
@@ -1165,49 +1216,66 @@ async function loadLB(){
     const users=await sb('users?select=id,username,created_at&order=created_at.asc');
     if(!users||!users.length){document.getElementById('lbEl').innerHTML=`<div class="empty">Noch keine Teilnehmer.</div>`;return;}
     await loadLR();
+    // ── BATCH QUERIES - alle data in één keer ophalen ──
+    const wk=getWS();
+    const [allGT,allKT,allFT,allMP,allSQAppr]=await Promise.all([
+      sb('group_tipps?select=user_id,match_key,score1,score2'),
+      sb('ko_tipps?select=user_id,match_key,score1,score2,winner'),
+      sb('finale_tipps?select=*'),
+      sb('manual_points?select=user_id,points'),
+      sb('admin_approvals?match_key=like.sq_%&select=user_id,match_key,approved,override_points'),
+    ]);
+    const fr=LR['finale'];
+
     const scores=[];
     for(const u of users){
       let pts=0,exact=0,wPts=0;
-      const wk=getWS();
-      const gt=await sb(`group_tipps?user_id=eq.${u.id}&select=match_key,score1,score2`);
-      (gt||[]).forEach(t=>{
+
+      // Groepsfase punten
+      (allGT||[]).filter(t=>t.user_id===u.id).forEach(t=>{
         const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
-        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0,rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
-        if(tw===rw){const p=(t.score1===res.score1&&t.score2===res.score2)?10:5;pts+=p;if(p===10)exact++;if(res.updated_at&&new Date(res.updated_at)>=wk)wPts+=p;}
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(tw===rw){
+          const p=(t.score1===res.score1&&t.score2===res.score2)?10:5;
+          pts+=p;if(p===10)exact++;
+          if(res.updated_at&&new Date(res.updated_at)>=wk)wPts+=p;
+        }
       });
-      const kt=await sb(`ko_tipps?user_id=eq.${u.id}&select=match_key,score1,score2,winner`);
-      (kt||[]).forEach(t=>{
+
+      // KO punten
+      (allKT||[]).filter(t=>t.user_id===u.id).forEach(t=>{
         const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
-        if(t.winner&&t.winner===res.winner){const p=(t.score1===res.score1&&t.score2===res.score2)?10:5;pts+=p;if(p===10)exact++;if(res.updated_at&&new Date(res.updated_at)>=wk)wPts+=p;}
+        if(t.winner&&t.winner===res.winner){
+          const p=(t.score1===res.score1&&t.score2===res.score2)?10:5;
+          pts+=p;if(p===10)exact++;
+          if(res.updated_at&&new Date(res.updated_at)>=wk)wPts+=p;
+        }
       });
-      const ft=await sb(`finale_tipps?user_id=eq.${u.id}&select=*`);
-      const fq=ft?.[0],fr=LR['finale'];
-      // Finale wedstrijd punten (automatisch via uitslag)
+
+      // Finale
+      const fq=(allFT||[]).find(f=>f.user_id===u.id);
       if(fq&&fr?.status==='FINISHED'){
-        if(fq.winner&&fq.winner===fr.winner)pts+=(fq.score1===fr.score1&&fq.score2===fr.score2)?35:10;
+        if(fq.winner&&fq.winner===fr.winner)
+          pts+=(fq.score1===fr.score1&&fq.score2===fr.score2)?35:10;
       }
+
       // Handmatige punten
-      const mp=await sb(`manual_points?user_id=eq.${u.id}&select=points`);
-      (mp||[]).forEach(p=>pts+=p.points);
-      // Sonderfragen: ALLEEN via admin vinkjes (voorkomt dubbel tellen)
-      // Als admin nog niets heeft aangevinkt → automatisch berekenen via fuzzyMatch
-      const sqAppr=await sb(`admin_approvals?user_id=eq.${u.id}&match_key=like.sq_%&select=match_key,approved,override_points`);
-      const sqApprMap={};(sqAppr||[]).forEach(a=>sqApprMap[a.match_key]=a);
-      const sqChecked=sqAppr&&sqAppr.length>0;
-      if(sqChecked){
-        // Admin heeft handmatig beoordeeld - gebruik admin vinkjes
-        (sqAppr||[]).forEach(a=>{if(a.approved&&a.override_points) pts+=a.override_points;});
+      (allMP||[]).filter(p=>p.user_id===u.id).forEach(p=>pts+=p.points);
+
+      // Sonderfragen: admin vinkjes OF automatisch - nooit beide
+      const sqAppr=(allSQAppr||[]).filter(a=>a.user_id===u.id);
+      if(sqAppr.length>0){
+        sqAppr.forEach(a=>{if(a.approved&&a.override_points)pts+=a.override_points;});
       } else if(fq&&fr?.status==='FINISHED'){
-        // Geen admin beoordeling - automatisch berekenen
         if(fuzzyMatch(fq.champion,fr.winner))pts+=60;
         if(fuzzyMatch(fq.topscorer_name,fr.topscorer))pts+=50;
         if(fuzzyMatch(fq.first_goal_name,fr.first_goal))pts+=30;
         if(fuzzyMatch(fq.austria_topscorer,fr.austria_topscorer))pts+=20;
       }
-      // ── GESAMTTORE: dichtstbij wint ──────────────────
-      // Wordt berekend na alle scores verzameld zijn (zie onder)
-      const sqData=fq;
-      scores.push({id:u.id,username:u.username,pts,exact,wPts,champ:sqData?.champion||'—',ts:sqData?.topscorer_name||'—'});
+
+      scores.push({id:u.id,username:u.username,pts,exact,wPts,
+        champ:fq?.champion||'—',ts:fq?.topscorer_name||'—'});
     }
     // ── GESAMTTORE: dichtstbij wint 20 punten ──────────
     const frGoals=LR['goals_result'];
@@ -1315,8 +1383,17 @@ async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DEL
 // ADMIN
 function aTab(n){
   document.querySelectorAll('.atb').forEach((t,i)=>t.classList.toggle('active',i===n));
-  document.querySelectorAll('.ap').forEach((p,i)=>p.classList.toggle('active',i===n));
-  if(n===0)loadAUsers();if(n===1)loadAUSel();if(n===2)loadCtrl();if(n===3)loadOv();if(n===4)loadASettings();if(n===5)initTestMode();if(n===6)loadSQOverview();
+  // Op ID zoeken - niet op index volgorde
+  document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('ap'+n);
+  if(panel) panel.classList.add('active');
+  if(n===0)loadAUsers();
+  if(n===1)loadAUSel();
+  if(n===2)loadCtrl();
+  if(n===3)loadOv();
+  if(n===4)loadASettings();
+  if(n===5)initTestMode();
+  if(n===6)loadSQOverview();
 }
 async function loadAdminData(){await loadAUsers();await loadASettings();}
 
@@ -1699,7 +1776,10 @@ async function saveOv(key){
     const safeKey=key.replace(/[^a-z0-9]/gi,'_');
     const el=document.getElementById(`ov_ok_${safeKey}`);
     if(el){el.style.display='inline';setTimeout(()=>el.style.display='none',2000);}
+    // Ververs live results EN herbouw KO UI
     await loadLR();
+    buildKO();
+    toast('✅ Gespeichert!','success');
   }catch(ex){toast('❌ '+ex.message,'error');}
 }
 
@@ -1905,17 +1985,20 @@ async function toggleStand(){
   const isOpen=panel.classList.contains('open');
   panel.classList.toggle('open');
   btn.textContent=isOpen?'🏟️ Gruppenstand anzeigen':'🏟️ Gruppenstand verbergen';
-  if(!isOpen && !panel.dataset.loaded){
-    panel.dataset.loaded='1';
+  if(!isOpen){
+    // Altijd opnieuw laden - data kan veranderd zijn na API sync
     await loadStand();
   }
 }
 
+let _standLoading=false;
 async function loadStand(){
+  if(_standLoading)return;
+  _standLoading=true;
   const el=document.getElementById('standContent');
   try{
-    // Bereken stand uit de gespeelde wedstrijden
-    await loadLR();
+    // Bereken stand uit de gespeelde wedstrijden - gebruik bestaande LR data
+    // loadLR wordt al aangeroepen door syncAPI elke 2 minuten
     let h='';
     GROUPS.forEach(g=>{
       // Bereken stand voor deze groep
@@ -1973,6 +2056,8 @@ async function loadStand(){
     el.innerHTML=h;
   }catch(ex){
     el.innerHTML=`<div class="stand-loading">Fehler: ${ex.message}</div>`;
+  } finally {
+    _standLoading=false;
   }
 }
 
@@ -2058,13 +2143,25 @@ async function loadPtsOverview(){
       const res=m.res;
       const allTipps=[...(allGT||[]),...(allKT||[])].filter(t=>t.match_key===m.key);
       const exact=[],correct=[],wrong=[];
+      const isKO=m.key.startsWith('r');
       allTipps.forEach(t=>{
         const name=userMap[t.user_id]||'?';
-        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
-        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
-        if(t.score1===res.score1&&t.score2===res.score2) exact.push(name);
-        else if(tw===rw) correct.push(name);
-        else wrong.push(name);
+        if(isKO){
+          // KO: winnaar check is leidend
+          if(!t.winner){wrong.push(name);return;}
+          const winnerOk=t.winner===res.winner;
+          const exactOk=winnerOk&&t.score1===res.score1&&t.score2===res.score2;
+          if(exactOk) exact.push(name);
+          else if(winnerOk) correct.push(name);
+          else wrong.push(name);
+        } else {
+          // Groepsfase: score vergelijking
+          const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+          const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+          if(t.score1===res.score1&&t.score2===res.score2) exact.push(name);
+          else if(tw===rw) correct.push(name);
+          else wrong.push(name);
+        }
       });
       h+=`<div class="pts-match-row">
         <div class="pts-match-name">${m.t1} – ${m.t2} · ${m.date}</div>
