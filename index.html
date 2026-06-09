@@ -406,12 +406,12 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <div class="fg" style="margin:0"><label class="fl">Name des Spielers</label><input type="text" id="sqAT" placeholder="z. B. Marcel Sabitzer"/></div></div>
       <div class="sqc"><div class="sqt">🔢 Gesamttore Gruppenphase</div><div class="sqd">Wie viele Tore werden in der Gruppenphase (48 Spiele) erzielt? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div>
         <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
-          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim letzten WK 2022 (32 Teams, 48 Gruppenspiele) wurden <strong style="color:var(--text);">120 Tore</strong> in der Gruppenphase erzielt. Das WK 2026 hat ebenfalls 48 Gruppenspiele — aber mit 48 Teams insgesamt könnten die Partien ausgeglichener werden.
+          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim letzten WK 2022 (32 Teams, 48 Gruppenspiele) wurden <strong style="color:var(--text);">120 Tore</strong> in der Gruppenphase erzielt. Das WK 2026 hat <strong style="color:var(--text);">72 Gruppenspiele</strong> (12 Gruppen × 6 Spiele) — mit mehr gleichwertigen Teams sind vielleicht mehr Tore möglich!
         </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGG" placeholder="z. B. 140" min="50" max="300" inputmode="numeric"/></div></div>
       <div class="sqc"><div class="sqt">🔢 Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div>
         <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
-          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim WK 2022 (32 Teams, 64 Spiele) wurden <strong style="color:var(--text);">172 Tore</strong> erzielt — ein Rekord für ein WK mit 32 Teams. Das WK 2026 hat <strong style="color:var(--text);">104 Spiele</strong> (40 mehr!), also sind deutlich mehr Tore zu erwarten. Hochgerechnet wären das ca. <strong style="color:var(--gold2);">279 Tore</strong> — aber der erste WK mit 48 Teams ist schwer vorherzusagen!
+          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim WK 2022 (32 Teams, 64 Spiele) wurden <strong style="color:var(--text);">172 Tore</strong> erzielt. Das WK 2026 hat <strong style="color:var(--text);">104 Spiele</strong> (72 Gruppenspiele + 32 K.O.-Spiele) — hochgerechnet wären das ca. <strong style="color:var(--gold2);">280+ Tore</strong>. Aber das erste WK mit 48 Teams ist schwer vorherzusagen!
         </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGT" placeholder="z. B. 250" min="100" max="500" inputmode="numeric"/></div></div>
       <div class="sqc" style="border-color:var(--gold)"><div class="sqt">🏆 WM-Finale</div><div class="sqd">Wer steht im Finale und wie endet es? Bei genauem Ergebnis gibt es 25 Bonuspunkte extra!</div><div class="sqp">10 + 25 Bonus Punkte</div>
@@ -1219,11 +1219,11 @@ async function loadLB(){
     // ── BATCH QUERIES - alle data in één keer ophalen ──
     const wk=getWS();
     const [allGT,allKT,allFT,allMP,allSQAppr]=await Promise.all([
-      sb('group_tipps?select=user_id,match_key,score1,score2'),
-      sb('ko_tipps?select=user_id,match_key,score1,score2,winner'),
-      sb('finale_tipps?select=*'),
-      sb('manual_points?select=user_id,points'),
-      sb('admin_approvals?match_key=like.sq_%&select=user_id,match_key,approved,override_points'),
+      sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
+      sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
+      sb('finale_tipps?select=*').catch(()=>[]),
+      sb('manual_points?select=user_id,points').catch(()=>[]),
+      sb('admin_approvals?match_key=like.sq_%&select=user_id,match_key,approved,override_points').catch(()=>[]),
     ]);
     const fr=LR['finale'];
 
@@ -1333,7 +1333,14 @@ async function loadLB(){
     });
     h+=`</div>`;
     document.getElementById('lbEl').innerHTML=h;
-  }catch(ex){document.getElementById('lbEl').innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
+  }catch(ex){
+    // Nog geen wedstrijden gespeeld of netwerk fout
+    document.getElementById('lbEl').innerHTML=`<div class="empty">
+      <div style="font-size:32px;margin-bottom:12px;">⏳</div>
+      <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);margin-bottom:8px;">Noch keine Spiele</div>
+      <div style="font-size:13px;color:var(--muted);">Die Rangliste wird automatisch aktualisiert sobald die ersten Partien gespielt wurden.</div>
+    </div>`;
+  }
 }
 function getWS(){const n=new Date(),d=n.getDay(),diff=n.getDate()-d+(d===0?-6:1);return new Date(n.setDate(diff));}
 
@@ -2111,75 +2118,117 @@ async function toggleReveal(key, t1, t2){
 }
 
 // PUNTEN OVERZICHT
-async function loadPtsOverview(){
+async function loadPtsOverview(selectedDay=null){
   const el=document.getElementById('ptsOverview');
   if(!el) return;
-  el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
+  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
   await loadLR();
-  const finished=[];
-  GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
-    const key=`${g.l}_${i}`,res=LR[key];
-    if(res&&res.status==='FINISHED') finished.push({key,t1:m[0],t2:m[1],date:m[2],time:m[3],res});
-  }));
-  KO.forEach(r=>r.matches.forEach(m=>{
-    const res=LR[m.key];
-    if(res&&res.status==='FINISHED') finished.push({key:m.key,t1:res.team1||m.t1,t2:res.team2||m.t2,date:m.date,res});
-  }));
-  if(!finished.length){
-    el.innerHTML=`<div class="empty">Noch keine abgeschlossenen Spiele.</div>`;
-    return;
-  }
   try{
-    const [allGT, allKT, users]=await Promise.all([
-      sb('group_tipps?select=user_id,match_key,score1,score2'),
-      sb('ko_tipps?select=user_id,match_key,score1,score2,winner'),
-      sb('users?select=id,username'),
+    const [allGT,allKT,users]=await Promise.all([
+      sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
+      sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
+      sb('users?select=id,username&order=created_at.asc').catch(()=>[]),
     ]);
-    const userMap={};
-    (users||[]).forEach(u=>userMap[u.id]=u.username);
-    let h='';
-    // Meest recente eerst
-    [...finished].reverse().forEach(m=>{
-      const res=m.res;
-      const allTipps=[...(allGT||[]),...(allKT||[])].filter(t=>t.match_key===m.key);
-      const exact=[],correct=[],wrong=[];
-      const isKO=m.key.startsWith('r');
-      allTipps.forEach(t=>{
-        const name=userMap[t.user_id]||'?';
-        if(isKO){
-          // KO: winnaar check is leidend
-          if(!t.winner){wrong.push(name);return;}
-          const winnerOk=t.winner===res.winner;
-          const exactOk=winnerOk&&t.score1===res.score1&&t.score2===res.score2;
-          if(exactOk) exact.push(name);
-          else if(winnerOk) correct.push(name);
-          else wrong.push(name);
-        } else {
-          // Groepsfase: score vergelijking
-          const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
-          const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
-          if(t.score1===res.score1&&t.score2===res.score2) exact.push(name);
-          else if(tw===rw) correct.push(name);
-          else wrong.push(name);
-        }
-      });
-      h+=`<div class="pts-match-row">
-        <div class="pts-match-name">${m.t1} – ${m.t2} · ${m.date}</div>
-        <div class="pts-match-result">${F(m.t1)} ${res.score1} : ${res.score2} ${F(m.t2)}</div>
-        <div class="pts-winners">
-          ${exact.map(n=>`<span class="pts-winner-tag exact">🎯 ${n} +10</span>`).join('')}
-          ${correct.map(n=>`<span class="pts-winner-tag">✅ ${n} +5</span>`).join('')}
-          ${wrong.map(n=>`<span class="pts-winner-tag" style="border-color:var(--red);color:var(--red);">❌ ${n}</span>`).join('')}
-        </div>
-      </div>`;
+
+    const matchesByDay={};
+    const dayOrder=[];
+
+    GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
+      const key=`${g.l}_${i}`;
+      const res=LR[key];
+      if(!res||(res.status!=='FINISHED'&&res.status!=='IN_PLAY')) return;
+      const day=m[2];
+      if(!matchesByDay[day]){matchesByDay[day]=[];dayOrder.push(day);}
+      matchesByDay[day].push({key,t1:m[0],t2:m[1],time:m[3],res,isKO:false});
+    }));
+    KO.forEach(r=>r.matches.forEach(m=>{
+      const res=LR[m.key];
+      if(!res||(res.status!=='FINISHED'&&res.status!=='IN_PLAY')) return;
+      const day=m.date.split('\xb7')[0].trim().split(' ').slice(0,2).join(' ');
+      if(!matchesByDay[day]){matchesByDay[day]=[];dayOrder.push(day);}
+      matchesByDay[day].push({key:m.key,t1:res.team1||m.t1,t2:res.team2||m.t2,time:m.date,res,isKO:true});
+    }));
+
+    const uniqueDays=[...new Set(dayOrder)];
+    if(!uniqueDays.length){
+      el.innerHTML='<div class="empty"><div style="font-size:32px;margin-bottom:12px;">⏳</div><div style="font-family:\'Cinzel\',serif;font-size:16px;color:var(--gold2);margin-bottom:8px;">Noch keine Spiele</div><div style="font-size:13px;color:var(--muted);">Sobald Partien angepfiffen werden erscheinen hier die Tipps.</div></div>';
+      return;
+    }
+
+    const activeDay=selectedDay&&uniqueDays.includes(selectedDay)?selectedDay:uniqueDays[uniqueDays.length-1];
+    const showAll=selectedDay==='ALL';
+
+    // Kalender
+    let h='<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:16px;">';
+    h+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">📅 Spieltag wählen</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+    uniqueDays.forEach(day=>{
+      const isActive=!showAll&&day===activeDay;
+      const cnt=matchesByDay[day].length;
+      const hasLive=matchesByDay[day].some(m=>m.res.status==='IN_PLAY');
+      h+=`<button onclick="loadPtsOverview('${day}')" style="padding:6px 10px;border-radius:6px;border:1px solid ${isActive?'var(--gold)':hasLive?'var(--red)':'var(--border)'};background:${isActive?'var(--gold)':hasLive?'rgba(192,57,43,.15)':'var(--bg3)'};color:${isActive?'#1a0e04':hasLive?'var(--red)':'var(--muted)'};font-size:11px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif;white-space:nowrap;">${day}<br><span style="font-size:9px;opacity:.7;">${cnt} Spiel${cnt>1?'e':''}</span></button>`;
     });
-    el.innerHTML=`<div class="pts-overview"><div class="pts-overview-title">📊 Abgeschlossene Spiele</div>${h}</div>`;
+    h+='</div>';
+    h+=showAll
+      ?'<div style="margin-top:10px;text-align:right;"><button onclick="loadPtsOverview(null)" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;font-family:\'Lato\',sans-serif;">\u2190 Nur heute</button></div>'
+      :'<div style="margin-top:10px;text-align:right;"><button onclick="loadPtsOverview(\'ALL\')" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;text-decoration:underline;font-family:\'Lato\',sans-serif;">Alle Tage anzeigen \u2192</button></div>';
+    h+='</div>';
+
+    // Wedstrijden
+    function renderMatch({key,t1,t2,time,res,isKO}){
+      const isLive=res.status==='IN_PLAY',isDone=res.status==='FINISHED';
+      const tipps=isKO?(allKT||[]).filter(t=>t.match_key===key):(allGT||[]).filter(t=>t.match_key===key);
+      const rows=(users||[]).map(u=>{
+        const tip=tipps.find(t=>t.user_id===u.id);
+        if(!tip) return {username:u.username,tipp:'—',pts:null,icon:'',isMe:CU&&u.id===CU.id};
+        let pts=0,icon='';
+        if(isDone){
+          if(isKO){
+            if(tip.winner&&tip.winner===res.winner){pts=tip.score1===res.score1&&tip.score2===res.score2?10:5;icon=pts===10?'🎯':'✅';}
+            else{icon='❌';pts=0;}
+          } else {
+            const tw=tip.score1>tip.score2?1:tip.score1<tip.score2?-1:0;
+            const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+            if(tw===rw){pts=tip.score1===res.score1&&tip.score2===res.score2?10:5;icon=pts===10?'🎯':'✅';}
+            else{icon='❌';pts=0;}
+          }
+        } else {icon='⏳';pts=null;}
+        return {username:u.username,tipp:isKO?`${tip.score1||0}:${tip.score2||0}`:`${tip.score1}:${tip.score2}`,pts,icon,isMe:CU&&u.id===CU.id};
+      }).sort((a,b)=>(b.pts||0)-(a.pts||0));
+
+      return `<div class="pts-overview" style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div><div style="font-size:13px;font-weight:700;">${F(t1)} ${t1} \u2013 ${F(t2)} ${t2}</div><div style="font-size:11px;color:var(--muted);">${time}</div></div>
+          <div style="text-align:right;">${isDone?`<div style="font-family:'Cinzel',serif;font-size:22px;color:var(--gold2);">${res.score1}:${res.score2}</div><div style="font-size:9px;color:var(--muted);letter-spacing:1px;">EINDSTAND</div>`:isLive?`<div style="font-family:'Cinzel',serif;font-size:22px;color:var(--red);">${res.score1??'\u2013'}:${res.score2??'\u2013'}</div><div style="font-size:9px;color:var(--red);animation:pu 1s infinite;">\u25cf LIVE</div>`:''}</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:4px 7px;font-size:9px;color:var(--muted);">TEILNEHMER</th>
+            <th style="text-align:center;padding:4px 7px;font-size:9px;color:var(--muted);">TIPP</th>
+            <th style="text-align:right;padding:4px 7px;font-size:9px;color:var(--muted);">PUNKTE</th>
+          </tr></thead>
+          <tbody>${rows.map(r=>{
+            const pc=r.pts===10?'var(--gold2)':r.pts===5?'var(--greenlt)':r.pts===0?'var(--red)':'var(--muted)';
+            return `<tr style="border-bottom:1px solid var(--border);${r.isMe?'background:rgba(200,146,42,.08);':''}"><td style="padding:6px 7px;font-weight:${r.isMe?700:400};color:${r.isMe?'var(--gold)':'var(--text)'};">${r.isMe?'👤 ':''} ${r.username}</td><td style="padding:6px 7px;text-align:center;font-family:'Cinzel',serif;color:var(--gold2);">${r.tipp}</td><td style="padding:6px 7px;text-align:right;">${r.pts!==null?`<span style="font-family:'Cinzel',serif;font-size:15px;color:${pc};">${r.icon} ${r.pts>0?'+'+r.pts:r.pts}</span>`:`<span style="color:var(--muted);">⏳</span>`}</td></tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+
+    const daysToShow=showAll?uniqueDays:[activeDay];
+    daysToShow.forEach(day=>{
+      if(showAll) h+=`<div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--gold);">📅 ${day}</div>`;
+      matchesByDay[day].forEach(m=>{h+=renderMatch(m);});
+    });
+
+    el.innerHTML=h;
   }catch(ex){
-    el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;
+    el.innerHTML='<div class="empty">⏳ Noch keine Spiele gespielt.</div>';
+    console.log(ex);
   }
 }
 
-// FUZZY MATCHING
+
 function normalize(str){
   if(!str) return '';
   return str.toLowerCase()
