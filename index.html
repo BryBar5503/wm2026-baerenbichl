@@ -1368,19 +1368,21 @@ function procAPI(data){
       totalGoals+=s1+s2;totalDone++;
       if(key.match(/^[A-L]_/)){groupGoals+=s1+s2;groupDone++;}
     }
+    const score1=s1!=null?parseInt(s1):null;
+    const score2=s2!=null?parseInt(s2):null;
+
+    // BELANGRIJK: niet eerst DELETE doen. Als de API NULL teruggeeft, bewaren we bestaande data.
+    if(score1===null||score2===null){
+      console.warn('Skip incomplete API result',key,{score1,score2,status:st});
+      return;
+    }
+
+    // Alleen opslaan als we echte scores hebben
+    const finalWinner=score1>score2?h:score2>score1?a:'DRAW';
     try{
       await sb(`results?match_key=eq.${key}`,'DELETE');
-      const score1=s1!=null?parseInt(s1):null;
-      const score2=s2!=null?parseInt(s2):null;
-      // Als scores NULL zijn - helemaal niets doen, bestaande data in DB bewaren
-      if(score1===null||score2===null) return;
-      // Alleen opslaan als we echte scores hebben
-      const finalWinner=score1>score2?h:score2>score1?a:'DRAW';
-      try{
-        await sb(`results?match_key=eq.${key}`,'DELETE');
-        await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
-      }catch(e){console.log('Save error:',key,e);}
-    }catch{}
+      await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
+    }catch(e){console.log('Save error:',key,e);}
   });
   // Sla gesamttore op als er gespeelde wedstrijden zijn
   setTimeout(async()=>{
