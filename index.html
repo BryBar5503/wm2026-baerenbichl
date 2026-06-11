@@ -1370,7 +1370,10 @@ function procAPI(data){
     }
     try{
       await sb(`results?match_key=eq.${key}`,'DELETE');
-      await sb('results','POST',{match_key:key,match_id:match.id,score1:s1,score2:s2,winner:w,team1:h,team2:a,status:st,starts_at:match.utcDate});
+      const score1=s1!=null?parseInt(s1):null;
+      const score2=s2!=null?parseInt(s2):null;
+      const finalWinner=score1!=null&&score2!=null?(score1>score2?h:score2>score1?a:'DRAW'):w;
+      await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
     }catch{}
   });
   // Sla gesamttore op als er gespeelde wedstrijden zijn
