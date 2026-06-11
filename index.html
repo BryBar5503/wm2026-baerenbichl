@@ -1378,7 +1378,7 @@ function procAPI(data){
         if(existing&&existing.status==='FINISHED'&&existing.score1!=null) return;
       }
       const finalWinner=score1!=null&&score2!=null?(score1>score2?h:score2>score1?a:'DRAW'):'DRAW';
-      await sb(\`results?match_key=eq.\${key}\`,'DELETE');
+      await sb(`results?match_key=eq.${key}`,'DELETE');
       await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
     }catch{}
   });
