@@ -1372,14 +1372,14 @@ function procAPI(data){
       await sb(`results?match_key=eq.${key}`,'DELETE');
       const score1=s1!=null?parseInt(s1):null;
       const score2=s2!=null?parseInt(s2):null;
-      // Nooit een bestaand FINISHED resultaat overschrijven met NULL scores
-      if(score1===null||score2===null){
-        const existing=LR[key];
-        if(existing&&existing.status==='FINISHED'&&existing.score1!=null) return;
-      }
-      const finalWinner=score1!=null&&score2!=null?(score1>score2?h:score2>score1?a:'DRAW'):'DRAW';
-      await sb(`results?match_key=eq.${key}`,'DELETE');
-      await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
+      // Als scores NULL zijn - helemaal niets doen, bestaande data in DB bewaren
+      if(score1===null||score2===null) return;
+      // Alleen opslaan als we echte scores hebben
+      const finalWinner=score1>score2?h:score2>score1?a:'DRAW';
+      try{
+        await sb(`results?match_key=eq.${key}`,'DELETE');
+        await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
+      }catch(e){console.log('Save error:',key,e);}
     }catch{}
   });
   // Sla gesamttore op als er gespeelde wedstrijden zijn
