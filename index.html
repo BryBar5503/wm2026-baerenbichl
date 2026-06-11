@@ -1356,9 +1356,10 @@ function findKey(h,a){const nh=NT(h),na=NT(a);for(const g of GROUPS){for(let j=0
 function procAPI(data){
   if(!data?.matches)return;
   let groupGoals=0,totalGoals=0,groupDone=0,totalDone=0;
-  const totalMatches=104,groupMatches=48;
+  const totalMatches=104,groupMatches=72;
   data.matches.forEach(async match=>{
-    const h=NT(match.homeTeam?.name||''),a=NT(match.awayTeam?.name||'');
+    const h=NT(match.homeTeam?.name||match.homeTeam?.shortName||'');
+    const a=NT(match.awayTeam?.name||match.awayTeam?.shortName||'');
     const st=match.status,s1=match.score?.fullTime?.home,s2=match.score?.fullTime?.away;
     const w=s1>s2?h:s2>s1?a:'DRAW',key=findKey(h,a);
     if(!key)return;
