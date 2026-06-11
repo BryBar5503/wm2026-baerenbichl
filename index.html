@@ -1231,8 +1231,13 @@ async function loadLB(){
     for(const u of users){
       let pts=0,exact=0,wPts=0;
 
-      // Groepsfase punten
-      (allGT||[]).filter(t=>t.user_id===u.id).forEach(t=>{
+      // Groepsfase punten - gesorteerd op volgorde
+      const userGT=(allGT||[]).filter(t=>t.user_id===u.id).sort((a,b)=>{
+        const [al,ai]=a.match_key.split('_');
+        const [bl,bi]=b.match_key.split('_');
+        return al.localeCompare(bl)||parseInt(ai)-parseInt(bi);
+      });
+      userGT.forEach(t=>{
         const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
         const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
         const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
@@ -1443,7 +1448,12 @@ async function loadUTipps(uid){
         <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>✅ 5Pkt</div>
         <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>🎯 10Pkt</div>
       </div>`;
-    (gt||[]).forEach(t=>{
+    const sortedGT=(gt||[]).sort((a,b)=>{
+      const [al,ai]=a.match_key.split('_');
+      const [bl,bi]=b.match_key.split('_');
+      return al.localeCompare(bl)||parseInt(ai)-parseInt(bi);
+    });
+    sortedGT.forEach(t=>{
       const parts=t.match_key.split('_');
       const g=GROUPS.find(x=>x.l===parts[0]);
       const m=g?.matches[parseInt(parts[1])];
