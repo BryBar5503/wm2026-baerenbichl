@@ -1350,8 +1350,8 @@ async function loadLB(){
 function getWS(){const n=new Date(),d=n.getDay(),diff=n.getDate()-d+(d===0?-6:1);return new Date(n.setDate(diff));}
 
 // API SYNC
-const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südkorea','Czechia':'Tschechien','Canada':'Kanada','Bosnia and Herzegovina':'Bosnien & H.','Bosnia-Herzegovina':'Bosnien & H.','Bosnia-H.':'Bosnien & H.',
-  'Korea Republic':'Südkorea','Korea DPR':'Nordkorea',
+const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südkorea','South Korea':'Südkorea','Czechia':'Tschechien','Canada':'Kanada','Bosnia and Herzegovina':'Bosnien & H.','Bosnia-Herzegovina':'Bosnien & H.','Bosnia-H.':'Bosnien & H.',
+  'Korea Republic':'Südkorea','South Korea':'Südkorea','Korea DPR':'Nordkorea',
   'Côte d'Ivoire':'Elfenbeinküste','Ivory Coast':'Elfenbeinküste',
   'DR Congo':'DR Kongo','Congo DR':'DR Kongo','Democratic Republic of Congo':'DR Kongo',
   'Curaçao':'Curaçao','Curacao':'Curaçao',
@@ -1401,61 +1401,97 @@ const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südko
   'Cameroon':'Kamerun','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'Haïti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'Türkei','Germany':'Deutschland','Curaçao':'Curaçao','Ivory Coast':'Elfenbeinküste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ägypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'Kaapverdië','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Österreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
 const NT=t=>TM[t]||t;
 function findKey(h,a){const nh=NT(h),na=NT(a);for(const g of GROUPS){for(let j=0;j<g.matches.length;j++){const m=g.matches[j];if((m[0]===nh&&m[1]===na)||(m[0]===na&&m[1]===nh))return `${g.l}_${j}`;}}for(const r of KO){for(const m of r.matches){const res=LR[m.key];if(res&&((res.team1===nh&&res.team2===na)||(res.team1===na&&res.team2===nh)))return m.key;}}return null;}
-function procAPI(data){
+async function procAPI(data){
   if(!data?.matches)return;
   let groupGoals=0,totalGoals=0,groupDone=0,totalDone=0;
   const totalMatches=104,groupMatches=72;
-  data.matches.forEach(async match=>{
+
+  for(const match of data.matches){
     const h=NT(match.homeTeam?.name||match.homeTeam?.shortName||'');
     const a=NT(match.awayTeam?.name||match.awayTeam?.shortName||'');
-    const st=match.status,s1=match.score?.fullTime?.home,s2=match.score?.fullTime?.away;
-    const w=s1>s2?h:s2>s1?a:'DRAW',key=findKey(h,a);
-    if(!key)return;
-    // Tel doelpunten op
-    if(s1!=null&&s2!=null&&st==='FINISHED'){
-      totalGoals+=s1+s2;totalDone++;
-      if(key.match(/^[A-L]_/)){groupGoals+=s1+s2;groupDone++;}
+    const st=match.status;
+    const s1=match.score?.fullTime?.home;
+    const s2=match.score?.fullTime?.away;
+
+    // Skip als scores null zijn
+    if(s1===null||s1===undefined||s2===null||s2===undefined) continue;
+
+    const score1=parseInt(s1);
+    const score2=parseInt(s2);
+    const key=findKey(h,a);
+
+    if(!key){
+      console.log('Key niet gevonden:',h,'vs',a);
+      continue;
     }
+
+    // Tel doelpunten
+    if(st==='FINISHED'){
+      totalGoals+=score1+score2;totalDone++;
+      if(key.match(/^[A-L]_/)){groupGoals+=score1+score2;groupDone++;}
+    }
+
+    const finalWinner=score1>score2?h:score2>score1?a:'DRAW';
+
+    // UPSERT via Supabase REST API
     try{
-      await sb(`results?match_key=eq.${key}`,'DELETE');
-      const score1=s1!=null?parseInt(s1):null;
-      const score2=s2!=null?parseInt(s2):null;
-      // Als scores NULL zijn - helemaal niets doen, bestaande data in DB bewaren
-      if(score1===null||score2===null) return;
-      // Alleen opslaan als we echte scores hebben
-      const finalWinner=score1>score2?h:score2>score1?a:'DRAW';
-      try{
-        // UPSERT - insert or update, nooit apart delete nodig
-        const res=await fetch(SB_URL+'/rest/v1/results',{
-          method:'POST',
-          headers:{
-            'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
-            'Content-Type':'application/json',
-            'Prefer':'resolution=merge-duplicates,return=minimal'
-          },
-          body:JSON.stringify({match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate})
-        });
-        if(!res.ok) console.log('Save error:',key,await res.text());
-      }catch(e){console.log('Save error:',key,e);}
-    }catch{}
-  });
-  // Sla gesamttore op als er gespeelde wedstrijden zijn
-  setTimeout(async()=>{
-    if(totalDone>0){
-      try{
-        await sb('results?match_key=eq.goals_result','DELETE');
-        await sb('results','POST',{
+      const res=await fetch(SB_URL+'/rest/v1/results',{
+        method:'POST',
+        headers:{
+          'apikey':SB_KEY,
+          'Authorization':'Bearer '+SB_KEY,
+          'Content-Type':'application/json',
+          'Prefer':'resolution=merge-duplicates,return=minimal'
+        },
+        body:JSON.stringify({
+          match_key:key,
+          match_id:match.id,
+          score1,
+          score2,
+          winner:finalWinner,
+          team1:h,
+          team2:a,
+          status:st,
+          starts_at:match.utcDate
+        })
+      });
+      if(!res.ok){
+        const err=await res.text();
+        console.log('UPSERT error:',key,err);
+      }
+    }catch(e){
+      console.log('Save error:',key,e);
+    }
+  }
+
+  // Gesamttore opslaan
+  if(totalDone>0){
+    try{
+      await fetch(SB_URL+'/rest/v1/results',{
+        method:'POST',
+        headers:{
+          'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
+          'Content-Type':'application/json',
+          'Prefer':'resolution=merge-duplicates,return=minimal'
+        },
+        body:JSON.stringify({
           match_key:'goals_result',
           goals_group_total:groupDone>=groupMatches?groupGoals:null,
           goals_wk_total:totalDone>=totalMatches?totalGoals:null,
           status:totalDone>=totalMatches?'FINISHED':(groupDone>=groupMatches?'IN_PLAY':'SCHEDULED'),
-          score1:groupGoals, score2:totalGoals
-        });
-      }catch{}
-    }
-    loadLR().then(()=>{buildGroups();buildKO();});
-  },2000);
+          score1:groupGoals,
+          score2:totalGoals
+        })
+      });
+    }catch{}
+  }
+
+  await loadLR();
+  buildGroups();
+  buildKO();
 }
+
+
 async function syncAPI(){try{const d=await edge('football-api',{});if(d&&!d.error)procAPI(d);}catch{}}
 async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DELETE').catch(()=>{});await syncAPI();toast('🔄 Synchronisiert!','success');}
 
