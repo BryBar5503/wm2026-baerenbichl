@@ -1456,7 +1456,7 @@ async function procAPI(data){
           score1:groupGoals,
           score2:totalGoals
         });
-    }catch{}
+    }catch(e){console.log('Goals save error:',e);}
   }
 
   await loadLR();
