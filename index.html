@@ -487,6 +487,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <button class="bb" onclick="goP(4);loadLB();" id="bn4"><span class="ic">🥇</span><span>Rang</span></button>
     <button class="bb" onclick="goP(5);loadPtsOverview();" id="bn5"><span class="ic">📊</span><span>Punkte</span></button>
     <button class="bb" onclick="goP(6)" id="bn6"><span class="ic">📖</span><span>Info</span></button>
+    <button class="bb" onclick="goP(7);loadTopscorers();" id="bn7"><span class="ic">⚽</span><span>Tore</span></button>
   </nav>
 </div>
 
@@ -615,13 +616,13 @@ const GROUPS=[
   {l:'A',teams:['Mexiko','Südafrika','Südkorea','Tschechien'],matches:[['Mexiko','Südafrika','11. Juni','21:00 · Mexiko-Stadt'],['Südkorea','Tschechien','12. Juni','04:00 · Guadalajara'],['Tschechien','Südafrika','18. Juni','18:00 · Atlanta'],['Mexiko','Südkorea','19. Juni','03:00 · Guadalajara'],['Tschechien','Mexiko','25. Juni','03:00 · Mexiko-Stadt'],['Südafrika','Südkorea','25. Juni','03:00 · Monterrey']]},
   {l:'B',teams:['Kanada','Bosnien & H.','Katar','Schweiz'],matches:[['Kanada','Bosnien & H.','12. Juni','21:00 · Toronto'],['Katar','Schweiz','13. Juni','21:00 · San Francisco'],['Schweiz','Bosnien & H.','18. Juni','21:00 · Los Angeles'],['Kanada','Katar','19. Juni','00:00 · Vancouver'],['Schweiz','Kanada','24. Juni','21:00 · Vancouver'],['Bosnien & H.','Katar','24. Juni','21:00 · Seattle']]},
   {l:'C',teams:['Brasilien','Marokko','Haïti','Schottland'],matches:[['Brasilien','Marokko','14. Juni','00:00 · New York/NJ'],['Haïti','Schottland','14. Juni','03:00 · Boston'],['Schottland','Marokko','20. Juni','00:00 · Boston'],['Brasilien','Haïti','20. Juni','02:30 · Philadelphia'],['Schottland','Brasilien','25. Juni','00:00 · Miami'],['Marokko','Haïti','25. Juni','00:00 · Atlanta']]},
-  {l:'D',teams:['USA','Paraguay','Australien','Türkei'],matches:[['USA','Paraguay','13. Juni','03:00 · Los Angeles'],['Australien','Türkei','13. Juni','06:00 · Vancouver'],['Türkei','Paraguay','19. Juni','06:00 · San Francisco'],['USA','Australien','19. Juni','21:00 · Seattle'],['Türkei','USA','26. Juni','04:00 · Los Angeles'],['Paraguay','Australien','26. Juni','04:00 · San Francisco']]},
+  {l:'D',teams:['USA','Paraguay','Australien','Türkei'],matches:[['USA','Paraguay','13. Juni','03:00 · Los Angeles'],['Australien','Türkei','14. Juni','06:00 · Vancouver'],['Türkei','Paraguay','20. Juni','05:00 · San Francisco'],['USA','Australien','19. Juni','21:00 · Seattle'],['Türkei','USA','26. Juni','04:00 · Los Angeles'],['Paraguay','Australien','26. Juni','04:00 · San Francisco']]},
   {l:'E',teams:['Deutschland','Curaçao','Elfenbeinküste','Ecuador'],matches:[['Deutschland','Curaçao','14. Juni','19:00 · Houston'],['Elfenbeinküste','Ecuador','15. Juni','01:00 · Philadelphia'],['Deutschland','Elfenbeinküste','20. Juni','22:00 · Toronto'],['Ecuador','Curaçao','21. Juni','02:00 · Kansas City'],['Ecuador','Deutschland','25. Juni','22:00 · New York/NJ'],['Curaçao','Elfenbeinküste','25. Juni','22:00 · Philadelphia']]},
-  {l:'F',teams:['Niederlande','Japan','Schweden','Tunesien'],matches:[['Niederlande','Japan','14. Juni','22:00 · Dallas'],['Schweden','Tunesien','15. Juni','04:00 · Monterrey'],['Tunesien','Japan','20. Juni','06:00 · Monterrey'],['Niederlande','Schweden','20. Juni','19:00 · Houston'],['Japan','Schweden','26. Juni','01:00 · Dallas'],['Tunesien','Niederlande','26. Juni','01:00 · Kansas City']]},
+  {l:'F',teams:['Niederlande','Japan','Schweden','Tunesien'],matches:[['Niederlande','Japan','14. Juni','22:00 · Dallas'],['Schweden','Tunesien','15. Juni','04:00 · Monterrey'],['Tunesien','Japan','21. Juni','06:00 · Monterrey'],['Niederlande','Schweden','20. Juni','19:00 · Houston'],['Japan','Schweden','26. Juni','01:00 · Dallas'],['Tunesien','Niederlande','26. Juni','01:00 · Kansas City']]},
   {l:'G',teams:['Belgien','Ägypten','Iran','Neuseeland'],matches:[['Belgien','Ägypten','15. Juni','21:00 · Seattle'],['Iran','Neuseeland','16. Juni','03:00 · Los Angeles'],['Belgien','Iran','21. Juni','21:00 · Los Angeles'],['Neuseeland','Ägypten','22. Juni','03:00 · Vancouver'],['Ägypten','Iran','27. Juni','05:00 · Seattle'],['Neuseeland','Belgien','27. Juni','05:00 · Vancouver']]},
   {l:'H',teams:['Spanien','Kaapverdië','Saudi-Arabien','Uruguay'],matches:[['Spanien','Kaapverdië','15. Juni','18:00 · Atlanta'],['Saudi-Arabien','Uruguay','16. Juni','00:00 · Miami'],['Spanien','Saudi-Arabien','21. Juni','18:00 · Atlanta'],['Uruguay','Kaapverdië','22. Juni','00:00 · Miami'],['Kaapverdië','Saudi-Arabien','27. Juni','02:00 · Houston'],['Uruguay','Spanien','27. Juni','02:00 · Guadalajara']]},
   {l:'I',teams:['Frankreich','Senegal','Irak','Norwegen'],matches:[['Frankreich','Senegal','16. Juni','21:00 · New York/NJ'],['Irak','Norwegen','17. Juni','00:00 · Boston'],['Frankreich','Irak','22. Juni','23:00 · Philadelphia'],['Norwegen','Senegal','23. Juni','02:00 · New York/NJ'],['Norwegen','Frankreich','26. Juni','21:00 · Boston'],['Senegal','Irak','26. Juni','21:00 · Toronto']]},
-  {l:'J',teams:['Argentinien','Algerien','Österreich','Jordanien'],matches:[['Österreich','Jordanien','16. Juni','06:00 · San Francisco'],['Argentinien','Algerien','17. Juni','03:00 · Kansas City'],['Argentinien','Österreich','22. Juni','19:00 · Dallas'],['Jordanien','Algerien','23. Juni','05:00 · San Francisco'],['Algerien','Österreich','28. Juni','04:00 · Kansas City'],['Jordanien','Argentinien','28. Juni','04:00 · Dallas']]},
+  {l:'J',teams:['Argentinien','Algerien','Österreich','Jordanien'],matches:[['Österreich','Jordanien','17. Juni','06:00 · San Francisco'],['Argentinien','Algerien','17. Juni','03:00 · Kansas City'],['Argentinien','Österreich','22. Juni','19:00 · Dallas'],['Jordanien','Algerien','23. Juni','05:00 · San Francisco'],['Algerien','Österreich','28. Juni','04:00 · Kansas City'],['Jordanien','Argentinien','28. Juni','04:00 · Dallas']]},
   {l:'K',teams:['Portugal','DR Kongo','Usbekistan','Kolumbien'],matches:[['Portugal','DR Kongo','17. Juni','19:00 · Houston'],['Usbekistan','Kolumbien','18. Juni','04:00 · Mexiko-Stadt'],['Portugal','Usbekistan','23. Juni','19:00 · Houston'],['Kolumbien','DR Kongo','24. Juni','04:00 · Guadalajara'],['Kolumbien','Portugal','28. Juni','01:30 · Miami'],['DR Kongo','Usbekistan','28. Juni','01:30 · Atlanta']]},
   {l:'L',teams:['England','Kroatien','Ghana','Panama'],matches:[['England','Kroatien','17. Juni','22:00 · Dallas'],['Ghana','Panama','18. Juni','01:00 · Toronto'],['England','Ghana','23. Juni','22:00 · Boston'],['Panama','Kroatien','24. Juni','01:00 · Toronto'],['Panama','England','27. Juni','23:00 · New York/NJ'],['Kroatien','Ghana','27. Juni','23:00 · Philadelphia']]},
 ];
@@ -856,7 +857,8 @@ async function afterLogin(welcome=false){
   else{showS('sApp');buildGroups();buildKO();loadSQ();setTimeout(showWelcomeMessage,1500);}
   startCD();
   if(_syncInterval) clearInterval(_syncInterval);
-  _syncInterval=setInterval(syncAPI,120000);
+  // Sync elke 30 seconden zodat scores nooit lang NULL blijven
+  _syncInterval=setInterval(syncAPI,30000);
 }
 function finWelcome(){localStorage.setItem('welcomed_'+CU?.id,'true');showS('sApp');buildGroups();buildKO();loadSQ();}
 function doLogout(){CU=null;DR={};showS('sAuth');togAuth(false);}
@@ -994,7 +996,7 @@ async function loadMyData(){
 function goP(n){
   document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n));
   document.querySelectorAll('.bb').forEach((b,i)=>b.classList.toggle('active',i===n));
-  document.getElementById('progBar').style.width=Math.round((n/6)*100)+'%';
+  document.getElementById('progBar').style.width=Math.round((n/7)*100)+'%';
   window.scrollTo(0,0);
 }
 
@@ -2395,6 +2397,85 @@ function closeNotice(){
 }
 function closeNoticeCancel(){
   document.getElementById('noticeOverlay').style.display='none';
+}
+
+// TOPSCORERS
+async function loadTopscorers(){
+  const el=document.getElementById('topscorersContent');
+  if(!el) return;
+  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
+  try{
+    // Haal topscorers op via Edge Function (football-api)
+    const data=await edge('football-api',{type:'scorers'});
+    const matchData=await edge('football-api',{});
+
+    let h='';
+
+    // Topscorers lijst
+    if(data?.scorers&&data.scorers.length){
+      h+='<div class="sb"><div class="sbt">🏆 Topscorer Rangliste</div>';
+      h+='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+      h+='<thead><tr style="border-bottom:1px solid var(--border);">';
+      h+='<th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);">#</th>';
+      h+='<th style="padding:6px 8px;text-align:left;font-size:10px;color:var(--muted);">Spieler</th>';
+      h+='<th style="padding:6px 8px;text-align:center;font-size:10px;color:var(--muted);">⚽</th>';
+      h+='<th style="padding:6px 8px;text-align:center;font-size:10px;color:var(--muted);">🅰️</th>';
+      h+='</tr></thead><tbody>';
+      data.scorers.slice(0,20).forEach((s,i)=>{
+        const flag=FL[s.team?.name]||FL[s.player?.nationality]||'🏳️';
+        h+=`<tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;font-family:'Cinzel',serif;color:var(--muted);">${i+1}</td>
+          <td style="padding:6px 8px;">
+            <div style="font-weight:700;">${s.player?.name||'—'}</div>
+            <div style="font-size:11px;color:var(--muted);">${flag} ${s.team?.name||'—'}</div>
+          </td>
+          <td style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);">${s.goals||0}</td>
+          <td style="padding:6px 8px;text-align:center;font-size:13px;color:var(--muted);">${s.assists||0}</td>
+        </tr>`;
+      });
+      h+='</tbody></table></div>';
+    } else {
+      h+='<div class="sb"><div class="sbt">🏆 Topscorer</div><div class="empty">Noch keine Tore erzielt.</div></div>';
+    }
+
+    // Doelpuntenmakers per wedstrijd
+    if(matchData?.matches){
+      const finished=matchData.matches.filter(m=>m.status==='FINISHED'&&m.goals&&m.goals.length>0);
+      if(finished.length){
+        h+='<div class="sb" style="margin-top:14px;"><div class="sbt">⚽ Torschützen pro Spiel</div>';
+        [...finished].reverse().forEach(match=>{
+          const h1=match.homeTeam?.name||'?';
+          const a1=match.awayTeam?.name||'?';
+          const s1=match.score?.fullTime?.home;
+          const s2=match.score?.fullTime?.away;
+          h+=`<div style="padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12px;font-weight:700;">${FL[h1]||'🏳️'} ${h1} – ${FL[a1]||'🏳️'} ${a1}</span>
+              <span style="font-family:'Cinzel',serif;color:var(--gold2);">${s1}:${s2}</span>
+            </div>`;
+          match.goals.forEach(g=>{
+            const isHome=g.team?.name===h1;
+            const icon=g.type==='OWN_GOAL'?'🔴':g.type==='PENALTY'?'⚽🎯':'⚽';
+            const ownGoal=g.type==='OWN_GOAL'?' (ET)':'';
+            const penalty=g.type==='PENALTY'?' (Elf.)':'';
+            h+=`<div style="font-size:12px;padding:2px 0;display:flex;gap:6px;">
+              <span style="color:var(--muted);min-width:30px;">${g.minute}'</span>
+              <span>${icon} ${g.scorer?.name||'?'}${ownGoal}${penalty}</span>
+              <span style="color:var(--muted);margin-left:auto;">${isHome?h1:a1}</span>
+            </div>`;
+          });
+          h+='</div>';
+        });
+        h+='</div>';
+      }
+    }
+
+    if(!h) h='<div class="empty">⏳ Noch keine Tore.</div>';
+    el.innerHTML=h;
+  }catch(ex){
+    el.innerHTML='<div class="empty">Fehler beim Laden: '+ex.message+'</div>';
+    console.log(ex);
+  }
 }
 
 // TOAST
