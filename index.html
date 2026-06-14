@@ -1435,32 +1435,10 @@ async function procAPI(data){
 
     const finalWinner=score1>score2?h:score2>score1?a:'DRAW';
 
-    // UPSERT via Supabase REST API
+    // DELETE + INSERT
     try{
-      const res=await fetch(SB_URL+'/rest/v1/results',{
-        method:'POST',
-        headers:{
-          'apikey':SB_KEY,
-          'Authorization':'Bearer '+SB_KEY,
-          'Content-Type':'application/json',
-          'Prefer':'resolution=merge-duplicates,return=minimal'
-        },
-        body:JSON.stringify({
-          match_key:key,
-          match_id:match.id,
-          score1,
-          score2,
-          winner:finalWinner,
-          team1:h,
-          team2:a,
-          status:st,
-          starts_at:match.utcDate
-        })
-      });
-      if(!res.ok){
-        const err=await res.text();
-        console.log('UPSERT error:',key,err);
-      }
+      await sb(`results?match_key=eq.${key}`,'DELETE');
+      await sb('results','POST',{match_key:key,match_id:match.id,score1,score2,winner:finalWinner,team1:h,team2:a,status:st,starts_at:match.utcDate});
     }catch(e){
       console.log('Save error:',key,e);
     }
@@ -1469,14 +1447,8 @@ async function procAPI(data){
   // Gesamttore opslaan
   if(totalDone>0){
     try{
-      await fetch(SB_URL+'/rest/v1/results',{
-        method:'POST',
-        headers:{
-          'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
-          'Content-Type':'application/json',
-          'Prefer':'resolution=merge-duplicates,return=minimal'
-        },
-        body:JSON.stringify({
+      await sb('results?match_key=eq.goals_result','DELETE');
+      await sb('results','POST',{
           match_key:'goals_result',
           goals_group_total:groupDone>=groupMatches?groupGoals:null,
           goals_wk_total:totalDone>=totalMatches?totalGoals:null,
