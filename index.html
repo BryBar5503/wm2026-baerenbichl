@@ -1455,8 +1455,7 @@ async function procAPI(data){
           status:totalDone>=totalMatches?'FINISHED':(groupDone>=groupMatches?'IN_PLAY':'SCHEDULED'),
           score1:groupGoals,
           score2:totalGoals
-        })
-      });
+        });
     }catch{}
   }
 
