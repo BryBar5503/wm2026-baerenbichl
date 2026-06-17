@@ -1357,7 +1357,7 @@ const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südko
   'Elfenbeinküste':'Elfenbeinküste','Ivory Coast':'Elfenbeinküste',
   'DR Congo':'DR Kongo','Congo DR':'DR Kongo','Democratic Republic of Congo':'DR Kongo',
   'Curaçao':'Curaçao','Curacao':'Curaçao',
-  'Cape Verde':'Kaapverdië','Cape Verde Islands':'Kaapverdië',
+  'Cape Verde':'Kaapverdië','Cape Verde Islands':'Kaapverdië','Cape Verde Islands':'Kaapverdië',
   'Saudi Arabia':'Saudi-Arabien',
   'South Africa':'Südafrika',
   'New Zealand':'Neuseeland',
@@ -1400,7 +1400,7 @@ const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südko
   'United States':'USA','USA':'USA',
   'Qatar':'Katar',
   'Iran':'Iran',
-  'Cameroon':'Kamerun','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'Haïti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'Türkei','Germany':'Deutschland','Curaçao':'Curaçao','Ivory Coast':'Elfenbeinküste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ägypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'Kaapverdië','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Österreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
+  'Cameroon':'Kamerun','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'Haïti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'Türkei','Germany':'Deutschland','Curaçao':'Curaçao','Ivory Coast':'Elfenbeinküste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ägypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'Kaapverdië','Cape Verde Islands':'Kaapverdië','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Österreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
 const NT=t=>TM[t]||t;
 function findKey(h,a){const nh=NT(h),na=NT(a);for(const g of GROUPS){for(let j=0;j<g.matches.length;j++){const m=g.matches[j];if((m[0]===nh&&m[1]===na)||(m[0]===na&&m[1]===nh))return `${g.l}_${j}`;}}for(const r of KO){for(const m of r.matches){const res=LR[m.key];if(res&&((res.team1===nh&&res.team2===na)||(res.team1===na&&res.team2===nh)))return m.key;}}return null;}
 async function procAPI(data){
@@ -2376,9 +2376,13 @@ async function loadTopscorers(){
   if(!el) return;
   el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
   try{
-    // Haal topscorers op via Edge Function (football-api)
-    const data=await edge('football-api',{type:'scorers'});
-    const matchData=await edge('football-api',{});
+    // Haal topscorers op uit Supabase settings (opgeslagen door Cloudflare Worker)
+    const [scorersSetting, matchData]=await Promise.all([
+      sb('settings?key=eq.topscorers&select=value').catch(()=>[]),
+      edge('football-api',{}).catch(()=>({})),
+    ]);
+    const scorers=scorersSetting?.[0]?.value?JSON.parse(scorersSetting[0].value):[];
+    const data={scorers};
 
     let h='';
 
