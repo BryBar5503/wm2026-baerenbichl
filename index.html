@@ -382,6 +382,14 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <!-- KO -->
     <div class="page" id="pg1">
       <div class="st">K.O.-Runde</div>
+      <div style="background:rgba(200,146,42,.15);border:1px solid var(--gold);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:12px;">
+        <div style="font-weight:700;color:var(--gold2);margin-bottom:6px;">⏱️ So funktioniert der K.O.-Tipp:</div>
+        <div style="color:var(--text);line-height:1.7;">
+          Trage den <strong>Endstand nach 120 Min.</strong> ein (inkl. Verlängerung).<br>
+          🏆 <strong>z.B. 2:1</strong> → Sieger wird automatisch gesetzt<br>
+          🤝 <strong>z.B. 1:1</strong> → Unentschieden nach 120 Min. (Elfmeter egal für den Tipp)
+        </div>
+      </div>
       <div class="sd">Teams werden automatisch eingetragen sobald die Gruppenphase bekannt ist.</div>
       <div id="koRds"></div>
       <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
@@ -1052,6 +1060,9 @@ function chkFl(l){const g=GROUPS.find(x=>x.l===l);const ok=g.matches.every((_,i)
 
 // BUILD KO
 function buildKO(){
+  // Show KO info banner if not shown yet
+  const koInfo=document.getElementById('koInfoBanner');
+  if(koInfo) koInfo.style.display='block';
   const cont=document.getElementById('koRds');cont.innerHTML='';
   KO.forEach((round,ri)=>{
     const nc=round.matches.filter(m=>{const r=LR[m.key];return r&&r.team1&&r.team1!==m.t1;}).length;
@@ -1075,16 +1086,17 @@ function buildKO(){
         mc.innerHTML=`<div class="kl2">Duel ${m.lbl}</div><div class="kd">${m.date}</div>
           <div class="kr"><input type="text" class="kt" value="${t1}" readonly/>
           <input type="number" class="ks" placeholder="0" inputmode="numeric" value="${res?.status==='FINISHED'?res.score1:(sv.s1||'')}" ${lk?'readonly':''}
-            oninput="DR['${m.key}']=DR['${m.key}']||{};DR['${m.key}'].s1=this.value"/></div>
+            oninput="DR['${m.key}']=DR['${m.key}']||{};DR['${m.key}'].s1=this.value;
+              const _s1=parseInt(DR['${m.key}'].s1),_s2=parseInt(DR['${m.key}'].s2||0);
+              if(!isNaN(_s1)&&!isNaN(_s2))DR['${m.key}'].winner=_s1>_s2?'${t1}':_s2>_s1?'${t2}':'DRAW';"/></div>
           <div class="kr"><input type="text" class="kt" value="${t2}" readonly/>
           <input type="number" class="ks" placeholder="0" inputmode="numeric" value="${res?.status==='FINISHED'?res.score2:(sv.s2||'')}" ${lk?'readonly':''}
-            oninput="DR['${m.key}']=DR['${m.key}']||{};DR['${m.key}'].s2=this.value"/></div>
-          <div class="wl">Sieger (nach Verl./Elfm.)</div>
-          <select ${lk?'disabled':''} onchange="DR['${m.key}']=DR['${m.key}']||{};DR['${m.key}'].winner=this.value">
-            <option value="">— Sieger wählen —</option>
-            <option value="${t1}" ${(sv.winner===t1||res?.winner===t1)?'selected':''}>${F(t1)} ${t1}</option>
-            <option value="${t2}" ${(sv.winner===t2||res?.winner===t2)?'selected':''}>${F(t2)} ${t2}</option>
-          </select>`;
+            oninput="DR['${m.key}']=DR['${m.key}']||{};DR['${m.key}'].s2=this.value;
+              const _s1b=parseInt(DR['${m.key}'].s1||0),_s2b=parseInt(DR['${m.key}'].s2);
+              if(!isNaN(_s1b)&&!isNaN(_s2b))DR['${m.key}'].winner=_s1b>_s2b?'${t1}':_s2b>_s1b?'${t2}':'DRAW';"/></div>
+          <div class="wl" style="font-size:10px;color:var(--muted);margin-top:4px;">
+            ⏱️ Score na 120 min (inkl. Verlängerung)
+          </div>`;
       }
       grid.appendChild(mc);
     });
