@@ -392,7 +392,10 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       </div>
       <div class="sd">Teams werden automatisch eingetragen sobald die Gruppenphase bekannt ist.</div>
       <div id="koRds"></div>
-      <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
+      <div id="koAvail" style="display:none;background:rgba(39,174,96,.12);border:1px solid var(--greenlt);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--greenlt);text-align:center;">
+        ✅ K.O.-Tipps sind jetzt verfügbar — die Teams stehen fest!
+      </div>
+  <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
     </div>
     <!-- SONDERFRAGEN -->
     <div class="page" id="pg2">
@@ -1060,14 +1063,16 @@ function chkFl(l){const g=GROUPS.find(x=>x.l===l);const ok=g.matches.every((_,i)
 
 // BUILD KO
 function buildKO(){
-  // Show KO info banner if not shown yet
-  const koInfo=document.getElementById('koInfoBanner');
-  if(koInfo) koInfo.style.display='block';
+  // Show availability notice if any KO teams are known
+  const koAvail=document.getElementById('koAvail');
+  if(koAvail){
+    const hasTeams=KO.some(r=>r.matches.some(m=>{const res=LR[m.key];return res&&res.team1;}));
+    koAvail.style.display=hasTeams?'block':'none';
+  }
   const cont=document.getElementById('koRds');cont.innerHTML='';
   KO.forEach((round,ri)=>{
-    const nc=round.matches.filter(m=>{const r=LR[m.key];return r&&r.team1&&r.team1!==m.t1;}).length;
     const blk=document.createElement('div');blk.className='kb';
-    blk.innerHTML=`<div class="krt">${round.name}${nc?`<span class="bdg">🆕 ${nc} NEU</span>`:''}</div><div class="kl" id="kl${ri}"></div>`;
+    blk.innerHTML=`<div class="krt">${round.name}</div><div class="kl" id="kl${ri}"></div>`;
     cont.appendChild(blk);
     const grid=document.getElementById('kl'+ri);
     round.matches.forEach(m=>{
