@@ -1081,7 +1081,9 @@ function buildKO(){
       const t2=res?.team2&&res.team2!==m.t2?res.team2:'';
       const kn=!!(t1&&t2);
       const sv=DR[m.key]||{};
-      const lk=FROZEN||(res&&(res.status==='IN_PLAY'||res.status==='FINISHED'));
+      // Lock als bevroren, al begonnen via API, of aftraptijd bereikt
+      const koStart=res?.starts_at?new Date(res.starts_at).getTime():null;
+      const lk=FROZEN||(res&&(res.status==='IN_PLAY'||res.status==='FINISHED'))||(koStart&&Date.now()>=koStart);
       const mc=document.createElement('div');mc.className='km';
       if(!kn){
         mc.innerHTML=`<div class="kl2">Duel ${m.lbl}</div><div class="kd">${m.date}</div>
