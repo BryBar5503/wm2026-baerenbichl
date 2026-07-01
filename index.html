@@ -1431,8 +1431,11 @@ async function procAPI(data){
     const h=NT(match.homeTeam?.name||match.homeTeam?.shortName||'');
     const a=NT(match.awayTeam?.name||match.awayTeam?.shortName||'');
     const st=match.status;
-    const s1=match.score?.fullTime?.home;
-    const s2=match.score?.fullTime?.away;
+    // Bij penalty shootout: gebruik regularTime (score na 120 min)
+    const isPenalty=match.score?.duration==='PENALTY_SHOOTOUT';
+    const scoreObj=isPenalty&&match.score?.regularTime?match.score.regularTime:match.score?.fullTime;
+    const s1=scoreObj?.home;
+    const s2=scoreObj?.away;
 
     // Skip als scores null zijn
     if(s1===null||s1===undefined||s2===null||s2===undefined) continue;
