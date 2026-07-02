@@ -1269,10 +1269,12 @@ async function loadLB(){
         }
       });
 
-      // KO punten
+      // KO punten - alleen score na 120 min telt
       (allKT||[]).filter(t=>t.user_id===u.id).forEach(t=>{
         const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
-        if(t.winner&&t.winner===res.winner){
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(tw===rw){
           const p=(t.score1===res.score1&&t.score2===res.score2)?10:5;
           pts+=p;if(p===10)exact++;
           if(res.updated_at&&new Date(res.updated_at)>=wk)wPts+=p;
@@ -2292,7 +2294,10 @@ async function loadPtsOverview(selectedDay=null){
         let pts=0,icon='';
         if(isDone){
           if(isKO){
-            if(tip.winner&&tip.winner===res.winner){pts=tip.score1===res.score1&&tip.score2===res.score2?10:5;icon=pts===10?'🎯':'✅';}
+            // KO: alleen score na 120 min telt, niet winner
+            const tw=tip.score1>tip.score2?1:tip.score1<tip.score2?-1:0;
+            const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+            if(tw===rw){pts=tip.score1===res.score1&&tip.score2===res.score2?10:5;icon=pts===10?'🎯':'✅';}
             else{icon='❌';pts=0;}
           } else {
             const tw=tip.score1>tip.score2?1:tip.score1<tip.score2?-1:0;
