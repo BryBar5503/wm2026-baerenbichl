@@ -1203,7 +1203,10 @@ async function loadMTP(){
     let kc=0;
     (kt||[]).forEach(t=>{
       const res=LR[t.match_key];
-      const ic=res?.status==='FINISHED'?(t.winner===res.winner?'✅ +5/+10':'❌ 0'):'⏳';
+      // KO: alleen score telt, niet winner
+      const _tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+      const _rw=res?.score1>res?.score2?1:res?.score1<res?.score2?-1:0;
+      const ic=res?.status==='FINISHED'?(_tw===_rw?(t.score1===res.score1&&t.score2===res.score2?'🎯 +10':'✅ +5'):'❌ 0'):'⏳';
       h+=`<div class="sr"><span class="st2">${F(t.team1)} ${t.team1||'?'} – ${F(t.team2)} ${t.team2||'?'}</span><span class="ss">${t.score1||0}:${t.score2||0} <span class="ssp">${ic}</span></span></div>`;kc++;
     });
     if(!kc)h+=`<div class="empty">Keine K.O.-Tipps</div>`;
@@ -1601,8 +1604,11 @@ async function loadUTipps(uid){
       const res=LR[t.match_key];
       const appr=apprMap[t.match_key]||{};
       let autoW=false,autoE=false;
-      if(res?.status==='FINISHED'&&t.winner){
-        if(t.winner===res.winner){autoW=true;if(t.score1===res.score1&&t.score2===res.score2)autoE=true;}
+      if(res?.status==='FINISHED'){
+        // KO: alleen score telt
+        const _tw2=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const _rw2=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(_tw2===_rw2){autoW=true;if(t.score1===res.score1&&t.score2===res.score2)autoE=true;}
       }
       const autoIcon=autoE?'🎯':autoW?'✅':'';
       h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
