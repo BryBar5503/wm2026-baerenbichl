@@ -1248,11 +1248,11 @@ async function loadLB(){
       sb('finale_tipps?select=*').catch(()=>[]),
       sb('manual_points?select=user_id,points').catch(()=>[]),
       sb('admin_approvals?match_key=like.sq_%&select=user_id,match_key,approved,override_points').catch(()=>[]),
-      sb('settings?key=like.sq_result_%&select=key,value').catch(()=>[]),
+      sb('settings?select=key,value').catch(()=>[]),
     ]);
     // Verwerk sq resultaten
     const sqSettings={};
-    (sqSettingsRaw||[]).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
+    (sqSettingsRaw||[]).filter(r=>r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
     const fr=LR['finale'];
 
     const scores=[];
@@ -1700,12 +1700,12 @@ async function loadSQOverview(){
     const [users,tipps,sqRes]=await Promise.all([
       sb('users?select=id,username&order=username.asc'),
       sb('finale_tipps?select=*'),
-      sb('settings?key=like.sq_result_%&select=key,value').catch(()=>[]),
+      sb('settings?select=key,value').catch(()=>[]),
     ]);
 
     // Echte resultaten ophalen uit settings
     const sqResults={};
-    (sqRes||[]).forEach(r=>sqResults[r.key.replace('sq_result_','')]=r.value);
+    (sqRes||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqResults[r.key.replace('sq_result_','')]=r.value);
 
     const fields=[
       {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,settingKey:'austria_topscorer'},
