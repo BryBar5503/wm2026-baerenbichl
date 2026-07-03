@@ -1242,13 +1242,17 @@ async function loadLB(){
     await loadLR();
     // ── BATCH QUERIES - alle data in één keer ophalen ──
     const wk=getWS();
-    const [allGT,allKT,allFT,allMP,allSQAppr]=await Promise.all([
+    const [allGT,allKT,allFT,allMP,allSQAppr,sqSettingsRaw]=await Promise.all([
       sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
       sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
       sb('finale_tipps?select=*').catch(()=>[]),
       sb('manual_points?select=user_id,points').catch(()=>[]),
       sb('admin_approvals?match_key=like.sq_%&select=user_id,match_key,approved,override_points').catch(()=>[]),
+      sb('settings?key=like.sq_result_%&select=key,value').catch(()=>[]),
     ]);
+    // Verwerk sq resultaten
+    const sqSettings={};
+    (sqSettingsRaw||[]).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
     const fr=LR['finale'];
 
     const scores=[];
@@ -1294,15 +1298,12 @@ async function loadLB(){
       // Handmatige punten
       (allMP||[]).filter(p=>p.user_id===u.id).forEach(p=>pts+=p.points);
 
-      // Sonderfragen: admin vinkjes OF automatisch - nooit beide
-      const sqAppr=(allSQAppr||[]).filter(a=>a.user_id===u.id);
-      if(sqAppr.length>0){
-        sqAppr.forEach(a=>{if(a.approved&&a.override_points)pts+=a.override_points;});
-      } else if(fq&&fr?.status==='FINISHED'){
-        if(fuzzyMatch(fq.champion,fr.winner))pts+=60;
-        if(fuzzyMatch(fq.topscorer_name,fr.topscorer))pts+=50;
-        if(fuzzyMatch(fq.first_goal_name,fr.first_goal))pts+=30;
-        if(fuzzyMatch(fq.austria_topscorer,fr.austria_topscorer))pts+=20;
+      // Sonderfragen: gebruik admin ingevoerde resultaten uit settings
+      if(fq){
+        if(sqSettings['champion']&&fuzzyMatch(fq.champion,sqSettings['champion']))pts+=60;
+        if(sqSettings['topscorer_name']&&fuzzyMatch(fq.topscorer_name,sqSettings['topscorer_name']))pts+=50;
+        if(sqSettings['first_goal_name']&&fuzzyMatch(fq.first_goal_name,sqSettings['first_goal_name']))pts+=30;
+        if(sqSettings['austria_topscorer']&&fuzzyMatch(fq.austria_topscorer,sqSettings['austria_topscorer']))pts+=20;
       }
 
       scores.push({id:u.id,username:u.username,pts,exact,wPts,
@@ -1696,74 +1697,86 @@ async function loadSQOverview(){
   if(!el)return;
   el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
   try{
-    const users=await edge('admin-data',{action:'get_users',password:ADM_PW});
-    if(!users||users.error){el.innerHTML=`<div class="empty">Fehler</div>`;return;}
+    const [users,tipps,sqRes]=await Promise.all([
+      sb('users?select=id,username&order=username.asc'),
+      sb('finale_tipps?select=*'),
+      sb('settings?key=like.sq_result_%&select=key,value').catch(()=>[]),
+    ]);
 
-    const sqFields=[
-      {key:'champion',label:'🏆 Weltmeister',pts:60},
-      {key:'topscorer',label:'⚡ Torschütze',pts:50},
-      {key:'first_goal',label:'⚽ Erster Torschütze',pts:30},
-      {key:'austria',label:'🇦🇹 Topscorer AUT',pts:20},
-      {key:'goals_group',label:'🔢 Tore Gruppe',pts:20},
-      {key:'goals_total',label:'🔢 Tore WK',pts:20},
+    // Echte resultaten ophalen uit settings
+    const sqResults={};
+    (sqRes||[]).forEach(r=>sqResults[r.key.replace('sq_result_','')]=r.value);
+
+    const fields=[
+      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,settingKey:'austria_topscorer'},
+      {key:'champion',label:'🏆 Weltmeister',pts:60,settingKey:'champion'},
+      {key:'topscorer_name',label:'⚡ Torschütze',pts:50,settingKey:'topscorer_name'},
+      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,settingKey:'first_goal_name'},
+      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:20,settingKey:'goals_group'},
+      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:20,settingKey:'goals_total'},
     ];
 
-    // Haal alle finale tipps op
-    const allFT=await sb('finale_tipps?select=user_id,champion,topscorer_name,topscorer_country,first_goal_name,first_goal_country,austria_topscorer,goals_group,goals_total,team1,team2,score1,score2,winner');
-    const ftMap={};(allFT||[]).forEach(f=>ftMap[f.user_id]=f);
+    let h='';
+    fields.forEach(f=>{
+      const realResult=sqResults[f.settingKey]||'';
+      h+=`<div class="sb" style="margin-bottom:14px;">
+        <div class="sbt" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>${f.label} <span style="color:var(--muted);font-size:11px;">(${f.pts} Pkt)</span></span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+          <input type="text" id="sqr_${f.settingKey}" value="${realResult}" placeholder="Echtes Ergebnis eingeben…"
+            style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:13px;min-height:40px;"/>
+          <button onclick="saveSQResult('${f.settingKey}')" class="btn bg" style="height:40px;white-space:nowrap;">
+            💾 Speichern
+          </button>
+        </div>`;
 
-    // Haal alle goedkeuringen op
-    const allAppr=await sb('admin_approvals?match_key=like.sq_%&approved=eq.true&select=user_id,match_key,override_points');
-    const apprMap={};
-    (allAppr||[]).forEach(a=>{
-      if(!apprMap[a.user_id])apprMap[a.user_id]={};
-      apprMap[a.user_id][a.match_key]=a.override_points;
-    });
+      if(realResult){
+        h+=`<div style="font-size:12px;color:var(--greenlt);margin-bottom:8px;">✅ Ergebnis: <strong>${realResult}</strong></div>`;
+      }
 
-    let h=`<div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px;">
-        <thead><tr style="background:var(--bg3);">
-          <th style="padding:8px;text-align:left;border-bottom:2px solid var(--border);font-size:10px;letter-spacing:2px;color:var(--gold2);">Teilnehmer</th>`;
-    sqFields.forEach(f=>h+=`<th style="padding:8px;text-align:center;border-bottom:2px solid var(--border);font-size:10px;letter-spacing:1px;color:var(--muted);white-space:nowrap;">${f.label}<br><span style="color:var(--gold2);">${f.pts}Pkt</span></th>`);
-    h+=`<th style="padding:8px;text-align:center;border-bottom:2px solid var(--border);font-size:10px;color:var(--muted);">🏆 Finale</th>
+      h+=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TEILNEHMER</th>
+          <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TIPP</th>
+          <th style="text-align:right;padding:4px 8px;font-size:10px;color:var(--muted);">PUNKTE</th>
         </tr></thead><tbody>`;
 
-    users.forEach(u=>{
-      const ft=ftMap[u.id];
-      const appr=apprMap[u.id]||{};
-      const vals=[
-        ft?.champion,
-        ft?.topscorer_name?(ft.topscorer_name+(ft.topscorer_country?' ('+ft.topscorer_country+')':'')):null,
-        ft?.first_goal_name,
-        ft?.austria_topscorer,
-        ft?.goals_group,
-        ft?.goals_total,
-      ];
-      const keys=['sq_weltmeister','sq_topscorer','sq_firstgoal','sq_austria','sq_goals_group','sq_goals_total'];
-      h+=`<tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px;font-weight:700;">${u.username}<div style="font-size:10px;color:var(--muted);">${u.real_name}</div></td>`;
-      vals.forEach((v,i)=>{
-        const approved=appr[keys[i]];
-        const bg=approved?'rgba(74,170,87,.15)':'';
-        const icon=approved?'✅ ':'';
-        h+=`<td style="padding:8px;text-align:center;background:${bg};">
-          <div style="font-size:12px;">${icon}${v||'<span style="color:var(--muted);">—</span>'}</div>
-        </td>`;
+      users.forEach(u=>{
+        const t=tipps.find(x=>x.user_id===u.id);
+        const val=t?.[f.key]||'—';
+        let pts='—',icon='';
+        if(realResult&&val!=='—'){
+          const match=fuzzyMatch(val,realResult);
+          pts=match?`+${f.pts}`:'0';
+          icon=match?'✅':'❌';
+        }
+        h+=`<tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;">${u.username}</td>
+          <td style="padding:6px 8px;color:var(--gold2);">${val}</td>
+          <td style="padding:6px 8px;text-align:right;">${icon} <span style="font-family:'Cinzel',serif;color:${pts.startsWith('+')?'var(--gold2)':'var(--muted)'};">${pts}</span></td>
+        </tr>`;
       });
-      // Finale
-      const finApprW=appr['sq_final_winner'];
-      const finApprE=appr['sq_final_exact'];
-      h+=`<td style="padding:8px;text-align:center;font-size:11px;">
-        ${ft?`<div>${ft.team1||'?'} ${ft.score1||0}:${ft.score2||0} ${ft.team2||'?'}</div>
-        <div style="color:var(--muted);">Sieger: ${ft.winner||'—'}</div>
-        <div style="margin-top:3px;">${finApprW?'✅ Sieger':''} ${finApprE?'✅ Exakt':''}</div>`:'<span style="color:var(--muted);">—</span>'}
-      </td>`;
-      h+=`</tr>`;
+      h+=`</tbody></table></div>`;
     });
-    h+=`</tbody></table></div>`;
-    el.innerHTML=h;
-  }catch(ex){el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
+
+    el.innerHTML=h||'<div class="empty">Keine Daten</div>';
+  }catch(ex){
+    el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;
+  }
 }
+
+async function saveSQResult(key){
+  const val=document.getElementById('sqr_'+key)?.value?.trim();
+  if(!val){toast('Bitte Ergebnis eingeben!','error');return;}
+  try{
+    await sb('settings?key=eq.sq_result_'+key,'DELETE');
+    await sb('settings','POST',{key:'sq_result_'+key,value:val});
+    toast('✅ Gespeichert!','success');
+    loadSQOverview();
+  }catch(ex){toast('❌ '+ex.message,'error');}
+}
+
 
 async function saveSQApproval(uid, sqKey, pts, checked){
   try{
