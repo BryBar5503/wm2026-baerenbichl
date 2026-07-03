@@ -430,6 +430,9 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <div class="kr" style="margin-bottom:7px;"><input type="text" class="kt" id="sqFT2" placeholder="Finalist 2" oninput="updFS()"/><input type="number" class="ks" id="sqFS2" placeholder="0" min="0" max="20" inputmode="numeric"/></div>
         <div class="wl">Sieger</div><select id="sqFW"><option value="">— Sieger wählen —</option></select></div>
       <div class="nb"><button class="btn bgg bf" id="saveSQBtn" onclick="saveSQ()">✅ Sonderfragen speichern</button></div>
+
+      <!-- Sonderfragen punten overzicht -->
+      <div id="sqPtsOverview" style="margin-top:20px;"></div>
     </div>
     <!-- MEINE TIPPS -->
     <div class="page" id="pg3">
@@ -1005,6 +1008,7 @@ async function loadMyData(){
 
 // PAGE NAV
 function goP(n){
+  if(n===2) setTimeout(loadSQPtsOverview,500);
   document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n));
   document.querySelectorAll('.bb').forEach((b,i)=>b.classList.toggle('active',i===n));
   document.getElementById('progBar').style.width=Math.round((n/7)*100)+'%';
@@ -2414,6 +2418,73 @@ function closeNotice(){
 }
 function closeNoticeCancel(){
   document.getElementById('noticeOverlay').style.display='none';
+}
+
+// SONDER PUNTEN OVERZICHT
+async function loadSQPtsOverview(){
+  const el=document.getElementById('sqPtsOverview');
+  if(!el) return;
+
+  try{
+    const [allTipps, allUsers, sqSettingsRaw]=await Promise.all([
+      sb('finale_tipps?select=*').catch(()=>[]),
+      sb('users?select=id,username&order=username.asc').catch(()=>[]),
+      sb('settings?select=key,value').catch(()=>[]),
+    ]);
+
+    const sqSettings={};
+    (sqSettingsRaw||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
+
+    const fields=[
+      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20},
+      {key:'champion',label:'🏆 Weltmeister',pts:60},
+      {key:'topscorer_name',label:'⚡ Torschütze',pts:50},
+      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30},
+    ];
+
+    // Check welke resultaten al bekend zijn
+    const knownFields=fields.filter(f=>sqSettings[f.key]);
+    if(!knownFields.length){
+      el.innerHTML='';
+      return;
+    }
+
+    let h=`<div class="sb"><div class="sbt">📊 Sonderfragen Punkte</div>`;
+
+    knownFields.forEach(f=>{
+      const real=sqSettings[f.key];
+      h+=`<div style="margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:6px;">
+          ${f.label} — <span style="color:var(--text);">Ergebnis: ${real}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TEILNEHMER</th>
+            <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TIPP</th>
+            <th style="text-align:right;padding:4px 8px;font-size:10px;color:var(--muted);">PUNKTE</th>
+          </tr></thead><tbody>`;
+
+      (allUsers||[]).forEach(u=>{
+        const t=(allTipps||[]).find(x=>x.user_id===u.id);
+        const val=t?.[f.key]||'—';
+        const match=val!=='—'&&fuzzyMatch(val,real);
+        const isMe=CU&&u.id===CU.id;
+        h+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(200,146,42,.08);':''}">
+          <td style="padding:5px 8px;font-weight:${isMe?700:400};color:${isMe?'var(--gold)':'var(--text)'};">${isMe?'👤 ':''} ${u.username}</td>
+          <td style="padding:5px 8px;color:var(--gold2);">${val}</td>
+          <td style="padding:5px 8px;text-align:right;">
+            ${match?`<span style="color:var(--gold2);font-family:'Cinzel',serif;">✅ +${f.pts}</span>`:`<span style="color:var(--red);">❌ 0</span>`}
+          </td>
+        </tr>`;
+      });
+      h+=`</tbody></table></div>`;
+    });
+
+    h+=`</div>`;
+    el.innerHTML=h;
+  }catch(ex){
+    console.log('loadSQPtsOverview error:',ex);
+  }
 }
 
 // TOPSCORERS
