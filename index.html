@@ -1777,20 +1777,31 @@ async function loadUTipps(uid){
       if(match){sqPts+=f.pts;sqDetails.push(`+${f.pts}`);}
     });
 
-    // Goals top 3
+    // Goals top 3 - haal alle tipps op om rangorde te bepalen
     const goalsFields=[
-      {key:'goals_group',topPts:[20,15,10]},
-      {key:'goals_total',topPts:[20,15,10]},
+      {key:'goals_group',topPts:[20,15,10],label:'⚽ Tore Gruppenphase'},
+      {key:'goals_total',topPts:[20,15,10],label:'⚽ Tore WK gesamt'},
     ];
-    goalsFields.forEach(f=>{
+    for(const f of goalsFields){
       const real=sqSettings2[f.key];
-      if(!real) return;
+      if(!real) continue;
       const realNum=parseInt(real);
       const val=fq?.[f.key];
-      if(val==null) return;
-      // Haal alle tipps op voor rangorde (vereenvoudigd: gebruik al berekende punten)
-      // Voor nu: check of gebruiker in top 3 zit
-    });
+      if(val==null) continue;
+      // Haal alle tipps op voor rangorde
+      const allGoalsTipps=await sb('finale_tipps?select=user_id,'+f.key).catch(()=>[]);
+      const diffs=(allGoalsTipps||[])
+        .filter(t=>t[f.key]!=null)
+        .map(t=>({uid:t.user_id,diff:Math.abs(parseInt(t[f.key])-realNum)}))
+        .sort((a,b)=>a.diff-b.diff);
+      const uniqueDiffs=[...new Set(diffs.map(d=>d.diff))].slice(0,3);
+      uniqueDiffs.forEach((diff,i)=>{
+        const pts=f.topPts[i]||0;
+        diffs.filter(d=>d.diff===diff).forEach(d=>{
+          if(d.uid===uid){sqPts+=pts;sqDetails.push(`${f.label}: +${pts}`);}
+        });
+      });
+    }
 
     // Handmatig
     (allMPu||[]).forEach(p=>mpPts+=p.points);
