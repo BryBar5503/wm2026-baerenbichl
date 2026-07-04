@@ -2664,8 +2664,8 @@ async function loadPtsOverview(selectedDay=null){
 
 
 function normalize(str){
-  if(!str) return '';
-  return str.toLowerCase()
+  if(!str&&str!==0) return '';
+  return String(str).toLowerCase()
     .normalize('NFD').replace(/[̀-ͯ]/g,'') // verwijder accenten: é→e, ü→u
     .replace(/[^a-z0-9\s]/g,'') // verwijder speciale tekens
     .replace(/\s+/g,' ').trim();
