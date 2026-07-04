@@ -1724,6 +1724,109 @@ async function loadUTipps(uid){
       <button class="btn bg" style="height:40px;font-size:10px;padding:0 12px;" onclick="addMP('${uid}')">+</button>
     </div></div>`;
 
+    // ── PUNTEN BREAKDOWN ────────────────────────────────
+    const [allGTu,allKTu,allFTu,allMPu,sqSettingsRaw2]=await Promise.all([
+      sb(`group_tipps?user_id=eq.${uid}&select=match_key,score1,score2`).catch(()=>[]),
+      sb(`ko_tipps?user_id=eq.${uid}&select=match_key,score1,score2,winner`).catch(()=>[]),
+      sb(`finale_tipps?user_id=eq.${uid}&select=*`).catch(()=>[]),
+      sb(`manual_points?user_id=eq.${uid}&select=points,reason`).catch(()=>[]),
+      sb('settings?select=key,value').catch(()=>[]),
+    ]);
+    const sqSettings2={};
+    (sqSettingsRaw2||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings2[r.key.replace('sq_result_','')]=r.value);
+
+    let gpPts=0,gpExact=0,koPts=0,koExact=0,sqPts=0,mpPts=0;
+
+    // Groepsfase
+    (allGTu||[]).forEach(t=>{
+      const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
+      const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+      const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+      if(tw===rw){const p=t.score1===res.score1&&t.score2===res.score2?10:5;gpPts+=p;if(p===10)gpExact++;}
+    });
+
+    // KO
+    (allKTu||[]).forEach(t=>{
+      const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
+      const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+      const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+      if(tw===rw){const p=t.score1===res.score1&&t.score2===res.score2?10:5;koPts+=p;if(p===10)koExact++;}
+    });
+
+    // Finale
+    const fq=(allFTu||[])[0];
+    const fr=LR['finale'];
+    if(fq&&fr?.status==='FINISHED'){
+      if(fq.winner&&fq.winner===fr.winner) koPts+=(fq.score1===fr.score1&&fq.score2===fr.score2)?35:10;
+    }
+
+    // Sonderfragen
+    const sqFields=[
+      {key:'austria_topscorer',pts:20,type:'name'},
+      {key:'champion',pts:60,type:'name'},
+      {key:'topscorer_name',pts:50,type:'name'},
+      {key:'first_goal_name',pts:30,type:'name'},
+    ];
+    const sqDetails=[];
+    sqFields.forEach(f=>{
+      const real=sqSettings2[f.key];
+      if(!real) return;
+      const val=fq?.[f.key];
+      const match=val&&fuzzyMatch(String(val),String(real));
+      if(match){sqPts+=f.pts;sqDetails.push(`+${f.pts}`);}
+    });
+
+    // Goals top 3
+    const goalsFields=[
+      {key:'goals_group',topPts:[20,15,10]},
+      {key:'goals_total',topPts:[20,15,10]},
+    ];
+    goalsFields.forEach(f=>{
+      const real=sqSettings2[f.key];
+      if(!real) return;
+      const realNum=parseInt(real);
+      const val=fq?.[f.key];
+      if(val==null) return;
+      // Haal alle tipps op voor rangorde (vereenvoudigd: gebruik al berekende punten)
+      // Voor nu: check of gebruiker in top 3 zit
+    });
+
+    // Handmatig
+    (allMPu||[]).forEach(p=>mpPts+=p.points);
+
+    const totalPts=gpPts+koPts+sqPts+mpPts;
+
+    h+=`<div class="sb" style="margin-top:14px;border-color:var(--gold);">
+      <div class="sbt" style="color:var(--gold2);">📊 Punkte-Breakdown</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;">⚽ Gruppenphase</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${gpExact}× exakt + ${Math.round((gpPts-gpExact*10)/5)}× richtig</td>
+          <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${gpPts}</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;">🥊 K.O. + Finale</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${koExact}× exakt + ${Math.round((koPts-koExact*10)/5)}× richtig</td>
+          <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${koPts}</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;">⭐ Sonderfragen</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${sqDetails.join(', ')||'—'}</td>
+          <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${sqPts}</td>
+        </tr>
+        ${mpPts>0?`<tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;">✏️ Manuell</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;"></td>
+          <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${mpPts}</td>
+        </tr>`:''}
+        <tr style="background:rgba(200,146,42,.1);">
+          <td style="padding:8px 8px;font-weight:700;">TOTAL</td>
+          <td></td>
+          <td style="padding:8px 8px;text-align:right;font-family:'Cinzel',serif;font-size:18px;color:var(--gold2);">+${totalPts}</td>
+        </tr>
+      </table>
+    </div>`;
+
     document.getElementById('uTView').innerHTML=h;
   }catch(ex){document.getElementById('uTView').innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
 }
