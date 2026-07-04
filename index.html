@@ -1431,7 +1431,32 @@ const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südko
   'Iran':'Iran',
   'Cameroon':'Kamerun','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'Haïti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'Türkei','Germany':'Deutschland','Curaçao':'Curaçao','Ivory Coast':'Elfenbeinküste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ägypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'Kaapverdië','Cape Verde Islands':'Kaapverdië','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Österreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
 const NT=t=>TM[t]||t;
-function findKey(h,a){const nh=NT(h),na=NT(a);for(const g of GROUPS){for(let j=0;j<g.matches.length;j++){const m=g.matches[j];if((m[0]===nh&&m[1]===na)||(m[0]===na&&m[1]===nh))return `${g.l}_${j}`;}}for(const r of KO){for(const m of r.matches){const res=LR[m.key];if(res&&((res.team1===nh&&res.team2===na)||(res.team1===na&&res.team2===nh)))return m.key;}}return null;}
+const KO_KEYS_MAP={
+  '2026-06-28T19:00:00Z':'r0_0','2026-06-29T17:00:00Z':'r0_1',
+  '2026-06-29T20:30:00Z':'r0_2','2026-06-30T01:00:00Z':'r0_3',
+  '2026-06-30T17:00:00Z':'r0_4','2026-06-30T21:00:00Z':'r0_5',
+  '2026-07-01T02:00:00Z':'r0_6','2026-07-01T16:00:00Z':'r0_7',
+  '2026-07-01T20:00:00Z':'r0_8','2026-07-02T00:00:00Z':'r0_9',
+  '2026-07-02T19:00:00Z':'r0_10','2026-07-02T23:00:00Z':'r0_11',
+  '2026-07-03T03:00:00Z':'r0_12','2026-07-03T18:00:00Z':'r0_13',
+  '2026-07-03T22:00:00Z':'r0_14','2026-07-04T01:30:00Z':'r0_15',
+  '2026-07-04T17:00:00Z':'r1_0','2026-07-04T21:00:00Z':'r1_1',
+  '2026-07-05T20:00:00Z':'r1_2','2026-07-06T00:00:00Z':'r1_3',
+  '2026-07-06T19:00:00Z':'r1_4','2026-07-07T00:00:00Z':'r1_5',
+  '2026-07-07T16:00:00Z':'r1_6','2026-07-07T20:00:00Z':'r1_7',
+  '2026-07-09T20:00:00Z':'r2_0','2026-07-10T19:00:00Z':'r2_1',
+  '2026-07-11T21:00:00Z':'r2_2','2026-07-12T01:00:00Z':'r2_3',
+  '2026-07-14T19:00:00Z':'r3_0','2026-07-15T19:00:00Z':'r3_1',
+  '2026-07-18T21:00:00Z':'r4_0','2026-07-19T19:00:00Z':'finale',
+};
+function findKey(h,a,utcDate){
+  // Eerst via UTC datum (meest betrouwbaar voor KO)
+  if(utcDate&&KO_KEYS_MAP[utcDate]) return KO_KEYS_MAP[utcDate];
+  const nh=NT(h),na=NT(a);
+  for(const g of GROUPS){for(let j=0;j<g.matches.length;j++){const m=g.matches[j];if((m[0]===nh&&m[1]===na)||(m[0]===na&&m[1]===nh))return `${g.l}_${j}`;}}
+  for(const r of KO){for(const m of r.matches){const res=LR[m.key];if(res&&((res.team1===nh&&res.team2===na)||(res.team1===na&&res.team2===nh)))return m.key;}}
+  return null;
+}
 async function procAPI(data){
   if(!data?.matches)return;
   let groupGoals=0,totalGoals=0,groupDone=0,totalDone=0;
@@ -1452,7 +1477,7 @@ async function procAPI(data){
 
     const score1=parseInt(s1);
     const score2=parseInt(s2);
-    const key=findKey(h,a);
+    const key=findKey(h,a,match.utcDate);
 
     if(!key){
       console.log('Key niet gevonden:',h,'vs',a);
