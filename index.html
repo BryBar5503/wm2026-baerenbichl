@@ -1725,6 +1725,7 @@ async function loadUTipps(uid){
     </div></div>`;
 
     // ── PUNTEN BREAKDOWN ────────────────────────────────
+    await loadLR(); // Zorg dat LR up-to-date is
     const [allGTu,allKTu,allFTu,allMPu,sqSettingsRaw2]=await Promise.all([
       sb(`group_tipps?user_id=eq.${uid}&select=match_key,score1,score2`).catch(()=>[]),
       sb(`ko_tipps?user_id=eq.${uid}&select=match_key,score1,score2,winner`).catch(()=>[]),
