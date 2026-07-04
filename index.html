@@ -528,6 +528,10 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     </div>
     <!-- TAB 1: TIPPS & PUNTEN -->
     <div class="ap" id="ap1">
+      <div style="margin-bottom:16px;">
+        <button class="btn bg" onclick="loadAllBreakdown()" style="height:40px;">📊 Alle Punkte anzeigen</button>
+        <div id="allBreakdown" style="margin-top:12px;"></div>
+      </div>
       <div class="sd">Wähle einen Teilnehmer — sieh seine Tipps, genehmige Spiele oder korrigiere Punkte manuell.</div>
       <div class="fg"><label class="fl">Teilnehmer</label>
         <select id="aUSel" onchange="loadUTipps(this.value)"><option value="">— Teilnehmer wählen —</option></select>
