@@ -2524,10 +2524,12 @@ async function loadSQPtsOverview(){
     (sqSettingsRaw||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
 
     const fields=[
-      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20},
-      {key:'champion',label:'🏆 Weltmeister',pts:60},
-      {key:'topscorer_name',label:'⚡ Torschütze',pts:50},
-      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30},
+      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,type:'name'},
+      {key:'champion',label:'🏆 Weltmeister',pts:60,type:'name'},
+      {key:'topscorer_name',label:'⚡ Torschütze',pts:50,type:'name'},
+      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,type:'name'},
+      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20 · 🥈15 · 🥉10',type:'closest3',topPts:[20,15,10]},
+      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20 · 🥈15 · 🥉10',type:'closest3',topPts:[20,15,10]},
     ];
 
     // Check welke resultaten al bekend zijn
