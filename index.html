@@ -2512,14 +2512,12 @@ function closeNoticeCancel(){
 async function loadSQPtsOverview(){
   const el=document.getElementById('sqPtsOverview');
   if(!el) return;
-
   try{
-    const [allTipps, allUsers, sqSettingsRaw]=await Promise.all([
+    const [allTipps,allUsers,sqSettingsRaw]=await Promise.all([
       sb('finale_tipps?select=*').catch(()=>[]),
       sb('users?select=id,username&order=username.asc').catch(()=>[]),
       sb('settings?select=key,value').catch(()=>[]),
     ]);
-
     const sqSettings={};
     (sqSettingsRaw||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
 
@@ -2528,22 +2526,48 @@ async function loadSQPtsOverview(){
       {key:'champion',label:'🏆 Weltmeister',pts:60,type:'name'},
       {key:'topscorer_name',label:'⚡ Torschütze',pts:50,type:'name'},
       {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,type:'name'},
-      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20 · 🥈15 · 🥉10',type:'closest3',topPts:[20,15,10]},
-      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20 · 🥈15 · 🥉10',type:'closest3',topPts:[20,15,10]},
+      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
+      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
     ];
 
-    // Check welke resultaten al bekend zijn
     const knownFields=fields.filter(f=>sqSettings[f.key]);
-    if(!knownFields.length){
-      el.innerHTML='';
-      return;
-    }
+    if(!knownFields.length){el.innerHTML='';return;}
 
     let h=`<div class="sb"><div class="sbt">📊 Sonderfragen Punkte</div>`;
 
     knownFields.forEach(f=>{
       const real=sqSettings[f.key];
-      h+=`<div style="margin-bottom:14px;">
+      const realNum=f.type==='closest3'?parseInt(real):null;
+
+      // Bereken punten per gebruiker
+      const uPts={};
+      const uDiff={};
+      if(f.type==='name'){
+        (allUsers||[]).forEach(u=>{
+          const t=(allTipps||[]).find(x=>x.user_id===u.id);
+          const val=t?.[f.key];
+          uPts[u.id]=val&&fuzzyMatch(String(val),String(real))?f.pts:0;
+        });
+      } else if(f.type==='closest3'&&realNum!=null){
+        (allUsers||[]).forEach(u=>{uPts[u.id]=0;});
+        const diffs=(allUsers||[]).map(u=>{
+          const t=(allTipps||[]).find(x=>x.user_id===u.id);
+          const val=t?.[f.key];
+          const d=val!=null?Math.abs(parseInt(val)-realNum):999;
+          uDiff[u.id]=d<999?d:null;
+          return {id:u.id,diff:d};
+        }).filter(d=>d.diff<999).sort((a,b)=>a.diff-b.diff);
+        const uniqueDiffs=[...new Set(diffs.map(d=>d.diff))].slice(0,3);
+        uniqueDiffs.forEach((diff,i)=>{
+          const pts=f.topPts[i]||0;
+          diffs.filter(d=>d.diff===diff).forEach(d=>{uPts[d.id]=pts;});
+        });
+      }
+
+      // Sorteer op punten
+      const sorted=[...(allUsers||[])].sort((a,b)=>(uPts[b.id]||0)-(uPts[a.id]||0));
+
+      h+=`<div style="margin-bottom:16px;">
         <div style="font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:6px;">
           ${f.label} — <span style="color:var(--text);">Ergebnis: ${real}</span>
         </div>
@@ -2551,20 +2575,22 @@ async function loadSQPtsOverview(){
           <thead><tr style="border-bottom:1px solid var(--border);">
             <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TEILNEHMER</th>
             <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TIPP</th>
+            ${f.type==='closest3'?'<th style="text-align:center;padding:4px 8px;font-size:10px;color:var(--muted);">DIFF</th>':''}
             <th style="text-align:right;padding:4px 8px;font-size:10px;color:var(--muted);">PUNKTE</th>
           </tr></thead><tbody>`;
 
-      (allUsers||[]).forEach(u=>{
+      sorted.forEach(u=>{
         const t=(allTipps||[]).find(x=>x.user_id===u.id);
-        const val=t?.[f.key]||'—';
-        const match=val!=='—'&&val!==null&&val!==undefined&&fuzzyMatch(String(val),String(real));
+        const val=t?.[f.key]??'—';
+        const pts=uPts[u.id]||0;
+        const diff=uDiff[u.id];
         const isMe=CU&&u.id===CU.id;
+        const medal=pts===20?'🥇':pts===15?'🥈':pts===10?'🥉':'';
         h+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(200,146,42,.08);':''}">
           <td style="padding:5px 8px;font-weight:${isMe?700:400};color:${isMe?'var(--gold)':'var(--text)'};">${isMe?'👤 ':''} ${u.username}</td>
           <td style="padding:5px 8px;color:var(--gold2);">${val}</td>
-          <td style="padding:5px 8px;text-align:right;">
-            ${match?`<span style="color:var(--gold2);font-family:'Cinzel',serif;">✅ +${f.pts}</span>`:`<span style="color:var(--red);">❌ 0</span>`}
-          </td>
+          ${f.type==='closest3'?`<td style="padding:5px 8px;text-align:center;color:var(--muted);">${diff!=null?'±'+diff:'—'}</td>`:''}
+          <td style="padding:5px 8px;text-align:right;">${pts>0?`<span style="color:var(--gold2);font-family:'Cinzel',serif;">${medal} +${pts}</span>`:`<span style="color:var(--muted);">0</span>`}</td>
         </tr>`;
       });
       h+=`</tbody></table></div>`;
@@ -2572,12 +2598,10 @@ async function loadSQPtsOverview(){
 
     h+=`</div>`;
     el.innerHTML=h;
-  }catch(ex){
-    console.log('loadSQPtsOverview error:',ex);
-  }
+  }catch(ex){console.log('loadSQPtsOverview error:',ex);}
 }
 
-// TOPSCORERS
+
 async function loadTopscorers(){
   const el=document.getElementById('topscorersContent');
   if(!el) return;
