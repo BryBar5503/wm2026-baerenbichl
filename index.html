@@ -1314,10 +1314,10 @@ async function loadLB(){
         champ:fq?.champion||'—',ts:fq?.topscorer_name||'—'});
     }
     // ── GESAMTTORE: dichtstbij wint 20 punten ──────────
-    const frGoals=LR['goals_result'];
-    if(frGoals&&frGoals.status==='FINISHED'){
-      const realGroup=frGoals.goals_group_total;
-      const realTotal=frGoals.goals_wk_total;
+    // Gebruik settings tabel (admin ingevoerd) of API data
+    const realGroup=sqSettings['goals_group']?parseInt(sqSettings['goals_group']):(LR['goals_result']?.goals_group_total||null);
+    const realTotal=sqSettings['goals_total']?parseInt(sqSettings['goals_total']):(LR['goals_result']?.goals_wk_total||null);
+    if(realGroup||realTotal){
       // Haal goals tipps op voor alle users
       const allFT=await sb('finale_tipps?select=user_id,goals_group,goals_total');
       if(realGroup&&allFT){
