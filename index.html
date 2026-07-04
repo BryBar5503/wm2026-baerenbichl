@@ -420,7 +420,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
           💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim letzten WK 2022 (32 Teams, 48 Gruppenspiele) wurden <strong style="color:var(--text);">120 Tore</strong> in der Gruppenphase erzielt. Das WK 2026 hat <strong style="color:var(--text);">72 Gruppenspiele</strong> (12 Gruppen × 6 Spiele) — mit mehr gleichwertigen Teams sind vielleicht mehr Tore möglich!
         </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGG" placeholder="z. B. 140" min="50" max="300" inputmode="numeric"/></div></div>
-      <div class="sqc"><div class="sqt">🔢 Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Die 3 Nächsten gewinnen: 🥇 20 Punkte · 🥈 15 Punkte · 🥉 10 Punkte. Bei Gleichstand werden die Punkte geteilt.</div>
+      <div class="sqc"><div class="sqt">🔢 Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Die 3 Nächsten gewinnen: 🥇 20 Punkte · 🥈 15 Punkte · 🥉 10 Punkte. Bei exaktem Treffer gibt es 20 Bonuspunkte extra! Bei Gleichstand werden die Punkte geteilt.</div>
         <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
           💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim WK 2022 (32 Teams, 64 Spiele) wurden <strong style="color:var(--text);">172 Tore</strong> erzielt. Das WK 2026 hat <strong style="color:var(--text);">104 Spiele</strong> (72 Gruppenspiele + 32 K.O.-Spiele) — hochgerechnet wären das ca. <strong style="color:var(--gold2);">280+ Tore</strong>. Aber das erste WK mit 48 Teams ist schwer vorherzusagen!
         </div><div class="sqp">20 Punkte</div>
@@ -1333,7 +1333,7 @@ async function loadLB(){
         const topPts=[20,15,10];
         let rank=0,lastDiff=-1,rankPts=0;
         diffs.forEach(d=>{
-          if(d.diff!==lastDiff){rank++;rankPts=topPts[rank-1]||0;lastDiff=d.diff;}
+          if(d.diff!==lastDiff){rank++;rankPts=(topPts[rank-1]||0)+(d.diff===0?20:0);lastDiff=d.diff;}
           if(rank<=3&&rankPts>0){const s=scores.find(x=>x.id===d.id);if(s)s.pts+=rankPts;}
         });
       }
@@ -1969,12 +1969,13 @@ async function loadSQOverview(){
       {key:'topscorer_name',label:'⚡ Torschütze',pts:50,settingKey:'topscorer_name',type:'name'},
       {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,settingKey:'first_goal_name',type:'name'},
       {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_group',type:'closest3'},
-      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_total',type:'closest3'},
+      {key:'goals_total',label:'⚽ Tore gesamt WK (nach WK)',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_total',type:'closest3'},
     ];
 
     let h='';
     const goalsFields=['goals_group','goals_total'];
     const goalsPts={'goals_group':[20,15,10],'goals_total':[20,15,10]};
+    const goalsBonus=20; // Extra punten bij exact goed
 
     fields.forEach(f=>{
       const realResult=sqResults[f.settingKey]||'';
@@ -2772,7 +2773,7 @@ async function loadSQPtsOverview(){
         }).filter(d=>d.diff<999).sort((a,b)=>a.diff-b.diff);
         const uniqueDiffs=[...new Set(diffs.map(d=>d.diff))].slice(0,3);
         uniqueDiffs.forEach((diff,i)=>{
-          const pts=f.topPts[i]||0;
+          const pts=(f.topPts[i]||0)+(diff===0?20:0);
           diffs.filter(d=>d.diff===diff).forEach(d=>{uPts[d.id]=pts;});
         });
       }
