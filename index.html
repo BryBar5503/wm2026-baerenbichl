@@ -1321,15 +1321,17 @@ async function loadLB(){
       // Haal goals tipps op voor alle users
       const allFT=await sb('finale_tipps?select=user_id,goals_group,goals_total');
       if(realGroup&&allFT){
-        // Dichtstbij groepsfase
+        // Top 3 dichtstbij groepsfase: 20/15/10 punten
         const diffs=scores.map(s=>{
           const ft=(allFT||[]).find(f=>f.user_id===s.id);
           return {id:s.id,diff:ft?.goals_group!=null?Math.abs(ft.goals_group-realGroup):999};
+        }).filter(d=>d.diff<999).sort((a,b)=>a.diff-b.diff);
+        const topPts=[20,15,10];
+        let rank=0,lastDiff=-1,rankPts=0;
+        diffs.forEach(d=>{
+          if(d.diff!==lastDiff){rank++;rankPts=topPts[rank-1]||0;lastDiff=d.diff;}
+          if(rank<=3&&rankPts>0){const s=scores.find(x=>x.id===d.id);if(s)s.pts+=rankPts;}
         });
-        const minDiff=Math.min(...diffs.map(d=>d.diff));
-        const winners=diffs.filter(d=>d.diff===minDiff);
-        const ptsEach=Math.round(20/winners.length);
-        winners.forEach(w=>{const s=scores.find(x=>x.id===w.id);if(s)s.pts+=ptsEach;});
       }
       if(realTotal&&allFT){
         // Top 3 dichtstbij totaal WK: 20/15/10 punten
@@ -1749,17 +1751,23 @@ async function loadSQOverview(){
     (sqRes||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqResults[r.key.replace('sq_result_','')]=r.value);
 
     const fields=[
-      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,settingKey:'austria_topscorer'},
-      {key:'champion',label:'🏆 Weltmeister',pts:60,settingKey:'champion'},
-      {key:'topscorer_name',label:'⚡ Torschütze',pts:50,settingKey:'topscorer_name'},
-      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,settingKey:'first_goal_name'},
-      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:20,settingKey:'goals_group'},
-      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_total'},
+      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,settingKey:'austria_topscorer',type:'name'},
+      {key:'champion',label:'🏆 Weltmeister',pts:60,settingKey:'champion',type:'name'},
+      {key:'topscorer_name',label:'⚡ Torschütze',pts:50,settingKey:'topscorer_name',type:'name'},
+      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,settingKey:'first_goal_name',type:'name'},
+      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_group',type:'closest3'},
+      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_total',type:'closest3'},
     ];
 
     let h='';
+    const goalsFields=['goals_group','goals_total'];
+    const goalsPts={'goals_group':[20],'goals_total':[20,15,10]};
+
     fields.forEach(f=>{
       const realResult=sqResults[f.settingKey]||'';
+      const isGoals=goalsFields.includes(f.key);
+      const realNum=isGoals&&realResult?parseInt(realResult):null;
+
       h+=`<div class="sb" style="margin-bottom:14px;">
         <div class="sbt" style="display:flex;justify-content:space-between;align-items:center;">
           <span>${f.label} <span style="color:var(--muted);font-size:11px;">(${f.pts} Pkt)</span></span>
@@ -1776,26 +1784,65 @@ async function loadSQOverview(){
         h+=`<div style="font-size:12px;color:var(--greenlt);margin-bottom:8px;">✅ Ergebnis: <strong>${realResult}</strong></div>`;
       }
 
+      // Bereken punten per deelnemer
+      let userRows=[];
+      users.forEach(u=>{
+        const t=tipps.find(x=>x.user_id===u.id);
+        const val=t?.[f.key];
+        const valStr=val!=null?String(val):'—';
+        userRows.push({username:u.username,val:valStr,num:val!=null?parseInt(val):null});
+      });
+
+      // Voor goals: bereken dichtstbij rangorde
+      if(isGoals&&realNum!=null){
+        const ranked=userRows
+          .filter(r=>r.num!=null)
+          .map(r=>({...r,diff:Math.abs(r.num-realNum)}))
+          .sort((a,b)=>a.diff-b.diff);
+        const pts=goalsPts[f.key]||[20];
+        let lastDiff=-1,rank=0;
+        ranked.forEach(r=>{
+          if(r.diff!==lastDiff){rank++;lastDiff=r.diff;}
+          r.rank=rank;
+          r.pts=pts[rank-1]||0;
+        });
+        userRows=userRows.map(u=>{
+          const r=ranked.find(x=>x.username===u.username);
+          return r?{...u,rank:r.rank,pts:r.pts,diff:r.diff}:{...u,rank:999,pts:0,diff:null};
+        });
+      }
+
       h+=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
         <thead><tr style="border-bottom:1px solid var(--border);">
           <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TEILNEHMER</th>
           <th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TIPP</th>
+          ${isGoals&&realNum!=null?'<th style="text-align:center;padding:4px 8px;font-size:10px;color:var(--muted);">DIFF</th>':''}
           <th style="text-align:right;padding:4px 8px;font-size:10px;color:var(--muted);">PUNKTE</th>
         </tr></thead><tbody>`;
 
-      users.forEach(u=>{
-        const t=tipps.find(x=>x.user_id===u.id);
-        const val=t?.[f.key]||'—';
-        let pts='—',icon='';
-        if(realResult&&val!=='—'){
-          const match=fuzzyMatch(val,realResult);
-          pts=match?`+${f.pts}`:'0';
-          icon=match?'✅':'❌';
+      // Sorteer op rang voor goals, anders alfabetisch
+      const sortedRows=isGoals&&realNum!=null
+        ?[...userRows].sort((a,b)=>(a.diff??999)-(b.diff??999))
+        :userRows;
+
+      sortedRows.forEach(r=>{
+        let ptsStr='—',icon='',diffStr='';
+        if(realResult&&r.val!=='—'){
+          if(isGoals&&realNum!=null){
+            ptsStr=r.pts>0?`+${r.pts}`:'0';
+            icon=r.pts>0?(r.rank===1?'🥇':r.rank===2?'🥈':'🥉'):'';
+            diffStr=r.diff!=null?`±${r.diff}`:'';
+          } else {
+            const match=fuzzyMatch(r.val,realResult);
+            ptsStr=match?`+${f.pts}`:'0';
+            icon=match?'✅':'❌';
+          }
         }
         h+=`<tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:6px 8px;">${u.username}</td>
-          <td style="padding:6px 8px;color:var(--gold2);">${val}</td>
-          <td style="padding:6px 8px;text-align:right;">${icon} <span style="font-family:'Cinzel',serif;color:${pts.startsWith('+')?'var(--gold2)':'var(--muted)'};">${pts}</span></td>
+          <td style="padding:6px 8px;">${r.username}</td>
+          <td style="padding:6px 8px;color:var(--gold2);">${r.val}</td>
+          ${isGoals&&realNum!=null?`<td style="padding:6px 8px;text-align:center;font-size:11px;color:var(--muted);">${diffStr}</td>`:''}
+          <td style="padding:6px 8px;text-align:right;">${icon} <span style="font-family:'Cinzel',serif;color:${ptsStr.startsWith('+')?'var(--gold2)':'var(--muted)'};">${ptsStr}</span></td>
         </tr>`;
       });
       h+=`</tbody></table></div>`;
