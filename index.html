@@ -1567,6 +1567,100 @@ async function loadAUsers(){
   }catch(ex){document.getElementById('uTbl').innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
 }
 
+async function loadAllBreakdown(){
+  const el=document.getElementById('allBreakdown');
+  if(!el) return;
+  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
+  await loadLR();
+  try{
+    const [users,allGT,allKT,allFT,allMP,sqSettingsRaw]=await Promise.all([
+      sb('users?select=id,username&order=username.asc'),
+      sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
+      sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
+      sb('finale_tipps?select=*').catch(()=>[]),
+      sb('manual_points?select=user_id,points').catch(()=>[]),
+      sb('settings?select=key,value').catch(()=>[]),
+    ]);
+    const sqSettings={};
+    (sqSettingsRaw||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
+    const realGroup=sqSettings['goals_group']?parseInt(sqSettings['goals_group']):null;
+    const realTotal=sqSettings['goals_total']?parseInt(sqSettings['goals_total']):null;
+
+    // Goals rangorde berekenen
+    const goalsGroupRanks={},goalsTotalRanks={};
+    if(realGroup){
+      const diffs=(allFT||[]).filter(t=>t.goals_group!=null).map(t=>({uid:t.user_id,diff:Math.abs(t.goals_group-realGroup)})).sort((a,b)=>a.diff-b.diff);
+      const uDiffs=[...new Set(diffs.map(d=>d.diff))].slice(0,3);
+      uDiffs.forEach((diff,i)=>diffs.filter(d=>d.diff===diff).forEach(d=>goalsGroupRanks[d.uid]=[20,15,10][i]||0));
+    }
+    if(realTotal){
+      const diffs=(allFT||[]).filter(t=>t.goals_total!=null).map(t=>({uid:t.user_id,diff:Math.abs(t.goals_total-realTotal)})).sort((a,b)=>a.diff-b.diff);
+      const uDiffs=[...new Set(diffs.map(d=>d.diff))].slice(0,3);
+      uDiffs.forEach((diff,i)=>diffs.filter(d=>d.diff===diff).forEach(d=>goalsTotalRanks[d.uid]=[20,15,10][i]||0));
+    }
+
+    let h='<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+    h+='<thead><tr style="border-bottom:2px solid var(--gold);">';
+    h+='<th style="text-align:left;padding:6px 8px;color:var(--gold2);">TEILNEHMER</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">⚽ GP</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">🥊 KO</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">⭐ SQ</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">✏️ MP</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--gold2);">TOTAL</th>';
+    h+='</tr></thead><tbody>';
+
+    const rows=[];
+    for(const u of users){
+      let gpPts=0,koPts=0,sqPts=0,mpPts=0;
+      (allGT||[]).filter(t=>t.user_id===u.id).forEach(t=>{
+        const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(tw===rw) gpPts+=(t.score1===res.score1&&t.score2===res.score2)?10:5;
+      });
+      (allKT||[]).filter(t=>t.user_id===u.id).forEach(t=>{
+        const res=LR[t.match_key];if(!res||res.status!=='FINISHED')return;
+        const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
+        const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+        if(tw===rw) koPts+=(t.score1===res.score1&&t.score2===res.score2)?10:5;
+      });
+      const fq=(allFT||[]).find(f=>f.user_id===u.id);
+      const fr=LR['finale'];
+      if(fq&&fr?.status==='FINISHED'){
+        const tw=fq.score1>fq.score2?1:fq.score1<fq.score2?-1:0;
+        const rw=fr.score1>fr.score2?1:fr.score1<fr.score2?-1:0;
+        if(tw===rw) koPts+=(fq.score1===fr.score1&&fq.score2===fr.score2)?35:10;
+      }
+      // SQ
+      const sqNameFields=[
+        {key:'austria_topscorer',pts:20},{key:'champion',pts:60},
+        {key:'topscorer_name',pts:50},{key:'first_goal_name',pts:30},
+      ];
+      sqNameFields.forEach(f=>{
+        const real=sqSettings[f.key];
+        if(real&&fq&&fq[f.key]&&fuzzyMatch(String(fq[f.key]),String(real))) sqPts+=f.pts;
+      });
+      sqPts+=(goalsGroupRanks[u.id]||0)+(goalsTotalRanks[u.id]||0);
+      (allMP||[]).filter(p=>p.user_id===u.id).forEach(p=>mpPts+=p.points);
+      const total=gpPts+koPts+sqPts+mpPts;
+      rows.push({username:u.username,gpPts,koPts,sqPts,mpPts,total});
+    }
+    rows.sort((a,b)=>b.total-a.total);
+    rows.forEach((r,i)=>{
+      h+=`<tr style="border-bottom:1px solid var(--border);${i%2===0?'background:rgba(255,255,255,.02);':''}">
+        <td style="padding:6px 8px;font-weight:700;">${r.username}</td>
+        <td style="padding:6px 8px;text-align:right;color:var(--muted);">+${r.gpPts}</td>
+        <td style="padding:6px 8px;text-align:right;color:var(--muted);">+${r.koPts}</td>
+        <td style="padding:6px 8px;text-align:right;color:var(--muted);">+${r.sqPts}</td>
+        <td style="padding:6px 8px;text-align:right;color:var(--muted);">+${r.mpPts}</td>
+        <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);font-size:15px;">+${r.total}</td>
+      </tr>`;
+    });
+    h+='</tbody></table>';
+    el.innerHTML=h;
+  }catch(ex){el.innerHTML=`<div class="empty">Fehler: ${ex.message}</div>`;}
+}
+
 async function loadAUSel(){
   try{
     const users=await edge('admin-data',{action:'get_users',password:ADM_PW});
