@@ -2399,9 +2399,13 @@ function normalize(str){
 }
 
 function fuzzyMatch(tipp, real){
-  if(!tipp||!real) return false;
-  const t=normalize(tipp);
-  const r=normalize(real);
+  if(tipp===null||tipp===undefined||real===null||real===undefined) return false;
+  // Getallen direct vergelijken
+  if(typeof tipp==='number'||typeof real==='number'){
+    return String(tipp)===String(real);
+  }
+  const t=normalize(String(tipp));
+  const r=normalize(String(real));
   if(!t||!r) return false;
   // Exact match
   if(t===r) return true;
@@ -2492,7 +2496,7 @@ async function loadSQPtsOverview(){
       (allUsers||[]).forEach(u=>{
         const t=(allTipps||[]).find(x=>x.user_id===u.id);
         const val=t?.[f.key]||'—';
-        const match=val!=='—'&&fuzzyMatch(val,real);
+        const match=val!=='—'&&val!==null&&val!==undefined&&fuzzyMatch(String(val),String(real));
         const isMe=CU&&u.id===CU.id;
         h+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(200,146,42,.08);':''}">
           <td style="padding:5px 8px;font-weight:${isMe?700:400};color:${isMe?'var(--gold)':'var(--text)'};">${isMe?'👤 ':''} ${u.username}</td>
