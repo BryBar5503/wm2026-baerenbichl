@@ -1244,6 +1244,36 @@ async function loadMTP(){
 }
 
 // RANGLISTE
+function normalize(str){
+  if(!str&&str!==0) return '';
+  return String(str).toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9\s]/g,'')
+    .replace(/\s+/g,' ').trim();
+}
+
+function fuzzyMatch(tipp, real){
+  if(tipp===null||tipp===undefined||real===null||real===undefined) return false;
+  if(typeof tipp==='number'||typeof real==='number'){
+    return String(tipp)===String(real);
+  }
+  const t=normalize(String(tipp));
+  const r=normalize(String(real));
+  if(!t||!r) return false;
+  if(t===r) return true;
+  if(r.includes(t)||t.includes(r)) return true;
+  const tLast=t.split(' ').pop();
+  const rLast=r.split(' ').pop();
+  if(tLast&&rLast&&tLast.length>3&&(tLast===rLast||rLast.includes(tLast)||tLast.includes(rLast))) return true;
+  // Levenshtein
+  const s1=t.length>r.length?t:r;
+  const s2=t.length>r.length?r:t;
+  if(s1.length-s2.length>3) return false;
+  let errors=0;
+  for(let i=0;i<s2.length;i++) if(s1[i]!==s2[i]) errors++;
+  return errors<=2&&s2.length>4;
+}
+
 async function loadLB(){
   document.getElementById('lbEl').innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
   document.getElementById('wwEl').innerHTML='';
@@ -1391,11 +1421,11 @@ async function loadLB(){
     h+=`</div>`;
     document.getElementById('lbEl').innerHTML=h;
   }catch(ex){
-    // Nog geen wedstrijden gespeeld of netwerk fout
+    console.log('loadLB error:',ex.message,ex);
     document.getElementById('lbEl').innerHTML=`<div class="empty">
-      <div style="font-size:32px;margin-bottom:12px;">⏳</div>
-      <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);margin-bottom:8px;">Noch keine Spiele</div>
-      <div style="font-size:13px;color:var(--muted);">Die Rangliste wird automatisch aktualisiert sobald die ersten Partien gespielt wurden.</div>
+      <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
+      <div style="font-size:16px;color:var(--gold2);margin-bottom:8px;">Fehler beim Laden</div>
+      <div style="font-size:13px;color:var(--muted);">${ex.message}</div>
     </div>`;
   }
 }
@@ -2602,7 +2632,7 @@ async function loadSQPtsOverview(){
         (allUsers||[]).forEach(u=>{
           const t=(allTipps||[]).find(x=>x.user_id===u.id);
           const val=t?.[f.key];
-          uPts[u.id]=val&&fuzzyMatch(String(val),String(real))?f.pts:0;
+          uPts[u.id]=val&&real?fuzzyMatch(String(val),String(real))?f.pts:0:0;
         });
       } else if(f.type==='closest3'&&realNum!=null){
         (allUsers||[]).forEach(u=>{uPts[u.id]=0;});
