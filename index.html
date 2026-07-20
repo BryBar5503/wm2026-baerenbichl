@@ -2366,6 +2366,12 @@ function launchConfetti(){
 }
 
 // WELKOMSTBERICHT
+function closeWKWinner(){
+  cancelAnimationFrame(window._fwFrame);
+  var o=document.getElementById('wkWinnerOverlay');
+  if(o) o.remove();
+}
+
 async function showWKWinner(){
   const winner='Hannah';
   const overlay=document.createElement('div');
