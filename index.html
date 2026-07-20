@@ -2644,15 +2644,13 @@ async function loadSQPtsOverview(){
       const uPts={};
       const uDiff={};
       if(f.type==='finale'){
-        // Finale punten worden apart berekend - zie koFinalsData
         (allUsers||[]).forEach(u=>{uPts[u.id]=0;});
         (koFinalsData||[]).forEach(kt=>{
           const t1=normalize(kt.team1||'');
           const t2=normalize(kt.team2||'');
-          const hasRightTeams=(t1.includes('spanien')||t1.includes('spain'))&&(t2.includes('argentin'));
-          const hasRightTeams2=(t2.includes('spanien')||t2.includes('spain'))&&(t1.includes('argentin'));
-          if(hasRightTeams||hasRightTeams2){
-            const exact=kt.score1===1&&kt.score2===0;
+          const rightTeams=(t1.includes('spanien')&&t2.includes('argentin'))||(t2.includes('spanien')&&t1.includes('argentin'));
+          if(rightTeams){
+            const exact=((kt.score1===1&&kt.score2===0&&normalize(kt.winner||'').includes('spanien'))||(kt.score1===0&&kt.score2===1&&normalize(kt.winner||'').includes('argentin')));
             uPts[kt.user_id]=exact?35:10;
           }
         });
@@ -2678,12 +2676,17 @@ async function loadSQPtsOverview(){
         });
       }
       const sorted=[...(allUsers||[])].sort((a,b)=>(uPts[b.id]||0)-(uPts[a.id]||0));
-      h+=`<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:6px;">${f.label} — <span style="color:var(--text);">Ergebnis: ${real}</span></div>`;
+      const realDisplay=f.type==='finale'?'Spanien 1:0 Argentinien':real;
+      h+=`<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:6px;">${f.label} — <span style="color:var(--text);">Ergebnis: ${realDisplay||'noch offen'}</span></div>`;
       h+='<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="border-bottom:1px solid var(--border);">';
       h+=`<th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TEILNEHMER</th><th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TIPP</th>${f.type==='closest3'?'<th style="text-align:center;padding:4px 8px;font-size:10px;color:var(--muted);">DIFF</th>':''}<th style="text-align:right;padding:4px 8px;font-size:10px;color:var(--muted);">PUNKTE</th></tr></thead><tbody>`;
       sorted.forEach(u=>{
         const t=(allTipps||[]).find(x=>x.user_id===u.id);
-        const val=t?.[f.key]??'—';
+        let val=t?.[f.key]??'—';
+        if(f.type==='finale'){
+          const kf=(koFinalsData||[]).find(k=>k.user_id===u.id);
+          val=kf?`${kf.team1} ${kf.score1}:${kf.score2} ${kf.team2}`:'—';
+        }
         const pts=uPts[u.id]||0;
         const diff=uDiff[u.id];
         const isMe=CU&&u.id===CU.id;
