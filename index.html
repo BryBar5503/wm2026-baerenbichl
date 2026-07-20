@@ -1253,14 +1253,14 @@ async function loadLB(){
     await loadLR();
     // ── BATCH QUERIES - alle data in één keer ophalen ──
     const wk=getWS();
-    const [allGT,allKT,allFT,allMP,allSQAppr,sqSettingsRaw]=await Promise.all([
+    const [allGT,allKT,allFT,allMP,sqSettingsRaw]=await Promise.all([
       sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
       sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
       sb('finale_tipps?select=*').catch(()=>[]),
       sb('manual_points?select=user_id,points').catch(()=>[]),
-      sb('admin_approvals?match_key=like.sq_%&select=user_id,match_key,approved,override_points').catch(()=>[]),
       sb('settings?select=key,value').catch(()=>[]),
     ]);
+    const allSQAppr=[];
     // Verwerk sq resultaten
     const sqSettings={};
     (sqSettingsRaw||[]).filter(r=>r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
@@ -2590,8 +2590,8 @@ async function loadSQPtsOverview(){
       {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
       {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
     ];
-    const knownFields=fields.filter(f=>sqSettings[f.key]);
-    if(!knownFields.length){el.innerHTML='';return;}
+    // Toon alle velden - ook zonder resultaat (dan geen punten zichtbaar)
+    const knownFields=fields;
     let h='<div class="sb"><div class="sbt">📊 Sonderfragen Punkte</div>';
     knownFields.forEach(f=>{
       const real=sqSettings[f.key];
