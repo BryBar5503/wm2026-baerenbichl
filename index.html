@@ -2428,7 +2428,9 @@ async function showWKWinner(){
   // Content
   const content=document.createElement('div');
   content.style.cssText='text-align:center;z-index:1;position:relative;';
-  content.innerHTML='<div style="font-size:80px;margin-bottom:10px;">🏆</div>'
+  const logoImg='<img src="'+LOGO_URL+'" id="wkLogo" style="width:80px;height:80px;object-fit:contain;border-radius:50%;border:3px solid #c8922a;margin-bottom:16px;"/><br>';
+  content.innerHTML=logoImg
+    +'<div style="font-size:70px;margin-bottom:10px;">🏆</div>'
     +'<div style="font-family:Cinzel,serif;font-size:14px;letter-spacing:4px;color:#c8922a;margin-bottom:8px;">WM 2026 TIPPSPIEL</div>'
     +'<div style="font-family:Cinzel,serif;font-size:42px;color:#e8b84b;margin-bottom:4px;">GEWINNER</div>'
     +'<div style="font-family:Cinzel,serif;font-size:56px;color:white;font-weight:700;margin-bottom:20px;text-shadow:0 0 30px #c8922a;">'+winner+'</div>'
