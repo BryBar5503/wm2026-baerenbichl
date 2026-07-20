@@ -2427,7 +2427,7 @@ async function showWKWinner(){
     +'<div style="font-family:Cinzel,serif;font-size:42px;color:#e8b84b;margin-bottom:4px;">GEWINNER</div>'
     +'<div style="font-family:Cinzel,serif;font-size:56px;color:white;font-weight:700;margin-bottom:20px;text-shadow:0 0 30px #c8922a;">'+winner+'</div>'
     +'<div style="font-size:13px;color:#7a8f6a;margin-bottom:30px;">Gasthaus Bärenbichl · WM 2026</div>'
-    +'<button onclick="cancelAnimationFrame(window._fwFrame);document.getElementById('wkWinnerOverlay').remove()" '
+    +'<button onclick="var o=document.getElementById(\x27wkWinnerOverlay\x27);cancelAnimationFrame(window._fwFrame);if(o)o.remove();" '
     +'style="background:#c8922a;color:#1a0e04;border:none;padding:14px 32px;border-radius:8px;font-family:Cinzel,serif;font-size:16px;cursor:pointer;font-weight:700;">'
     +'🎮 Zum Tippspiel</button>';
   overlay.appendChild(content);
