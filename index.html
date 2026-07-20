@@ -1283,12 +1283,13 @@ async function loadLB(){
     await loadLR();
     // ── BATCH QUERIES - alle data in één keer ophalen ──
     const wk=getWS();
-    const [allGT,allKT,allFT,allMP,sqSettingsRaw]=await Promise.all([
+    const [allGT,allKT,allFT,allMP,sqSettingsRaw,koFinals]=await Promise.all([
       sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
       sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
       sb('finale_tipps?select=*').catch(()=>[]),
       sb('manual_points?select=user_id,points').catch(()=>[]),
       sb('settings?select=key,value').catch(()=>[]),
+      sb('ko_tipps?match_key=eq.finale&select=user_id,team1,team2,score1,score2,winner').catch(()=>[]),
     ]);
     const allSQAppr=[];
     // Verwerk sq resultaten
@@ -1339,6 +1340,18 @@ async function loadLB(){
       // Handmatige punten
       (allMP||[]).filter(p=>p.user_id===u.id).forEach(p=>pts+=p.points);
 
+      // Finale punten via ko_tipps
+      const koFinalUser=(koFinals||[]).find(k=>k.user_id===u.id);
+      if(koFinalUser){
+        const t1=koFinalUser.team1?koFinalUser.team1.toLowerCase():'';
+        const t2=koFinalUser.team2?koFinalUser.team2.toLowerCase():'';
+        const rightTeams=(t1.includes('spanien')||t1.includes('spain'))&&(t2.includes('argentin'));
+        const rightTeams2=(t2.includes('spanien')||t2.includes('spain'))&&(t1.includes('argentin'));
+        if(rightTeams||rightTeams2){
+          const exact=koFinalUser.score1===1&&koFinalUser.score2===0;
+          pts+=exact?35:10;
+        }
+      }
       // Sonderfragen: gebruik admin ingevoerde resultaten uit settings
       if(fq){
         if(sqSettings['champion']&&fuzzyMatch(fq.champion,sqSettings['champion']))pts+=60;
@@ -2605,10 +2618,11 @@ async function loadSQPtsOverview(){
   const el=document.getElementById('sqPtsOverview');
   if(!el) return;
   try{
-    const [allTipps,allUsers,sqSettingsRaw]=await Promise.all([
+    const [allTipps,allUsers,sqSettingsRaw,koFinalsData]=await Promise.all([
       sb('finale_tipps?select=*').catch(()=>[]),
       sb('users?select=id,username&order=username.asc').catch(()=>[]),
       sb('settings?select=key,value').catch(()=>[]),
+      sb('ko_tipps?match_key=eq.finale&select=user_id,team1,team2,score1,score2,winner').catch(()=>[]),
     ]);
     const sqSettings={};
     (sqSettingsRaw||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
@@ -2619,6 +2633,7 @@ async function loadSQPtsOverview(){
       {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,type:'name'},
       {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
       {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
+      {key:'finale',label:'🏆 WM-Finale (Spanien vs Argentinien)',pts:'10 / +25 bonus',type:'finale'},
     ];
     // Toon alle velden - ook zonder resultaat (dan geen punten zichtbaar)
     const knownFields=fields;
@@ -2628,7 +2643,20 @@ async function loadSQPtsOverview(){
       const realNum=f.type==='closest3'?parseInt(real):null;
       const uPts={};
       const uDiff={};
-      if(f.type==='name'){
+      if(f.type==='finale'){
+        // Finale punten worden apart berekend - zie koFinalsData
+        (allUsers||[]).forEach(u=>{uPts[u.id]=0;});
+        (koFinalsData||[]).forEach(kt=>{
+          const t1=normalize(kt.team1||'');
+          const t2=normalize(kt.team2||'');
+          const hasRightTeams=(t1.includes('spanien')||t1.includes('spain'))&&(t2.includes('argentin'));
+          const hasRightTeams2=(t2.includes('spanien')||t2.includes('spain'))&&(t1.includes('argentin'));
+          if(hasRightTeams||hasRightTeams2){
+            const exact=kt.score1===1&&kt.score2===0;
+            uPts[kt.user_id]=exact?35:10;
+          }
+        });
+      } else if(f.type==='name'){
         (allUsers||[]).forEach(u=>{
           const t=(allTipps||[]).find(x=>x.user_id===u.id);
           const val=t?.[f.key];
