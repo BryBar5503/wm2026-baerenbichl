@@ -2444,6 +2444,202 @@ async function showWKWinner(){
 }
 
 
+// TOPSCORERS
+async function loadTopscorers(){
+  const el=document.getElementById('topscorersContent');
+  if(!el) return;
+  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
+  try{
+    const [scorersSetting,matchData]=await Promise.all([
+      sb('settings?key=eq.topscorers&select=value').catch(()=>[]),
+      edge('football-api',{}).catch(()=>({})),
+    ]);
+    const scorers=scorersSetting?.[0]?.value?JSON.parse(scorersSetting[0].value):[];
+    let h='';
+    if(scorers&&scorers.length){
+      h+='<div class="sb"><div class="sbt">🏆 Topscorer Rangliste</div>';
+      h+='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+      h+='<thead><tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:6px 8px;font-size:10px;color:var(--muted);">#</th><th style="text-align:left;padding:6px 8px;font-size:10px;color:var(--muted);">Spieler</th><th style="text-align:center;padding:6px 8px;font-size:10px;color:var(--muted);">⚽</th></tr></thead><tbody>';
+      scorers.slice(0,20).forEach((s,i)=>{
+        h+=`<tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 8px;font-family:'Cinzel',serif;color:var(--muted);">${i+1}</td>
+          <td style="padding:6px 8px;"><div style="font-weight:700;">${s.player?.name||'—'}</div><div style="font-size:11px;color:var(--muted);">${s.team?.name||'—'}</div></td>
+          <td style="padding:6px 8px;text-align:center;font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);">${s.goals||0}</td>
+        </tr>`;
+      });
+      h+='</tbody></table></div>';
+    } else {
+      h='<div class="empty">⏳ Noch keine Topscorer-Daten.</div>';
+    }
+    el.innerHTML=h;
+  }catch(ex){
+    el.innerHTML='<div class="empty">Fehler: '+ex.message+'</div>';
+  }
+}
+
+// PUNKTE OVERZICHT
+async function loadPtsOverview(selectedDay=null){
+  const el=document.getElementById('ptsOverview');
+  if(!el) return;
+  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
+  await loadLR();
+  try{
+    const [allGT,allKT,users]=await Promise.all([
+      sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
+      sb('ko_tipps?select=user_id,match_key,score1,score2,winner').catch(()=>[]),
+      sb('users?select=id,username&order=created_at.asc').catch(()=>[]),
+    ]);
+    const matchesByDay={};
+    const dayOrder=[];
+    GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
+      const key=`${g.l}_${i}`;
+      const res=LR[key];
+      if(!res||(res.status!=='FINISHED'&&res.status!=='IN_PLAY')) return;
+      const day=m[2];
+      if(!matchesByDay[day]){matchesByDay[day]=[];dayOrder.push(day);}
+      matchesByDay[day].push({key,t1:m[0],t2:m[1],time:m[3],res,isKO:false});
+    }));
+    KO.forEach(r=>r.matches.forEach(m=>{
+      const res=LR[m.key];
+      if(!res||(res.status!=='FINISHED'&&res.status!=='IN_PLAY')) return;
+      const day=m.date.split('·')[0].trim().split(' ').slice(0,2).join(' ');
+      if(!matchesByDay[day]){matchesByDay[day]=[];dayOrder.push(day);}
+      matchesByDay[day].push({key:m.key,t1:res.team1||m.t1,t2:res.team2||m.t2,time:m.date,res,isKO:true});
+    }));
+    const uniqueDays=[...new Set(dayOrder)];
+    if(!uniqueDays.length){
+      el.innerHTML='<div class="empty"><div style="font-size:32px;margin-bottom:12px;">⏳</div><div style="font-size:16px;color:var(--gold2);margin-bottom:8px;">Noch keine Spiele</div><div style="font-size:13px;color:var(--muted);">Sobald Partien angepfiffen werden erscheinen hier die Tipps.</div></div>';
+      return;
+    }
+    const activeDay=selectedDay&&uniqueDays.includes(selectedDay)?selectedDay:uniqueDays[uniqueDays.length-1];
+    const showAll=selectedDay==='ALL';
+    let h='<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:16px;">';
+    h+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">📅 Spieltag wählen</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+    uniqueDays.forEach(day=>{
+      const isActive=!showAll&&day===activeDay;
+      const cnt=matchesByDay[day].length;
+      const hasLive=matchesByDay[day].some(m=>m.res.status==='IN_PLAY');
+      h+=`<button onclick="loadPtsOverview('${day}')" style="padding:6px 10px;border-radius:6px;border:1px solid ${isActive?'var(--gold)':hasLive?'var(--red)':'var(--border)'};background:${isActive?'var(--gold)':hasLive?'rgba(192,57,43,.15)':'var(--bg3)'};color:${isActive?'#1a0e04':hasLive?'var(--red)':'var(--muted)'};font-size:11px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif;white-space:nowrap;">${day}<br><span style="font-size:9px;opacity:.7;">${cnt} Spiel${cnt>1?'e':''}</span></button>`;
+    });
+    h+='</div>';
+    h+=showAll?'<div style="margin-top:10px;text-align:right;"><button onclick="loadPtsOverview(null)" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">← Nur heute</button></div>':'<div style="margin-top:10px;text-align:right;"><button onclick="loadPtsOverview(' + "'ALL'" + ')" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;text-decoration:underline;">Alle Tage anzeigen →</button></div>';
+    h+='</div>';
+    function renderMatch({key,t1,t2,time,res,isKO}){
+      const isLive=res.status==='IN_PLAY',isDone=res.status==='FINISHED';
+      const tipps=isKO?(allKT||[]).filter(t=>t.match_key===key):(allGT||[]).filter(t=>t.match_key===key);
+      const rows=(users||[]).map(u=>{
+        const tip=tipps.find(t=>t.user_id===u.id);
+        if(!tip) return {username:u.username,tipp:'—',pts:null,icon:'',isMe:CU&&u.id===CU.id};
+        let pts=0,icon='';
+        if(isDone){
+          const tw=tip.score1>tip.score2?1:tip.score1<tip.score2?-1:0;
+          const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
+          if(tw===rw){pts=tip.score1===res.score1&&tip.score2===res.score2?10:5;icon=pts===10?'🎯':'✅';}
+          else{icon='❌';pts=0;}
+        } else {icon='⏳';pts=null;}
+        return {username:u.username,tipp:`${tip.score1}:${tip.score2}`,pts,icon,isMe:CU&&u.id===CU.id};
+      }).sort((a,b)=>(b.pts||0)-(a.pts||0));
+      return `<div class="pts-overview" style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div><div style="font-size:13px;font-weight:700;">${F(t1)} ${t1} – ${F(t2)} ${t2}</div><div style="font-size:11px;color:var(--muted);">${time}</div></div>
+          <div style="text-align:right;">${isDone?`<div style="font-family:'Cinzel',serif;font-size:22px;color:var(--gold2);">${res.score1}:${res.score2}</div><div style="font-size:9px;color:var(--muted);letter-spacing:1px;">EINDSTAND</div>`:isLive?`<div style="font-family:'Cinzel',serif;font-size:22px;color:var(--red);">${res.score1??'–'}:${res.score2??'–'}</div><div style="font-size:9px;color:var(--red);animation:pu 1s infinite;">● LIVE</div>`:''}</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:4px 7px;font-size:9px;color:var(--muted);">TEILNEHMER</th>
+            <th style="text-align:center;padding:4px 7px;font-size:9px;color:var(--muted);">TIPP</th>
+            <th style="text-align:right;padding:4px 7px;font-size:9px;color:var(--muted);">PUNKTE</th>
+          </tr></thead>
+          <tbody>${rows.map(r=>{
+            const pc=r.pts===10?'var(--gold2)':r.pts===5?'var(--greenlt)':r.pts===0?'var(--red)':'var(--muted)';
+            return `<tr style="border-bottom:1px solid var(--border);${r.isMe?'background:rgba(200,146,42,.08);':''}"><td style="padding:6px 7px;font-weight:${r.isMe?700:400};color:${r.isMe?'var(--gold)':'var(--text)'};">${r.isMe?'👤 ':''} ${r.username}</td><td style="padding:6px 7px;text-align:center;font-family:'Cinzel',serif;color:var(--gold2);">${r.tipp}</td><td style="padding:6px 7px;text-align:right;">${r.pts!==null?`<span style="font-family:'Cinzel',serif;font-size:15px;color:${pc};">${r.icon} ${r.pts>0?'+'+r.pts:r.pts}</span>`:`<span style="color:var(--muted);">⏳</span>`}</td></tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+    const daysToShow=showAll?uniqueDays:[activeDay];
+    daysToShow.forEach(day=>{
+      if(showAll) h+=`<div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--gold);">📅 ${day}</div>`;
+      matchesByDay[day].forEach(m=>{h+=renderMatch(m);});
+    });
+    el.innerHTML=h;
+  }catch(ex){
+    el.innerHTML='<div class="empty">⏳ Noch keine Spiele gespielt.</div>';
+    console.log(ex);
+  }
+}
+
+// SONDER PUNTEN OVERZICHT
+async function loadSQPtsOverview(){
+  const el=document.getElementById('sqPtsOverview');
+  if(!el) return;
+  try{
+    const [allTipps,allUsers,sqSettingsRaw]=await Promise.all([
+      sb('finale_tipps?select=*').catch(()=>[]),
+      sb('users?select=id,username&order=username.asc').catch(()=>[]),
+      sb('settings?select=key,value').catch(()=>[]),
+    ]);
+    const sqSettings={};
+    (sqSettingsRaw||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqSettings[r.key.replace('sq_result_','')]=r.value);
+    const fields=[
+      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,type:'name'},
+      {key:'champion',label:'🏆 Weltmeister',pts:60,type:'name'},
+      {key:'topscorer_name',label:'⚡ Torschütze',pts:50,type:'name'},
+      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,type:'name'},
+      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
+      {key:'goals_total',label:'⚽ Tore gesamt WK',pts:'🥇20·🥈15·🥉10',type:'closest3',topPts:[20,15,10]},
+    ];
+    const knownFields=fields.filter(f=>sqSettings[f.key]);
+    if(!knownFields.length){el.innerHTML='';return;}
+    let h='<div class="sb"><div class="sbt">📊 Sonderfragen Punkte</div>';
+    knownFields.forEach(f=>{
+      const real=sqSettings[f.key];
+      const realNum=f.type==='closest3'?parseInt(real):null;
+      const uPts={};
+      const uDiff={};
+      if(f.type==='name'){
+        (allUsers||[]).forEach(u=>{
+          const t=(allTipps||[]).find(x=>x.user_id===u.id);
+          const val=t?.[f.key];
+          uPts[u.id]=val&&fuzzyMatch(String(val),String(real))?f.pts:0;
+        });
+      } else if(f.type==='closest3'&&realNum!=null){
+        (allUsers||[]).forEach(u=>{uPts[u.id]=0;});
+        const diffs=(allUsers||[]).map(u=>{
+          const t=(allTipps||[]).find(x=>x.user_id===u.id);
+          const val=t?.[f.key];
+          const d=val!=null?Math.abs(parseInt(val)-realNum):999;
+          uDiff[u.id]=d<999?d:null;
+          return {id:u.id,diff:d};
+        }).filter(d=>d.diff<999).sort((a,b)=>a.diff-b.diff);
+        const uniqueDiffs=[...new Set(diffs.map(d=>d.diff))].slice(0,3);
+        uniqueDiffs.forEach((diff,i)=>{
+          const pts=(f.topPts[i]||0)+(diff===0?20:0);
+          diffs.filter(d=>d.diff===diff).forEach(d=>{uPts[d.id]=pts;});
+        });
+      }
+      const sorted=[...(allUsers||[])].sort((a,b)=>(uPts[b.id]||0)-(uPts[a.id]||0));
+      h+=`<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:6px;">${f.label} — <span style="color:var(--text);">Ergebnis: ${real}</span></div>`;
+      h+='<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="border-bottom:1px solid var(--border);">';
+      h+=`<th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TEILNEHMER</th><th style="text-align:left;padding:4px 8px;font-size:10px;color:var(--muted);">TIPP</th>${f.type==='closest3'?'<th style="text-align:center;padding:4px 8px;font-size:10px;color:var(--muted);">DIFF</th>':''}<th style="text-align:right;padding:4px 8px;font-size:10px;color:var(--muted);">PUNKTE</th></tr></thead><tbody>`;
+      sorted.forEach(u=>{
+        const t=(allTipps||[]).find(x=>x.user_id===u.id);
+        const val=t?.[f.key]??'—';
+        const pts=uPts[u.id]||0;
+        const diff=uDiff[u.id];
+        const isMe=CU&&u.id===CU.id;
+        const medal=pts===40?'🎯🥇':pts===20?'🥇':pts===35?'🎯🥈':pts===15?'🥈':pts===30?'🎯🥉':pts===10?'🥉':'';
+        h+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(200,146,42,.08);':''}"><td style="padding:5px 8px;font-weight:${isMe?700:400};color:${isMe?'var(--gold)':'var(--text)'};">${isMe?'👤 ':''} ${u.username}</td><td style="padding:5px 8px;color:var(--gold2);">${val}</td>${f.type==='closest3'?`<td style="padding:5px 8px;text-align:center;color:var(--muted);">${diff!=null?'±'+diff:'—'}</td>`:''}<td style="padding:5px 8px;text-align:right;">${pts>0?`<span style="color:var(--gold2);font-family:'Cinzel',serif;">${medal} +${pts}</span>`:`<span style="color:var(--muted);">0</span>`}</td></tr>`;
+      });
+      h+='</tbody></table></div>';
+    });
+    h+='</div>';
+    el.innerHTML=h;
+  }catch(ex){console.log('loadSQPtsOverview error:',ex);}
+}
+
+
 </script>
 </body>
 </html>
