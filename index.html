@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>WM 2026 Tippspiel – Gasthaus Bärenbichl</title>
+<title>WM 2026 Tippspiel â€“ Gasthaus BÃ¤renbichl</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f120e;--bg2:#171d14;--bg3:#1e261a;--border:#2e3d28;--gold:#c8922a;--gold2:#e8b84b;--red:#c0392b;--cream:#f0e6cc;--muted:#7a8f6a;--text:#dde8cc;--green:#2d6a35;--greenlt:#4aaa57;--tap:48px;--r:10px;}
@@ -56,7 +56,7 @@ input[readonly]{color:var(--muted);cursor:not-allowed;opacity:.7;}
 .gca{font-size:15px;color:var(--muted);transition:transform .2s;flex-shrink:0;}.gc.open .gca{transform:rotate(180deg);}
 .gcb{display:none;padding:8px 10px;gap:6px;flex-direction:column;}.gc.open .gcb{display:flex;}
 .mr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;background:var(--bg3);border-radius:7px;padding:7px 9px;position:relative;}
-.mr.lk::after{content:'🔒';position:absolute;right:5px;top:5px;font-size:9px;}
+.mr.lk::after{content:'ðŸ”’';position:absolute;right:5px;top:5px;font-size:9px;}
 .tn{font-size:11px;font-weight:700;line-height:1.2;}.tn.r{text-align:right;}
 .si{display:flex;align-items:center;gap:3px;justify-content:center;}
 input.sc{width:42px;height:42px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:19px;text-align:center;border-radius:6px;padding:0;-moz-appearance:textfield;min-height:unset;}
@@ -199,14 +199,14 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <!-- MELDUNG OVERLAY -->
 <div class="notice-overlay" id="noticeOverlay" style="display:none;">
   <div class="notice-card">
-    <div class="notice-icon">⚠️</div>
+    <div class="notice-icon">âš ï¸</div>
     <div class="notice-title">Wichtiger Hinweis!</div>
     <div class="notice-text">
       Die Teilnahme am WM 2026 Tippspiel kostet <strong>10 Euro</strong>.<br><br>
-      Dieser Betrag fließt vollständig in den <strong>Preistopf</strong> ein.<br><br>
-      Bitte bezahle beim Gasthaus Bärenbichl bevor du tippst! 🍺🐻
+      Dieser Betrag flieÃŸt vollstÃ¤ndig in den <strong>Preistopf</strong> ein.<br><br>
+      Bitte bezahle beim Gasthaus BÃ¤renbichl bevor du tippst! ðŸºðŸ»
     </div>
-    <button class="btn bg bf" onclick="closeNotice()">✅ Verstanden – Weiter</button>
+    <button class="btn bg bf" onclick="closeNotice()">âœ… Verstanden â€“ Weiter</button>
     <div style="margin-top:10px;">
       <button class="btn bgh" style="height:36px;font-size:11px;" onclick="closeNoticeCancel()">Abbrechen</button>
     </div>
@@ -223,12 +223,12 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <div class="ac">
       <img class="ac-logo" id="lgAppPw" src="" alt="" onerror="this.style.display='none'">
       <div class="at">WM 2026 Tippspiel</div>
-      <div class="as">Gasthaus Bärenbichl<br>Bitte Zugangscode eingeben um dich zu registrieren</div>
+      <div class="as">Gasthaus BÃ¤renbichl<br>Bitte Zugangscode eingeben um dich zu registrieren</div>
       <div class="fg"><input type="password" id="appPwIn" placeholder="Zugangscode" onkeydown="if(event.key==='Enter')chkApp()"/></div>
-      <button class="btn bg bf" onclick="chkApp()">Weiter →</button>
-      <div class="err" id="appPwErr">❌ Falscher Zugangscode</div>
+      <button class="btn bg bf" onclick="chkApp()">Weiter â†’</button>
+      <div class="err" id="appPwErr">âŒ Falscher Zugangscode</div>
       <div style="margin-top:14px;">
-        <button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAuth');togAuth(false)">← Zurück zum Login</button>
+        <button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAuth');togAuth(false)">â† ZurÃ¼ck zum Login</button>
       </div>
     </div>
   </div>
@@ -238,13 +238,13 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <div class="screen" id="sReset">
   <div class="fc">
     <div class="ac">
-      <div class="at">🔑 Passwort zurücksetzen</div>
-      <div class="as">Gib deine E-Mail-Adresse ein. Du bekommst einen Link zum Zurücksetzen.</div>
+      <div class="at">ðŸ”‘ Passwort zurÃ¼cksetzen</div>
+      <div class="as">Gib deine E-Mail-Adresse ein. Du bekommst einen Link zum ZurÃ¼cksetzen.</div>
       <div class="fg"><label class="fl">E-Mail</label><input type="email" id="resetEmail" placeholder="deine@email.at"/></div>
       <button class="btn bg bf" id="resetBtn" onclick="doReset()">Link senden</button>
       <div class="err" id="resetErr"></div>
-      <div id="resetOk" style="display:none;color:var(--greenlt);font-size:13px;margin-top:8px;text-align:center;">✅ E-Mail wurde gesendet! Bitte überprüfe deinen Posteingang.</div>
-      <div style="margin-top:14px;"><button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAppPw')">← Zurück</button></div>
+      <div id="resetOk" style="display:none;color:var(--greenlt);font-size:13px;margin-top:8px;text-align:center;">âœ… E-Mail wurde gesendet! Bitte Ã¼berprÃ¼fe deinen Posteingang.</div>
+      <div style="margin-top:14px;"><button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAppPw')">â† ZurÃ¼ck</button></div>
     </div>
   </div>
 </div>
@@ -253,10 +253,10 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <div class="screen" id="sNewPw">
   <div class="fc">
     <div class="ac">
-      <div class="at">🔑 Neues Passwort</div>
-      <div class="as">Wähle ein neues Passwort für dein Konto.</div>
-      <div class="fg"><label class="fl">Neues Passwort (min. 6 Zeichen)</label><input type="password" id="newPwIn" placeholder="••••••••"/></div>
-      <div class="fg"><label class="fl">Passwort wiederholen</label><input type="password" id="newPwIn2" placeholder="••••••••"/></div>
+      <div class="at">ðŸ”‘ Neues Passwort</div>
+      <div class="as">WÃ¤hle ein neues Passwort fÃ¼r dein Konto.</div>
+      <div class="fg"><label class="fl">Neues Passwort (min. 6 Zeichen)</label><input type="password" id="newPwIn" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"/></div>
+      <div class="fg"><label class="fl">Passwort wiederholen</label><input type="password" id="newPwIn2" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"/></div>
       <button class="btn bg bf" id="newPwBtn" onclick="doNewPw()">Passwort speichern</button>
       <div class="err" id="newPwErr"></div>
     </div>
@@ -267,12 +267,12 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <div class="screen" id="sAdminPw">
   <div class="fc">
     <div class="ac">
-      <div class="at">🔐 Admin Bereich</div>
-      <div class="as">Nur für den Organisator</div>
+      <div class="at">ðŸ” Admin Bereich</div>
+      <div class="as">Nur fÃ¼r den Organisator</div>
       <div class="fg"><input type="password" id="adminPwIn" placeholder="Admin Passwort" onkeydown="if(event.key==='Enter')chkAdmin()"/></div>
       <button class="btn bg bf" id="adminPwBtn" onclick="chkAdmin()">Einloggen</button>
-      <div class="err" id="adminPwErr">❌ Falsches Passwort</div>
-      <div style="margin-top:12px;"><button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAppPw')">← Zurück</button></div>
+      <div class="err" id="adminPwErr">âŒ Falsches Passwort</div>
+      <div style="margin-top:12px;"><button class="btn bgh" style="height:36px;font-size:10px;" onclick="showS('sAppPw')">â† ZurÃ¼ck</button></div>
     </div>
   </div>
 </div>
@@ -284,44 +284,44 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(200,146,42,.2) 0%,transparent 70%);pointer-events:none;"></div>
       <img id="lgWelcome" src="" alt="" style="width:120px;height:120px;object-fit:contain;border-radius:50%;border:4px solid var(--gold);margin:0 auto 14px;display:block;position:relative;z-index:1;box-shadow:0 0 40px rgba(200,146,42,.4);" onerror="this.style.display='none'">
       <div style="font-family:'Cinzel',serif;font-size:clamp(38px,12vw,70px);font-weight:900;color:var(--cream);line-height:.9;position:relative;z-index:1;">WM <span style="color:var(--gold2);">2026</span></div>
-      <div style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:var(--gold);margin-top:8px;position:relative;z-index:1;">⚽ Gasthaus Bärenbichl ⚽</div>
-      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:6px;position:relative;z-index:1;">Tippspiel · 11. Juni – 19. Juli 2026</div>
+      <div style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:var(--gold);margin-top:8px;position:relative;z-index:1;">âš½ Gasthaus BÃ¤renbichl âš½</div>
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:6px;position:relative;z-index:1;">Tippspiel Â· 11. Juni â€“ 19. Juli 2026</div>
     </div>
     <div style="max-width:600px;margin:0 auto;padding:20px 14px;">
-      <div class="rs"><div class="rst">👋 Herzlich Willkommen!</div><div class="rtx">
-        <p>Willkommen beim offiziellen WM 2026 Tippspiel des Gasthaus Bärenbichl! Du hast dich erfolgreich registriert.</p>
+      <div class="rs"><div class="rst">ðŸ‘‹ Herzlich Willkommen!</div><div class="rtx">
+        <p>Willkommen beim offiziellen WM 2026 Tippspiel des Gasthaus BÃ¤renbichl! Du hast dich erfolgreich registriert.</p>
         <p>Tippe die Ergebnisse aller 72 Gruppenspiele, die K.O.-Runden und beantworte spannende Sonderfragen. Wer am Ende die meisten Punkte hat, gewinnt!</p>
       </div></div>
-      <div class="rs"><div class="rst">📋 So funktioniert es</div><div class="rtx">
+      <div class="rs"><div class="rst">ðŸ“‹ So funktioniert es</div><div class="rtx">
         <p><strong>1. Gruppenphase:</strong> Tippe die genaue Endstand aller 72 Gruppenspiele. Jedes Spiel wird beim Anpfiff automatisch gesperrt.</p>
-        <p><strong>2. Sonderfragen:</strong> Beantworte vor dem ersten Spiel (11. Juni 21:00 Uhr) alle Sonderfragen — danach eingefroren.</p>
+        <p><strong>2. Sonderfragen:</strong> Beantworte vor dem ersten Spiel (11. Juni 21:00 Uhr) alle Sonderfragen â€” danach eingefroren.</p>
         <p><strong>3. K.O.-Runde:</strong> Sobald die Gruppenphase abgeschlossen ist, werden die Teams automatisch eingetragen und du kannst tippen.</p>
         <p><strong>4. Rangliste:</strong> Die Live-Rangliste wird nach jeder Partie automatisch aktualisiert.</p>
       </div></div>
-      <div class="rs"><div class="rst">🏆 Punktesystem</div>
+      <div class="rs"><div class="rst">ðŸ† Punktesystem</div>
         <table class="pts-tbl"><thead><tr><th>Was</th><th style="text-align:right">Punkte</th></tr></thead><tbody>
           <tr><td>Richtiger Sieger / Unentschieden</td><td class="p">5</td></tr>
           <tr><td>Richtiger Sieger + genaues Ergebnis</td><td class="p">10</td></tr>
           <tr><td>Finale: genaues Ergebnis Bonus</td><td class="p">+25</td></tr>
           <tr><td>Richtiger Weltmeister</td><td class="p">60</td></tr>
-          <tr><td>Torschützenkönig (Name + Land)</td><td class="p">50</td></tr>
-          <tr><td>Erster Torschütze des WK</td><td class="p">30</td></tr>
-          <tr><td>Topscorer Österreich</td><td class="p">20</td></tr>
-          <tr><td>Gesamttore Gruppe (nächster gewinnt)</td><td class="p">20</td></tr>
-          <tr><td>Gesamttore WK (nächster gewinnt)</td><td class="p">20</td></tr>
+          <tr><td>TorschÃ¼tzenkÃ¶nig (Name + Land)</td><td class="p">50</td></tr>
+          <tr><td>Erster TorschÃ¼tze des WK</td><td class="p">30</td></tr>
+          <tr><td>Topscorer Ã–sterreich</td><td class="p">20</td></tr>
+          <tr><td>Gesamttore Gruppe (nÃ¤chster gewinnt)</td><td class="p">20</td></tr>
+          <tr><td>Gesamttore WK (nÃ¤chster gewinnt)</td><td class="p">20</td></tr>
         </tbody></table>
       </div>
-      <div class="rs"><div class="rst">⚠️ Wichtige Regeln</div><div class="rtx">
-        <p>• Jeder Teilnehmer darf nur einmal mitmachen</p>
-        <p>• Tipps können bis zum Anpfiff der jeweiligen Partie geändert werden</p>
-        <p>• Sonderfragen werden am 11. Juni um 21:00 Uhr eingefroren</p>
-        <p>• Bei Gleichstand entscheidet die Anzahl der exakten Ergebnisse</p>
-        <p>• Bei den Gesamttoren gewinnt der Nächste. Bei Gleichstand werden die Punkte geteilt</p>
-        <p>• Du erhältst 8 Stunden vor jedem Spiel eine Erinnerung per E-Mail falls noch nicht getippt</p>
+      <div class="rs"><div class="rst">âš ï¸ Wichtige Regeln</div><div class="rtx">
+        <p>â€¢ Jeder Teilnehmer darf nur einmal mitmachen</p>
+        <p>â€¢ Tipps kÃ¶nnen bis zum Anpfiff der jeweiligen Partie geÃ¤ndert werden</p>
+        <p>â€¢ Sonderfragen werden am 11. Juni um 21:00 Uhr eingefroren</p>
+        <p>â€¢ Bei Gleichstand entscheidet die Anzahl der exakten Ergebnisse</p>
+        <p>â€¢ Bei den Gesamttoren gewinnt der NÃ¤chste. Bei Gleichstand werden die Punkte geteilt</p>
+        <p>â€¢ Du erhÃ¤ltst 8 Stunden vor jedem Spiel eine Erinnerung per E-Mail falls noch nicht getippt</p>
       </div></div>
     </div>
     <div style="position:fixed;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(to top,var(--bg) 60%,transparent);padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));">
-      <button class="btn bg bf" style="max-width:420px;margin:0 auto;display:flex;" onclick="finWelcome()">Los geht's! ⚽</button>
+      <button class="btn bg bf" style="max-width:420px;margin:0 auto;display:flex;" onclick="finWelcome()">Los geht's! âš½</button>
     </div>
   </div>
 </div>
@@ -332,23 +332,23 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <div class="ac" id="lgCard">
       <img id="lgAuthLogo" src="" alt="" onerror="this.style.display='none'" style="width:80px;height:80px;object-fit:contain;border-radius:50%;border:3px solid var(--gold);margin:0 auto 12px;display:block;box-shadow:0 0 20px rgba(200,146,42,.3);">
       <div class="at">WM 2026 Tippspiel</div>
-      <div class="as">⚽ Gasthaus Bärenbichl</div>
+      <div class="as">âš½ Gasthaus BÃ¤renbichl</div>
       <div class="fg"><label class="fl">E-Mail</label><input type="email" id="lgU" placeholder="deine@email.at" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-      <div class="fg"><label class="fl">Passwort</label><input type="password" id="lgP" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="fg"><label class="fl">Passwort</label><input type="password" id="lgP" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <button class="btn bg bf" onclick="doLogin()">Einloggen</button>
-      <div class="err" id="lgErr">❌ Falsche E-Mail oder Passwort</div>
+      <div class="err" id="lgErr">âŒ Falsche E-Mail oder Passwort</div>
       <div class="asw" style="margin-top:12px;">Noch kein Konto? <a onclick="showS('sAppPw')">Jetzt registrieren</a></div>
       <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;">
-        <button class="btn bgh" style="height:32px;font-size:10px;" onclick="showS('sReset')">🔑 Passwort vergessen</button>
-        <button class="btn bgh" style="height:32px;font-size:10px;" onclick="showS('sAdminPw')">🔐 Admin</button>
+        <button class="btn bgh" style="height:32px;font-size:10px;" onclick="showS('sReset')">ðŸ”‘ Passwort vergessen</button>
+        <button class="btn bgh" style="height:32px;font-size:10px;" onclick="showS('sAdminPw')">ðŸ” Admin</button>
       </div>
     </div>
     <div class="ac" id="rgCard" style="display:none;">
-      <div class="at">✨ Registrieren</div>
+      <div class="at">âœ¨ Registrieren</div>
       <div class="as">Erstelle dein Tippspiel-Konto</div>
-      <div class="fg"><label class="fl">Benutzername <span style="color:var(--muted);font-size:9px">(auf Rangliste sichtbar)</span></label><input type="text" id="rgU" placeholder="z. B. HansMüller99"/></div>
-      <div class="fg"><label class="fl">Passwort <span style="color:var(--muted);font-size:9px">(min. 6 Zeichen)</span></label><input type="password" id="rgP" placeholder="••••••••"/></div>
-      <div class="fg"><label class="fl">Echter Name <span style="color:var(--muted);font-size:9px">(nur Admin)</span></label><input type="text" id="rgN" placeholder="z. B. Hans Müller"/></div>
+      <div class="fg"><label class="fl">Benutzername <span style="color:var(--muted);font-size:9px">(auf Rangliste sichtbar)</span></label><input type="text" id="rgU" placeholder="z. B. HansMÃ¼ller99"/></div>
+      <div class="fg"><label class="fl">Passwort <span style="color:var(--muted);font-size:9px">(min. 6 Zeichen)</span></label><input type="password" id="rgP" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"/></div>
+      <div class="fg"><label class="fl">Echter Name <span style="color:var(--muted);font-size:9px">(nur Admin)</span></label><input type="text" id="rgN" placeholder="z. B. Hans MÃ¼ller"/></div>
       <div class="fg"><label class="fl">E-Mail <span style="color:var(--muted);font-size:9px">(nur Admin)</span></label><input type="email" id="rgE" placeholder="hans@beispiel.at"/></div>
       <button class="btn bg bf" id="rgBtn" onclick="doReg()">Konto erstellen</button>
       <div class="err" id="rgErr"></div>
@@ -361,7 +361,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <div class="screen" id="sApp">
   <header><div class="h-inner">
     <img class="h-logo" id="lgHeader" src="" alt="" onerror="this.style.display='none'" style="width:64px;height:64px;">
-    <div style="flex:1"><div class="h-gasthof">Gasthaus Bärenbichl</div><h1>WM <em>2026</em></h1><div class="h-sub">11. Juni – 19. Juli 2026</div><div class="h-user" id="hUser"></div></div>
+    <div style="flex:1"><div class="h-gasthof">Gasthaus BÃ¤renbichl</div><h1>WM <em>2026</em></h1><div class="h-sub">11. Juni â€“ 19. Juli 2026</div><div class="h-user" id="hUser"></div></div>
     <img id="lgHeader2" src="" alt="" onerror="this.style.display='none'" style="width:64px;height:64px;object-fit:contain;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;">
   </div></header>
   <div class="prog"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
@@ -371,31 +371,31 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <div class="page active" id="pg0">
       <div class="st">Gruppenphase</div>
       <div class="sd">Tippe alle 48 Gruppenspiele. Jede Partie wird beim Anpfiff gesperrt.</div>
-      <div id="fbBanner" style="display:none;"><div class="fb"><div class="fbt">🔒 Tippspiel gesperrt</div><div id="fbMsg" style="font-size:13px;color:var(--muted);"></div></div></div>
-      <button class="stand-btn" onclick="toggleStand()">🏟️ Gruppenstand anzeigen</button>
+      <div id="fbBanner" style="display:none;"><div class="fb"><div class="fbt">ðŸ”’ Tippspiel gesperrt</div><div id="fbMsg" style="font-size:13px;color:var(--muted);"></div></div></div>
+      <button class="stand-btn" onclick="toggleStand()">ðŸŸï¸ Gruppenstand anzeigen</button>
       <div class="stand-panel" id="standPanel">
-        <div id="standContent"><div class="stand-loading"><div class="sp" style="width:24px;height:24px;border-width:2px;margin:0 auto 8px;"></div>Wird geladen…</div></div>
+        <div id="standContent"><div class="stand-loading"><div class="sp" style="width:24px;height:24px;border-width:2px;margin:0 auto 8px;"></div>Wird geladenâ€¦</div></div>
       </div>
       <div class="groups-list" id="glst"></div>
-      <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
+      <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('ðŸ’¾ Gespeichert!','success')).catch(e=>toast('âŒ Fehler!','error'))">ðŸ’¾ Speichern</button></div>
     </div>
     <!-- KO -->
     <div class="page" id="pg1">
       <div class="st">K.O.-Runde</div>
       <div style="background:rgba(200,146,42,.15);border:1px solid var(--gold);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:12px;">
-        <div style="font-weight:700;color:var(--gold2);margin-bottom:6px;">⏱️ So funktioniert der K.O.-Tipp:</div>
+        <div style="font-weight:700;color:var(--gold2);margin-bottom:6px;">â±ï¸ So funktioniert der K.O.-Tipp:</div>
         <div style="color:var(--text);line-height:1.7;">
-          Trage den <strong>Endstand nach 120 Min.</strong> ein (inkl. Verlängerung).<br>
-          🏆 <strong>z.B. 2:1</strong> → Sieger wird automatisch gesetzt<br>
-          🤝 <strong>z.B. 1:1</strong> → Unentschieden nach 120 Min. (Elfmeter egal für den Tipp)
+          Trage den <strong>Endstand nach 120 Min.</strong> ein (inkl. VerlÃ¤ngerung).<br>
+          ðŸ† <strong>z.B. 2:1</strong> â†’ Sieger wird automatisch gesetzt<br>
+          ðŸ¤ <strong>z.B. 1:1</strong> â†’ Unentschieden nach 120 Min. (Elfmeter egal fÃ¼r den Tipp)
         </div>
       </div>
       <div class="sd">Teams werden automatisch eingetragen sobald die Gruppenphase bekannt ist.</div>
       <div id="koRds"></div>
       <div id="koAvail" style="display:none;background:rgba(39,174,96,.12);border:1px solid var(--greenlt);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--greenlt);text-align:center;">
-        ✅ K.O.-Tipps sind jetzt verfügbar — die Teams stehen fest!
+        âœ… K.O.-Tipps sind jetzt verfÃ¼gbar â€” die Teams stehen fest!
       </div>
-  <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('💾 Gespeichert!','success')).catch(e=>toast('❌ Fehler!','error'))">💾 Speichern</button></div>
+  <div class="nb"><button class="btn bg" onclick="saveTipps().then(r=>toast('ðŸ’¾ Gespeichert!','success')).catch(e=>toast('âŒ Fehler!','error'))">ðŸ’¾ Speichern</button></div>
     </div>
     <!-- SONDERFRAGEN -->
     <div class="page" id="pg2">
@@ -403,33 +403,33 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <img id="lgSonder" src="" alt="" onerror="this.style.display='none'" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;">
         <div class="st" style="margin-bottom:0;">Sonderfragen</div>
       </div>
-      <div class="sd">Werden am 11. Juni um 21:00 Uhr eingefroren — danach keine Änderungen mehr!</div>
-      <div id="sqFrz" class="fn" style="display:none;">🔒 Sonderfragen sind gesperrt</div>
-      <div class="sqc"><div class="sqt">🏆 Weltmeister 2026</div><div class="sqd">Welches Land wird Weltmeister bei der WM 2026?</div><div class="sqp">60 Punkte</div>
-        <div class="fg" style="margin:0"><label class="fl">Dein Tipp</label><input type="text" id="sqWM" placeholder="z. B. Argentinien, Deutschland…"/></div></div>
-      <div class="sqc"><div class="sqt">⚡ Torschützenkönig</div><div class="sqd">Wer wird Torschützenkönig der WM 2026? Name und Land des Spielers.</div><div class="sqp">50 Punkte</div>
-        <div class="fg"><label class="fl">Name des Spielers</label><input type="text" id="sqTSN" placeholder="z. B. Kylian Mbappé"/></div>
+      <div class="sd">Werden am 11. Juni um 21:00 Uhr eingefroren â€” danach keine Ã„nderungen mehr!</div>
+      <div id="sqFrz" class="fn" style="display:none;">ðŸ”’ Sonderfragen sind gesperrt</div>
+      <div class="sqc"><div class="sqt">ðŸ† Weltmeister 2026</div><div class="sqd">Welches Land wird Weltmeister bei der WM 2026?</div><div class="sqp">60 Punkte</div>
+        <div class="fg" style="margin:0"><label class="fl">Dein Tipp</label><input type="text" id="sqWM" placeholder="z. B. Argentinien, Deutschlandâ€¦"/></div></div>
+      <div class="sqc"><div class="sqt">âš¡ TorschÃ¼tzenkÃ¶nig</div><div class="sqd">Wer wird TorschÃ¼tzenkÃ¶nig der WM 2026? Name und Land des Spielers.</div><div class="sqp">50 Punkte</div>
+        <div class="fg"><label class="fl">Name des Spielers</label><input type="text" id="sqTSN" placeholder="z. B. Kylian MbappÃ©"/></div>
         <div class="fg" style="margin:0"><label class="fl">Land</label><input type="text" id="sqTSC" placeholder="z. B. Frankreich"/></div></div>
-      <div class="sqc"><div class="sqt">⚽ Erster Torschütze des WK</div><div class="sqd">Wer schießt das allererste Tor der WM 2026? Name und Land.</div><div class="sqp">30 Punkte</div>
+      <div class="sqc"><div class="sqt">âš½ Erster TorschÃ¼tze des WK</div><div class="sqd">Wer schieÃŸt das allererste Tor der WM 2026? Name und Land.</div><div class="sqp">30 Punkte</div>
         <div class="fg"><label class="fl">Name des Spielers</label><input type="text" id="sqFGN" placeholder="z. B. Erling Haaland"/></div>
         <div class="fg" style="margin:0"><label class="fl">Land</label><input type="text" id="sqFGC" placeholder="z. B. Norwegen"/></div></div>
-      <div class="sqc"><div class="sqt">🇦🇹 Topscorer Österreich</div><div class="sqd">Welcher österreichische Spieler schießt die meisten Tore bei der WM 2026?</div><div class="sqp">20 Punkte</div>
+      <div class="sqc"><div class="sqt">ðŸ‡¦ðŸ‡¹ Topscorer Ã–sterreich</div><div class="sqd">Welcher Ã¶sterreichische Spieler schieÃŸt die meisten Tore bei der WM 2026?</div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Name des Spielers</label><input type="text" id="sqAT" placeholder="z. B. Marcel Sabitzer"/></div></div>
-      <div class="sqc"><div class="sqt">🔢 Gesamttore Gruppenphase</div><div class="sqd">Wie viele Tore werden in der Gruppenphase (72 Spiele) erzielt? Wer am nächsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div>
+      <div class="sqc"><div class="sqt">ðŸ”¢ Gesamttore Gruppenphase</div><div class="sqd">Wie viele Tore werden in der Gruppenphase (72 Spiele) erzielt? Wer am nÃ¤chsten dran ist gewinnt. Bei Gleichstand werden die Punkte geteilt.</div>
         <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
-          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim letzten WK 2022 (32 Teams, 48 Gruppenspiele) wurden <strong style="color:var(--text);">120 Tore</strong> in der Gruppenphase erzielt. Das WK 2026 hat <strong style="color:var(--text);">72 Gruppenspiele</strong> (12 Gruppen × 6 Spiele) — mit mehr gleichwertigen Teams sind vielleicht mehr Tore möglich!
+          ðŸ’¡ <strong style="color:var(--gold2);">Tipp:</strong> Beim letzten WK 2022 (32 Teams, 48 Gruppenspiele) wurden <strong style="color:var(--text);">120 Tore</strong> in der Gruppenphase erzielt. Das WK 2026 hat <strong style="color:var(--text);">72 Gruppenspiele</strong> (12 Gruppen Ã— 6 Spiele) â€” mit mehr gleichwertigen Teams sind vielleicht mehr Tore mÃ¶glich!
         </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGG" placeholder="z. B. 140" min="50" max="300" inputmode="numeric"/></div></div>
-      <div class="sqc"><div class="sqt">🔢 Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Die 3 Nächsten gewinnen: 🥇 20 Punkte · 🥈 15 Punkte · 🥉 10 Punkte. Bei exaktem Treffer gibt es 20 Bonuspunkte extra! Bei Gleichstand werden die Punkte geteilt.</div>
+      <div class="sqc"><div class="sqt">ðŸ”¢ Gesamttore ganzes WK</div><div class="sqd">Wie viele Tore werden beim gesamten WK 2026 erzielt (alle 104 Spiele)? Die 3 NÃ¤chsten gewinnen: ðŸ¥‡ 20 Punkte Â· ðŸ¥ˆ 15 Punkte Â· ðŸ¥‰ 10 Punkte. Bei exaktem Treffer gibt es 20 Bonuspunkte extra! Bei Gleichstand werden die Punkte geteilt.</div>
         <div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:4px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--muted);">
-          💡 <strong style="color:var(--gold2);">Tipp:</strong> Beim WK 2022 (32 Teams, 64 Spiele) wurden <strong style="color:var(--text);">172 Tore</strong> erzielt. Das WK 2026 hat <strong style="color:var(--text);">104 Spiele</strong> (72 Gruppenspiele + 32 K.O.-Spiele) — hochgerechnet wären das ca. <strong style="color:var(--gold2);">280+ Tore</strong>. Aber das erste WK mit 48 Teams ist schwer vorherzusagen!
+          ðŸ’¡ <strong style="color:var(--gold2);">Tipp:</strong> Beim WK 2022 (32 Teams, 64 Spiele) wurden <strong style="color:var(--text);">172 Tore</strong> erzielt. Das WK 2026 hat <strong style="color:var(--text);">104 Spiele</strong> (72 Gruppenspiele + 32 K.O.-Spiele) â€” hochgerechnet wÃ¤ren das ca. <strong style="color:var(--gold2);">280+ Tore</strong>. Aber das erste WK mit 48 Teams ist schwer vorherzusagen!
         </div><div class="sqp">20 Punkte</div>
         <div class="fg" style="margin:0"><label class="fl">Anzahl Tore</label><input type="number" id="sqGT" placeholder="z. B. 250" min="100" max="500" inputmode="numeric"/></div></div>
-      <div class="sqc" style="border-color:var(--gold)"><div class="sqt">🏆 WM-Finale</div><div class="sqd">Wer steht im Finale und wie endet es? Bei genauem Ergebnis gibt es 25 Bonuspunkte extra!</div><div class="sqp">10 + 25 Bonus Punkte</div>
+      <div class="sqc" style="border-color:var(--gold)"><div class="sqt">ðŸ† WM-Finale</div><div class="sqd">Wer steht im Finale und wie endet es? Bei genauem Ergebnis gibt es 25 Bonuspunkte extra!</div><div class="sqp">10 + 25 Bonus Punkte</div>
         <div class="kr" style="margin-bottom:7px;"><input type="text" class="kt" id="sqFT1" placeholder="Finalist 1" oninput="updFS()"/><input type="number" class="ks" id="sqFS1" placeholder="0" min="0" max="20" inputmode="numeric"/></div>
         <div class="kr" style="margin-bottom:7px;"><input type="text" class="kt" id="sqFT2" placeholder="Finalist 2" oninput="updFS()"/><input type="number" class="ks" id="sqFS2" placeholder="0" min="0" max="20" inputmode="numeric"/></div>
-        <div class="wl">Sieger</div><select id="sqFW"><option value="">— Sieger wählen —</option></select></div>
-      <div class="nb"><button class="btn bgg bf" id="saveSQBtn" onclick="saveSQ()">✅ Sonderfragen speichern</button></div>
+        <div class="wl">Sieger</div><select id="sqFW"><option value="">â€” Sieger wÃ¤hlen â€”</option></select></div>
+      <div class="nb"><button class="btn bgg bf" id="saveSQBtn" onclick="saveSQ()">âœ… Sonderfragen speichern</button></div>
 
       <!-- Sonderfragen punten overzicht -->
       <div id="sqPtsOverview" style="margin-top:20px;"></div>
@@ -437,7 +437,7 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <!-- MEINE TIPPS -->
     <div class="page" id="pg3">
       <div class="st">Meine Tipps</div><div class="sd">Alle deine Tipps auf einen Blick.</div>
-      <div id="mtp"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+      <div id="mtp"><div class="ld"><div class="sp"></div>Wird geladenâ€¦</div></div>
     </div>
     <!-- RANGLISTE -->
     <div class="page" id="pg4">
@@ -446,62 +446,62 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
         <img id="lgRang" src="" alt="" onerror="this.style.display='none'" style="width:60px;height:60px;object-fit:contain;border-radius:50%;border:2px solid var(--gold);box-shadow:0 0 20px rgba(200,146,42,.2);">
       </div>
       <div id="wwEl"></div>
-      <div id="lbEl"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+      <div id="lbEl"><div class="ld"><div class="sp"></div>Wird geladenâ€¦</div></div>
       <div class="nb">
-        <button class="btn bgh" onclick="loadLB()">🔄 Aktualisieren</button>
-        <button class="btn bgh" onclick="doLogout()">🚪 Abmelden</button>
+        <button class="btn bgh" onclick="loadLB()">ðŸ”„ Aktualisieren</button>
+        <button class="btn bgh" onclick="doLogout()">ðŸšª Abmelden</button>
       </div>
     </div>
     <!-- PUNTEN OVERZICHT -->
     <div class="page" id="pg5">
-      <div class="st">Punkte-Übersicht</div>
+      <div class="st">Punkte-Ãœbersicht</div>
       <div class="sd">Pro abgeschlossenem Spiel siehst du wer Punkte verdient hat.</div>
-      <div id="ptsOverview"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+      <div id="ptsOverview"><div class="ld"><div class="sp"></div>Wird geladenâ€¦</div></div>
     </div>
 
     <!-- REGELN -->
     <div class="page" id="pg6">
-      <div class="st">Regeln & Erklärung</div>
-      <div class="rs"><div class="rst">📋 Allgemeine Regeln</div><div class="rtx">
-        <p>Jeder Teilnehmer darf nur einmal mitmachen. Die Registrierung erfolgt mit einem Benutzernamen (sichtbar), echtem Namen und E-Mail (nur für Admin).</p>
-        <p>Tipps können bis zum Anpfiff der jeweiligen Partie geändert werden. Danach automatisch gesperrt.</p>
+      <div class="st">Regeln & ErklÃ¤rung</div>
+      <div class="rs"><div class="rst">ðŸ“‹ Allgemeine Regeln</div><div class="rtx">
+        <p>Jeder Teilnehmer darf nur einmal mitmachen. Die Registrierung erfolgt mit einem Benutzernamen (sichtbar), echtem Namen und E-Mail (nur fÃ¼r Admin).</p>
+        <p>Tipps kÃ¶nnen bis zum Anpfiff der jeweiligen Partie geÃ¤ndert werden. Danach automatisch gesperrt.</p>
         <p>Sonderfragen werden am <strong>11. Juni 2026 um 21:00 Uhr</strong> eingefroren.</p>
-        <p>Du erhältst 8 Stunden vor jedem Spiel eine E-Mail-Erinnerung wenn du das Spiel noch nicht getippt hast.</p>
+        <p>Du erhÃ¤ltst 8 Stunden vor jedem Spiel eine E-Mail-Erinnerung wenn du das Spiel noch nicht getippt hast.</p>
       </div></div>
-      <div class="rs"><div class="rst">⚽ Gruppenphase</div><div class="rtx">
-        <p>Tippe die genaue Endstand aller 72 Gruppenspiele (12 Gruppen à 4 Mannschaften).</p>
-        <p><strong>5 Punkte</strong> für richtigen Sieger oder richtiges Unentschieden.<br><strong>10 Punkte</strong> für richtigen Sieger + genaues Ergebnis.</p>
+      <div class="rs"><div class="rst">âš½ Gruppenphase</div><div class="rtx">
+        <p>Tippe die genaue Endstand aller 72 Gruppenspiele (12 Gruppen Ã  4 Mannschaften).</p>
+        <p><strong>5 Punkte</strong> fÃ¼r richtigen Sieger oder richtiges Unentschieden.<br><strong>10 Punkte</strong> fÃ¼r richtigen Sieger + genaues Ergebnis.</p>
       </div></div>
-      <div class="rs"><div class="rst">🥊 K.O.-Runde</div><div class="rtx">
-        <p>Teams werden automatisch eingetragen wenn Gruppenphase fertig. Bei Unentschieden nach 90 Min. gibst du den Sieger nach Verlängerung/Elfmeter an.</p>
-        <p><strong>5 Punkte</strong> für richtigen Sieger. <strong>10 Punkte</strong> für richtigen Sieger + genaues Ergebnis (nach 90 Min.).</p>
+      <div class="rs"><div class="rst">ðŸ¥Š K.O.-Runde</div><div class="rtx">
+        <p>Teams werden automatisch eingetragen wenn Gruppenphase fertig. Bei Unentschieden nach 90 Min. gibst du den Sieger nach VerlÃ¤ngerung/Elfmeter an.</p>
+        <p><strong>5 Punkte</strong> fÃ¼r richtigen Sieger. <strong>10 Punkte</strong> fÃ¼r richtigen Sieger + genaues Ergebnis (nach 90 Min.).</p>
       </div></div>
-      <div class="rs"><div class="rst">⭐ Sonderfragen</div><div class="rtx">
+      <div class="rs"><div class="rst">â­ Sonderfragen</div><div class="rtx">
         <p>Alle vor dem <strong>11. Juni 2026 um 21:00 Uhr</strong> beantworten.</p>
-        <p>🏆 <strong>Weltmeister (60 Pkt)</strong> — Welches Land wird Weltmeister?</p>
-        <p>⚡ <strong>Torschützenkönig (50 Pkt)</strong> — Name und Land.</p>
-        <p>⚽ <strong>Erster Torschütze (30 Pkt)</strong> — Wer schießt das erste Tor?</p>
-        <p>🇦🇹 <strong>Topscorer Österreich (20 Pkt)</strong> — Welcher Österreicher schießt die meisten Tore?</p>
-        <p>🔢 <strong>Gesamttore Gruppe (20 Pkt)</strong> — Nächster gewinnt, bei Gleichstand teilen.</p>
-        <p>🔢 <strong>Gesamttore WK (20 Pkt)</strong> — Nächster gewinnt, bei Gleichstand teilen.</p>
-        <p>🏆 <strong>Finale (10 + 25 Bonus Pkt)</strong> — Genauer Endstand bringt 25 Bonuspunkte extra.</p>
+        <p>ðŸ† <strong>Weltmeister (60 Pkt)</strong> â€” Welches Land wird Weltmeister?</p>
+        <p>âš¡ <strong>TorschÃ¼tzenkÃ¶nig (50 Pkt)</strong> â€” Name und Land.</p>
+        <p>âš½ <strong>Erster TorschÃ¼tze (30 Pkt)</strong> â€” Wer schieÃŸt das erste Tor?</p>
+        <p>ðŸ‡¦ðŸ‡¹ <strong>Topscorer Ã–sterreich (20 Pkt)</strong> â€” Welcher Ã–sterreicher schieÃŸt die meisten Tore?</p>
+        <p>ðŸ”¢ <strong>Gesamttore Gruppe (20 Pkt)</strong> â€” NÃ¤chster gewinnt, bei Gleichstand teilen.</p>
+        <p>ðŸ”¢ <strong>Gesamttore WK (20 Pkt)</strong> â€” NÃ¤chster gewinnt, bei Gleichstand teilen.</p>
+        <p>ðŸ† <strong>Finale (10 + 25 Bonus Pkt)</strong> â€” Genauer Endstand bringt 25 Bonuspunkte extra.</p>
       </div></div>
-      <div class="rs"><div class="rst">📊 Rangliste & E-Mails</div><div class="rtx">
-        <p>Live-Rangliste wird nach jeder Partie aktualisiert. Wöchentlich bekommst du die Rangliste per E-Mail.</p>
+      <div class="rs"><div class="rst">ðŸ“Š Rangliste & E-Mails</div><div class="rtx">
+        <p>Live-Rangliste wird nach jeder Partie aktualisiert. WÃ¶chentlich bekommst du die Rangliste per E-Mail.</p>
         <p>Bei Gleichstand entscheidet die Anzahl der exakt richtigen Ergebnisse.</p>
         <p>Jede Woche wird der <strong>Wochenbeste</strong> ausgezeichnet.</p>
       </div></div>
     </div>
   </main>
   <nav class="bn">
-    <button class="bb active" onclick="goP(0)" id="bn0"><span class="ic">⚽</span><span>Gruppen</span></button>
-    <button class="bb" onclick="goP(1)" id="bn1"><span class="ic">🥊</span><span>K.O.</span></button>
-    <button class="bb" onclick="goP(2)" id="bn2"><span class="ic">⭐</span><span>Sonder</span></button>
-    <button class="bb" onclick="goP(3);loadMTP();" id="bn3"><span class="ic">📋</span><span>Meine</span></button>
-    <button class="bb" onclick="goP(4);loadLB();" id="bn4"><span class="ic">🥇</span><span>Rang</span></button>
-    <button class="bb" onclick="goP(5);loadPtsOverview();" id="bn5"><span class="ic">📊</span><span>Punkte</span></button>
-    <button class="bb" onclick="goP(6)" id="bn6"><span class="ic">📖</span><span>Info</span></button>
-    <button class="bb" onclick="goP(7);loadTopscorers();" id="bn7"><span class="ic">⚽</span><span>Tore</span></button>
+    <button class="bb active" onclick="goP(0)" id="bn0"><span class="ic">âš½</span><span>Gruppen</span></button>
+    <button class="bb" onclick="goP(1)" id="bn1"><span class="ic">ðŸ¥Š</span><span>K.O.</span></button>
+    <button class="bb" onclick="goP(2)" id="bn2"><span class="ic">â­</span><span>Sonder</span></button>
+    <button class="bb" onclick="goP(3);loadMTP();" id="bn3"><span class="ic">ðŸ“‹</span><span>Meine</span></button>
+    <button class="bb" onclick="goP(4);loadLB();" id="bn4"><span class="ic">ðŸ¥‡</span><span>Rang</span></button>
+    <button class="bb" onclick="goP(5);loadPtsOverview();" id="bn5"><span class="ic">ðŸ“Š</span><span>Punkte</span></button>
+    <button class="bb" onclick="goP(6)" id="bn6"><span class="ic">ðŸ“–</span><span>Info</span></button>
+    <button class="bb" onclick="goP(7);loadTopscorers();" id="bn7"><span class="ic">âš½</span><span>Tore</span></button>
   </nav>
 </div>
 
@@ -509,17 +509,17 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
 <div class="screen" id="sAdmin">
   <header><div class="h-inner">
     <img class="h-logo" src="" alt="" onerror="this.style.display='none'" id="lgAdmin">
-    <div><div class="h-gasthof">🔐 Admin</div><h1>WM <em>2026</em></h1><div class="h-sub">Gasthaus Bärenbichl</div></div>
+    <div><div class="h-gasthof">ðŸ” Admin</div><h1>WM <em>2026</em></h1><div class="h-sub">Gasthaus BÃ¤renbichl</div></div>
   </div></header>
   <main style="padding-bottom:40px;">
     <div class="atbs">
-      <button class="atb active" onclick="aTab(0)">👥 Teilnehmer</button>
-      <button class="atb" onclick="aTab(1)">📋 Tipps & Punkte</button>
-      <button class="atb" onclick="aTab(2)">✅ Kontrolle</button>
-      <button class="atb" onclick="aTab(3)">✏️ Override</button>
-      <button class="atb" onclick="aTab(4)">⚙️ Einstellungen</button>
-      <button class="atb" onclick="aTab(5)">🧪 Testmodus</button>
-      <button class="atb" onclick="aTab(6);loadSQOverview();">📊 Sonder-Übersicht</button>
+      <button class="atb active" onclick="aTab(0)">ðŸ‘¥ Teilnehmer</button>
+      <button class="atb" onclick="aTab(1)">ðŸ“‹ Tipps & Punkte</button>
+      <button class="atb" onclick="aTab(2)">âœ… Kontrolle</button>
+      <button class="atb" onclick="aTab(3)">âœï¸ Override</button>
+      <button class="atb" onclick="aTab(4)">âš™ï¸ Einstellungen</button>
+      <button class="atb" onclick="aTab(5)">ðŸ§ª Testmodus</button>
+      <button class="atb" onclick="aTab(6);loadSQOverview();">ðŸ“Š Sonder-Ãœbersicht</button>
     </div>
     <!-- TAB 0 -->
     <div class="ap active" id="ap0">
@@ -529,18 +529,18 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     <!-- TAB 1: TIPPS & PUNTEN -->
     <div class="ap" id="ap1">
       <div style="margin-bottom:16px;">
-        <button class="btn bg" onclick="loadAllBreakdown()" style="height:40px;">📊 Alle Punkte anzeigen</button>
+        <button class="btn bg" onclick="loadAllBreakdown()" style="height:40px;">ðŸ“Š Alle Punkte anzeigen</button>
         <div id="allBreakdown" style="margin-top:12px;"></div>
       </div>
-      <div class="sd">Wähle einen Teilnehmer — sieh seine Tipps, genehmige Spiele oder korrigiere Punkte manuell.</div>
+      <div class="sd">WÃ¤hle einen Teilnehmer â€” sieh seine Tipps, genehmige Spiele oder korrigiere Punkte manuell.</div>
       <div class="fg"><label class="fl">Teilnehmer</label>
-        <select id="aUSel" onchange="loadUTipps(this.value)"><option value="">— Teilnehmer wählen —</option></select>
+        <select id="aUSel" onchange="loadUTipps(this.value)"><option value="">â€” Teilnehmer wÃ¤hlen â€”</option></select>
       </div>
       <div id="uTView"></div>
     </div>
     <!-- TAB 2: KONTROLLE -->
     <div class="ap" id="ap2">
-      <div class="sd">Überprüfe abgeschlossene Spiele und wer Punkte bekommen hat.</div>
+      <div class="sd">ÃœberprÃ¼fe abgeschlossene Spiele und wer Punkte bekommen hat.</div>
       <div id="ctrlEl"><div class="ld"><div class="sp"></div></div></div>
     </div>
     <!-- TAB 3: OVERRIDE -->
@@ -550,58 +550,58 @@ input.ks::-webkit-inner-spin-button,input.ks::-webkit-outer-spin-button{-webkit-
     </div>
     <!-- TAB 4: EINSTELLUNGEN -->
     <div class="ap" id="ap4">
-      <div class="sb"><div class="sbt">🔒 Tippspiel sperren/entsperren</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:13px;">Drücke VOR der ersten Partie (11. Juni 21:00 Uhr). Alle Tipps werden eingefroren.</p>
+      <div class="sb"><div class="sbt">ðŸ”’ Tippspiel sperren/entsperren</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:13px;">DrÃ¼cke VOR der ersten Partie (11. Juni 21:00 Uhr). Alle Tipps werden eingefroren.</p>
         <div id="frzSt" style="margin-bottom:11px;"></div>
-        <button class="btn br" id="frzBtn" onclick="togFreeze()">🔒 Jetzt sperren</button>
+        <button class="btn br" id="frzBtn" onclick="togFreeze()">ðŸ”’ Jetzt sperren</button>
       </div>
-      <div class="sb" style="margin-top:14px;"><div class="sbt">📡 API Status</div>
-        <div id="apiSt" style="font-size:13px;color:var(--muted);">Wird geladen…</div>
-        <button class="btn bgh" style="margin-top:11px;" onclick="forceSync()">🔄 Jetzt synchronisieren</button>
+      <div class="sb" style="margin-top:14px;"><div class="sbt">ðŸ“¡ API Status</div>
+        <div id="apiSt" style="font-size:13px;color:var(--muted);">Wird geladenâ€¦</div>
+        <button class="btn bgh" style="margin-top:11px;" onclick="forceSync()">ðŸ”„ Jetzt synchronisieren</button>
       </div>
-      <div class="sb" style="margin-top:14px;"><div class="sbt">📧 Erinnerungen senden</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:13px;">Sende eine Erinnerung an alle Teilnehmer die noch nicht alle Tipps ausgefüllt haben.</p>
-        <button class="btn bg" onclick="sendRem()">📧 Erinnerung senden</button>
+      <div class="sb" style="margin-top:14px;"><div class="sbt">ðŸ“§ Erinnerungen senden</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:13px;">Sende eine Erinnerung an alle Teilnehmer die noch nicht alle Tipps ausgefÃ¼llt haben.</p>
+        <button class="btn bg" onclick="sendRem()">ðŸ“§ Erinnerung senden</button>
       </div>
-      <div class="sb" style="margin-top:14px;"><div class="sbt">📊 Statistiken</div>
-        <div id="stEl" style="font-size:13px;color:var(--muted);">Wird geladen…</div>
+      <div class="sb" style="margin-top:14px;"><div class="sbt">ðŸ“Š Statistiken</div>
+        <div id="stEl" style="font-size:13px;color:var(--muted);">Wird geladenâ€¦</div>
       </div>
       <div style="margin-top:22px;">
-        <button class="btn bgh" onclick="showS('sAuth');togAuth(false);">← Abmelden</button>
+        <button class="btn bgh" onclick="showS('sAuth');togAuth(false);">â† Abmelden</button>
       </div>
     </div><!-- end ap4 -->
 
     <!-- TAB 5: TESTMODUS -->
     <div class="ap" id="ap5">
-      <div class="sd">Simuliere Spielergebnisse um die Punkteberechnung zu testen. Testdaten können danach wieder gelöscht werden.</div>
+      <div class="sd">Simuliere Spielergebnisse um die Punkteberechnung zu testen. Testdaten kÃ¶nnen danach wieder gelÃ¶scht werden.</div>
       <div class="sb">
-        <div class="sbt">⚽ Gruppenspiel simulieren</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Wähle ein Spiel, trage ein Ergebnis ein und sieh sofort wer wie viele Punkte bekommt.</p>
-        <div class="fg"><label class="fl">Spiel wählen</label>
-          <select id="testMatchSel"><option value="">— Spiel wählen —</option></select>
+        <div class="sbt">âš½ Gruppenspiel simulieren</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">WÃ¤hle ein Spiel, trage ein Ergebnis ein und sieh sofort wer wie viele Punkte bekommt.</p>
+        <div class="fg"><label class="fl">Spiel wÃ¤hlen</label>
+          <select id="testMatchSel"><option value="">â€” Spiel wÃ¤hlen â€”</option></select>
         </div>
         <div style="display:grid;grid-template-columns:1fr 50px 14px 50px 1fr;align-items:center;gap:6px;margin-bottom:12px;">
           <div style="font-size:12px;font-weight:700;text-align:center;" id="testT1">Team 1</div>
           <input type="number" id="testS1" min="0" max="20" placeholder="0" inputmode="numeric" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:20px;text-align:center;padding:8px;border-radius:6px;height:44px;-moz-appearance:textfield;"/>
-          <div style="text-align:center;color:var(--muted);font-weight:700;">–</div>
+          <div style="text-align:center;color:var(--muted);font-weight:700;">â€“</div>
           <input type="number" id="testS2" min="0" max="20" placeholder="0" inputmode="numeric" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:20px;text-align:center;padding:8px;border-radius:6px;height:44px;-moz-appearance:textfield;"/>
           <div style="font-size:12px;font-weight:700;text-align:center;" id="testT2">Team 2</div>
         </div>
-        <button class="btn bg bf" onclick="runTest()">&#9654;&#65039; Test ausführen</button>
+        <button class="btn bg bf" onclick="runTest()">&#9654;&#65039; Test ausfÃ¼hren</button>
         <div id="testResult" style="display:none;margin-top:14px;"></div>
       </div>
       <div class="sb" style="margin-top:14px;">
-        <div class="sbt">&#128465;&#65039; Testdaten löschen</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Lösche alle Testergebnisse. Echte Tipps bleiben erhalten.</p>
+        <div class="sbt">&#128465;&#65039; Testdaten lÃ¶schen</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">LÃ¶sche alle Testergebnisse. Echte Tipps bleiben erhalten.</p>
         <div id="testDataList" style="margin-bottom:12px;font-size:13px;color:var(--muted);">Keine Testdaten vorhanden.</div>
-        <button class="btn br" onclick="clearTestData()">&#128465;&#65039; Alle Testdaten löschen</button>
+        <button class="btn br" onclick="clearTestData()">&#128465;&#65039; Alle Testdaten lÃ¶schen</button>
       </div>
     </div>
 
-    <!-- TAB 6: SONDER ÜBERSICHT -->
+    <!-- TAB 6: SONDER ÃœBERSICHT -->
     <div class="ap" id="ap6">
-      <div class="sd">Übersicht aller Sonderfragen-Tipps aller Teilnehmer auf einen Blick.</div>
-      <div id="sqOverview"><div class="ld"><div class="sp"></div>Wird geladen…</div></div>
+      <div class="sd">Ãœbersicht aller Sonderfragen-Tipps aller Teilnehmer auf einen Blick.</div>
+      <div id="sqOverview"><div class="ld"><div class="sp"></div>Wird geladenâ€¦</div></div>
     </div>
 
   </main>
@@ -615,80 +615,80 @@ const FIRST_MATCH=new Date('2026-06-11T19:00:00Z');
 const LOGO_URL='https://brybar5503.github.io/wm2026-baerenbichl/Barenbichl.png';
 
 const FL={
-  'Mexiko':'🇲🇽','Südafrika':'🇿🇦','Südkorea':'🇰🇷','Tschechien':'🇨🇿',
-  'Kanada':'🇨🇦','Bosnien & H.':'🇧🇦','Katar':'🇶🇦','Schweiz':'🇨🇭',
-  'Brasilien':'🇧🇷','Marokko':'🇲🇦','Haïti':'🇭🇹','Schottland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-  'USA':'🇺🇸','Paraguay':'🇵🇾','Australien':'🇦🇺','Türkei':'🇹🇷',
-  'Deutschland':'🇩🇪','Curaçao':'🇨🇼','Elfenbeinküste':'🇨🇮','Ecuador':'🇪🇨',
-  'Niederlande':'🇳🇱','Japan':'🇯🇵','Schweden':'🇸🇪','Tunesien':'🇹🇳',
-  'Belgien':'🇧🇪','Ägypten':'🇪🇬','Iran':'🇮🇷','Neuseeland':'🇳🇿',
-  'Spanien':'🇪🇸','Kaapverdië':'🇨🇻','Saudi-Arabien':'🇸🇦','Uruguay':'🇺🇾',
-  'Frankreich':'🇫🇷','Senegal':'🇸🇳','Irak':'🇮🇶','Norwegen':'🇳🇴',
-  'Argentinien':'🇦🇷','Algerien':'🇩🇿','Österreich':'🇦🇹','Jordanien':'🇯🇴',
-  'Portugal':'🇵🇹','DR Kongo':'🇨🇩','Usbekistan':'🇺🇿','Kolumbien':'🇨🇴',
-  'England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Kroatien':'🇭🇷','Ghana':'🇬🇭','Panama':'🇵🇦',
+  'Mexiko':'ðŸ‡²ðŸ‡½','SÃ¼dafrika':'ðŸ‡¿ðŸ‡¦','SÃ¼dkorea':'ðŸ‡°ðŸ‡·','Tschechien':'ðŸ‡¨ðŸ‡¿',
+  'Kanada':'ðŸ‡¨ðŸ‡¦','Bosnien & H.':'ðŸ‡§ðŸ‡¦','Katar':'ðŸ‡¶ðŸ‡¦','Schweiz':'ðŸ‡¨ðŸ‡­',
+  'Brasilien':'ðŸ‡§ðŸ‡·','Marokko':'ðŸ‡²ðŸ‡¦','HaÃ¯ti':'ðŸ‡­ðŸ‡¹','Schottland':'ðŸ´ó §ó ¢ó ³ó £ó ´ó ¿',
+  'USA':'ðŸ‡ºðŸ‡¸','Paraguay':'ðŸ‡µðŸ‡¾','Australien':'ðŸ‡¦ðŸ‡º','TÃ¼rkei':'ðŸ‡¹ðŸ‡·',
+  'Deutschland':'ðŸ‡©ðŸ‡ª','CuraÃ§ao':'ðŸ‡¨ðŸ‡¼','ElfenbeinkÃ¼ste':'ðŸ‡¨ðŸ‡®','Ecuador':'ðŸ‡ªðŸ‡¨',
+  'Niederlande':'ðŸ‡³ðŸ‡±','Japan':'ðŸ‡¯ðŸ‡µ','Schweden':'ðŸ‡¸ðŸ‡ª','Tunesien':'ðŸ‡¹ðŸ‡³',
+  'Belgien':'ðŸ‡§ðŸ‡ª','Ã„gypten':'ðŸ‡ªðŸ‡¬','Iran':'ðŸ‡®ðŸ‡·','Neuseeland':'ðŸ‡³ðŸ‡¿',
+  'Spanien':'ðŸ‡ªðŸ‡¸','KaapverdiÃ«':'ðŸ‡¨ðŸ‡»','Saudi-Arabien':'ðŸ‡¸ðŸ‡¦','Uruguay':'ðŸ‡ºðŸ‡¾',
+  'Frankreich':'ðŸ‡«ðŸ‡·','Senegal':'ðŸ‡¸ðŸ‡³','Irak':'ðŸ‡®ðŸ‡¶','Norwegen':'ðŸ‡³ðŸ‡´',
+  'Argentinien':'ðŸ‡¦ðŸ‡·','Algerien':'ðŸ‡©ðŸ‡¿','Ã–sterreich':'ðŸ‡¦ðŸ‡¹','Jordanien':'ðŸ‡¯ðŸ‡´',
+  'Portugal':'ðŸ‡µðŸ‡¹','DR Kongo':'ðŸ‡¨ðŸ‡©','Usbekistan':'ðŸ‡ºðŸ‡¿','Kolumbien':'ðŸ‡¨ðŸ‡´',
+  'England':'ðŸ´ó §ó ¢ó ¥ó ®ó §ó ¿','Kroatien':'ðŸ‡­ðŸ‡·','Ghana':'ðŸ‡¬ðŸ‡­','Panama':'ðŸ‡µðŸ‡¦',
 };
-const F=t=>FL[t]||'🏳️';
+const F=t=>FL[t]||'ðŸ³ï¸';
 
 const GROUPS=[
-  {l:'A',teams:['Mexiko','Südafrika','Südkorea','Tschechien'],matches:[['Mexiko','Südafrika','11. Juni','21:00 · Mexiko-Stadt'],['Südkorea','Tschechien','12. Juni','04:00 · Guadalajara'],['Tschechien','Südafrika','18. Juni','18:00 · Atlanta'],['Mexiko','Südkorea','19. Juni','03:00 · Guadalajara'],['Tschechien','Mexiko','25. Juni','03:00 · Mexiko-Stadt'],['Südafrika','Südkorea','25. Juni','03:00 · Monterrey']]},
-  {l:'B',teams:['Kanada','Bosnien & H.','Katar','Schweiz'],matches:[['Kanada','Bosnien & H.','12. Juni','21:00 · Toronto'],['Katar','Schweiz','13. Juni','21:00 · San Francisco'],['Schweiz','Bosnien & H.','18. Juni','21:00 · Los Angeles'],['Kanada','Katar','19. Juni','00:00 · Vancouver'],['Schweiz','Kanada','24. Juni','21:00 · Vancouver'],['Bosnien & H.','Katar','24. Juni','21:00 · Seattle']]},
-  {l:'C',teams:['Brasilien','Marokko','Haïti','Schottland'],matches:[['Brasilien','Marokko','14. Juni','00:00 · New York/NJ'],['Haïti','Schottland','14. Juni','03:00 · Boston'],['Schottland','Marokko','20. Juni','00:00 · Boston'],['Brasilien','Haïti','20. Juni','02:30 · Philadelphia'],['Schottland','Brasilien','25. Juni','00:00 · Miami'],['Marokko','Haïti','25. Juni','00:00 · Atlanta']]},
-  {l:'D',teams:['USA','Paraguay','Australien','Türkei'],matches:[['USA','Paraguay','13. Juni','03:00 · Los Angeles'],['Australien','Türkei','14. Juni','06:00 · Vancouver'],['Türkei','Paraguay','20. Juni','05:00 · San Francisco'],['USA','Australien','19. Juni','21:00 · Seattle'],['Türkei','USA','26. Juni','04:00 · Los Angeles'],['Paraguay','Australien','26. Juni','04:00 · San Francisco']]},
-  {l:'E',teams:['Deutschland','Curaçao','Elfenbeinküste','Ecuador'],matches:[['Deutschland','Curaçao','14. Juni','19:00 · Houston'],['Elfenbeinküste','Ecuador','15. Juni','01:00 · Philadelphia'],['Deutschland','Elfenbeinküste','20. Juni','22:00 · Toronto'],['Ecuador','Curaçao','21. Juni','02:00 · Kansas City'],['Ecuador','Deutschland','25. Juni','22:00 · New York/NJ'],['Curaçao','Elfenbeinküste','25. Juni','22:00 · Philadelphia']]},
-  {l:'F',teams:['Niederlande','Japan','Schweden','Tunesien'],matches:[['Niederlande','Japan','14. Juni','22:00 · Dallas'],['Schweden','Tunesien','15. Juni','04:00 · Monterrey'],['Tunesien','Japan','21. Juni','06:00 · Monterrey'],['Niederlande','Schweden','20. Juni','19:00 · Houston'],['Japan','Schweden','26. Juni','01:00 · Dallas'],['Tunesien','Niederlande','26. Juni','01:00 · Kansas City']]},
-  {l:'G',teams:['Belgien','Ägypten','Iran','Neuseeland'],matches:[['Belgien','Ägypten','15. Juni','21:00 · Seattle'],['Iran','Neuseeland','16. Juni','03:00 · Los Angeles'],['Belgien','Iran','21. Juni','21:00 · Los Angeles'],['Neuseeland','Ägypten','22. Juni','03:00 · Vancouver'],['Ägypten','Iran','27. Juni','05:00 · Seattle'],['Neuseeland','Belgien','27. Juni','05:00 · Vancouver']]},
-  {l:'H',teams:['Spanien','Kaapverdië','Saudi-Arabien','Uruguay'],matches:[['Spanien','Kaapverdië','15. Juni','18:00 · Atlanta'],['Saudi-Arabien','Uruguay','16. Juni','00:00 · Miami'],['Spanien','Saudi-Arabien','21. Juni','18:00 · Atlanta'],['Uruguay','Kaapverdië','22. Juni','00:00 · Miami'],['Kaapverdië','Saudi-Arabien','27. Juni','02:00 · Houston'],['Uruguay','Spanien','27. Juni','02:00 · Guadalajara']]},
-  {l:'I',teams:['Frankreich','Senegal','Irak','Norwegen'],matches:[['Frankreich','Senegal','16. Juni','21:00 · New York/NJ'],['Irak','Norwegen','17. Juni','00:00 · Boston'],['Frankreich','Irak','22. Juni','23:00 · Philadelphia'],['Norwegen','Senegal','23. Juni','02:00 · New York/NJ'],['Norwegen','Frankreich','26. Juni','21:00 · Boston'],['Senegal','Irak','26. Juni','21:00 · Toronto']]},
-  {l:'J',teams:['Argentinien','Algerien','Österreich','Jordanien'],matches:[['Österreich','Jordanien','17. Juni','06:00 · San Francisco'],['Argentinien','Algerien','17. Juni','03:00 · Kansas City'],['Argentinien','Österreich','22. Juni','19:00 · Dallas'],['Jordanien','Algerien','23. Juni','05:00 · San Francisco'],['Algerien','Österreich','28. Juni','04:00 · Kansas City'],['Jordanien','Argentinien','28. Juni','04:00 · Dallas']]},
-  {l:'K',teams:['Portugal','DR Kongo','Usbekistan','Kolumbien'],matches:[['Portugal','DR Kongo','17. Juni','19:00 · Houston'],['Usbekistan','Kolumbien','18. Juni','04:00 · Mexiko-Stadt'],['Portugal','Usbekistan','23. Juni','19:00 · Houston'],['Kolumbien','DR Kongo','24. Juni','04:00 · Guadalajara'],['Kolumbien','Portugal','28. Juni','01:30 · Miami'],['DR Kongo','Usbekistan','28. Juni','01:30 · Atlanta']]},
-  {l:'L',teams:['England','Kroatien','Ghana','Panama'],matches:[['England','Kroatien','17. Juni','22:00 · Dallas'],['Ghana','Panama','18. Juni','01:00 · Toronto'],['England','Ghana','23. Juni','22:00 · Boston'],['Panama','Kroatien','24. Juni','01:00 · Toronto'],['Panama','England','27. Juni','23:00 · New York/NJ'],['Kroatien','Ghana','27. Juni','23:00 · Philadelphia']]},
+  {l:'A',teams:['Mexiko','SÃ¼dafrika','SÃ¼dkorea','Tschechien'],matches:[['Mexiko','SÃ¼dafrika','11. Juni','21:00 Â· Mexiko-Stadt'],['SÃ¼dkorea','Tschechien','12. Juni','04:00 Â· Guadalajara'],['Tschechien','SÃ¼dafrika','18. Juni','18:00 Â· Atlanta'],['Mexiko','SÃ¼dkorea','19. Juni','03:00 Â· Guadalajara'],['Tschechien','Mexiko','25. Juni','03:00 Â· Mexiko-Stadt'],['SÃ¼dafrika','SÃ¼dkorea','25. Juni','03:00 Â· Monterrey']]},
+  {l:'B',teams:['Kanada','Bosnien & H.','Katar','Schweiz'],matches:[['Kanada','Bosnien & H.','12. Juni','21:00 Â· Toronto'],['Katar','Schweiz','13. Juni','21:00 Â· San Francisco'],['Schweiz','Bosnien & H.','18. Juni','21:00 Â· Los Angeles'],['Kanada','Katar','19. Juni','00:00 Â· Vancouver'],['Schweiz','Kanada','24. Juni','21:00 Â· Vancouver'],['Bosnien & H.','Katar','24. Juni','21:00 Â· Seattle']]},
+  {l:'C',teams:['Brasilien','Marokko','HaÃ¯ti','Schottland'],matches:[['Brasilien','Marokko','14. Juni','00:00 Â· New York/NJ'],['HaÃ¯ti','Schottland','14. Juni','03:00 Â· Boston'],['Schottland','Marokko','20. Juni','00:00 Â· Boston'],['Brasilien','HaÃ¯ti','20. Juni','02:30 Â· Philadelphia'],['Schottland','Brasilien','25. Juni','00:00 Â· Miami'],['Marokko','HaÃ¯ti','25. Juni','00:00 Â· Atlanta']]},
+  {l:'D',teams:['USA','Paraguay','Australien','TÃ¼rkei'],matches:[['USA','Paraguay','13. Juni','03:00 Â· Los Angeles'],['Australien','TÃ¼rkei','14. Juni','06:00 Â· Vancouver'],['TÃ¼rkei','Paraguay','20. Juni','05:00 Â· San Francisco'],['USA','Australien','19. Juni','21:00 Â· Seattle'],['TÃ¼rkei','USA','26. Juni','04:00 Â· Los Angeles'],['Paraguay','Australien','26. Juni','04:00 Â· San Francisco']]},
+  {l:'E',teams:['Deutschland','CuraÃ§ao','ElfenbeinkÃ¼ste','Ecuador'],matches:[['Deutschland','CuraÃ§ao','14. Juni','19:00 Â· Houston'],['ElfenbeinkÃ¼ste','Ecuador','15. Juni','01:00 Â· Philadelphia'],['Deutschland','ElfenbeinkÃ¼ste','20. Juni','22:00 Â· Toronto'],['Ecuador','CuraÃ§ao','21. Juni','02:00 Â· Kansas City'],['Ecuador','Deutschland','25. Juni','22:00 Â· New York/NJ'],['CuraÃ§ao','ElfenbeinkÃ¼ste','25. Juni','22:00 Â· Philadelphia']]},
+  {l:'F',teams:['Niederlande','Japan','Schweden','Tunesien'],matches:[['Niederlande','Japan','14. Juni','22:00 Â· Dallas'],['Schweden','Tunesien','15. Juni','04:00 Â· Monterrey'],['Tunesien','Japan','21. Juni','06:00 Â· Monterrey'],['Niederlande','Schweden','20. Juni','19:00 Â· Houston'],['Japan','Schweden','26. Juni','01:00 Â· Dallas'],['Tunesien','Niederlande','26. Juni','01:00 Â· Kansas City']]},
+  {l:'G',teams:['Belgien','Ã„gypten','Iran','Neuseeland'],matches:[['Belgien','Ã„gypten','15. Juni','21:00 Â· Seattle'],['Iran','Neuseeland','16. Juni','03:00 Â· Los Angeles'],['Belgien','Iran','21. Juni','21:00 Â· Los Angeles'],['Neuseeland','Ã„gypten','22. Juni','03:00 Â· Vancouver'],['Ã„gypten','Iran','27. Juni','05:00 Â· Seattle'],['Neuseeland','Belgien','27. Juni','05:00 Â· Vancouver']]},
+  {l:'H',teams:['Spanien','KaapverdiÃ«','Saudi-Arabien','Uruguay'],matches:[['Spanien','KaapverdiÃ«','15. Juni','18:00 Â· Atlanta'],['Saudi-Arabien','Uruguay','16. Juni','00:00 Â· Miami'],['Spanien','Saudi-Arabien','21. Juni','18:00 Â· Atlanta'],['Uruguay','KaapverdiÃ«','22. Juni','00:00 Â· Miami'],['KaapverdiÃ«','Saudi-Arabien','27. Juni','02:00 Â· Houston'],['Uruguay','Spanien','27. Juni','02:00 Â· Guadalajara']]},
+  {l:'I',teams:['Frankreich','Senegal','Irak','Norwegen'],matches:[['Frankreich','Senegal','16. Juni','21:00 Â· New York/NJ'],['Irak','Norwegen','17. Juni','00:00 Â· Boston'],['Frankreich','Irak','22. Juni','23:00 Â· Philadelphia'],['Norwegen','Senegal','23. Juni','02:00 Â· New York/NJ'],['Norwegen','Frankreich','26. Juni','21:00 Â· Boston'],['Senegal','Irak','26. Juni','21:00 Â· Toronto']]},
+  {l:'J',teams:['Argentinien','Algerien','Ã–sterreich','Jordanien'],matches:[['Ã–sterreich','Jordanien','17. Juni','06:00 Â· San Francisco'],['Argentinien','Algerien','17. Juni','03:00 Â· Kansas City'],['Argentinien','Ã–sterreich','22. Juni','19:00 Â· Dallas'],['Jordanien','Algerien','23. Juni','05:00 Â· San Francisco'],['Algerien','Ã–sterreich','28. Juni','04:00 Â· Kansas City'],['Jordanien','Argentinien','28. Juni','04:00 Â· Dallas']]},
+  {l:'K',teams:['Portugal','DR Kongo','Usbekistan','Kolumbien'],matches:[['Portugal','DR Kongo','17. Juni','19:00 Â· Houston'],['Usbekistan','Kolumbien','18. Juni','04:00 Â· Mexiko-Stadt'],['Portugal','Usbekistan','23. Juni','19:00 Â· Houston'],['Kolumbien','DR Kongo','24. Juni','04:00 Â· Guadalajara'],['Kolumbien','Portugal','28. Juni','01:30 Â· Miami'],['DR Kongo','Usbekistan','28. Juni','01:30 Â· Atlanta']]},
+  {l:'L',teams:['England','Kroatien','Ghana','Panama'],matches:[['England','Kroatien','17. Juni','22:00 Â· Dallas'],['Ghana','Panama','18. Juni','01:00 Â· Toronto'],['England','Ghana','23. Juni','22:00 Â· Boston'],['Panama','Kroatien','24. Juni','01:00 Â· Toronto'],['Panama','England','27. Juni','23:00 Â· New York/NJ'],['Kroatien','Ghana','27. Juni','23:00 Â· Philadelphia']]},
 ];
 
 const KO=[
   {name:'Letzte 32',matches:[
-    {key:'r0_0',lbl:'#73',date:'28. Juni 21:00 · Los Angeles',t1:'2. Gruppe A',t2:'2. Gruppe B'},
-    {key:'r0_1',lbl:'#76',date:'29. Juni 19:00 · Houston',t1:'1. Gruppe C',t2:'2. Gruppe F'},
-    {key:'r0_2',lbl:'#74',date:'29. Juni 22:30 · Boston',t1:'1. Gruppe E',t2:'Bester Dritter'},
-    {key:'r0_3',lbl:'#75',date:'30. Juni 03:00 · Monterrey',t1:'1. Gruppe F',t2:'2. Gruppe C'},
-    {key:'r0_4',lbl:'#78',date:'30. Juni 19:00 · Dallas',t1:'2. Gruppe E',t2:'2. Gruppe I'},
-    {key:'r0_5',lbl:'#77',date:'30. Juni 23:00 · New York/NJ',t1:'1. Gruppe I',t2:'Bester Dritter'},
-    {key:'r0_6',lbl:'#79',date:'01. Juli 03:00 · Mexiko-Stadt',t1:'1. Gruppe A',t2:'Bester Dritter'},
-    {key:'r0_7',lbl:'#80',date:'01. Juli 18:00 · Atlanta',t1:'1. Gruppe L',t2:'Bester Dritter'},
-    {key:'r0_8',lbl:'#82',date:'01. Juli 22:00 · San Francisco',t1:'1. Gruppe G',t2:'Bester Dritter'},
-    {key:'r0_9',lbl:'#81',date:'02. Juli 02:00 · Seattle',t1:'1. Gruppe D',t2:'Bester Dritter'},
-    {key:'r0_10',lbl:'#84',date:'02. Juli 21:00 · Los Angeles',t1:'1. Gruppe H',t2:'2. Gruppe J'},
-    {key:'r0_11',lbl:'#83',date:'03. Juli 01:00 · Toronto',t1:'2. Gruppe K',t2:'2. Gruppe L'},
-    {key:'r0_12',lbl:'#85',date:'03. Juli 05:00 · Vancouver',t1:'1. Gruppe B',t2:'Bester Dritter'},
-    {key:'r0_13',lbl:'#88',date:'03. Juli 20:00 · Dallas',t1:'2. Gruppe D',t2:'2. Gruppe G'},
-    {key:'r0_14',lbl:'#86',date:'04. Juli 00:00 · Miami',t1:'1. Gruppe J',t2:'2. Gruppe H'},
-    {key:'r0_15',lbl:'#87',date:'04. Juli 03:30 · Kansas City',t1:'1. Gruppe K',t2:'Bester Dritter'},
+    {key:'r0_0',lbl:'#73',date:'28. Juni 21:00 Â· Los Angeles',t1:'2. Gruppe A',t2:'2. Gruppe B'},
+    {key:'r0_1',lbl:'#76',date:'29. Juni 19:00 Â· Houston',t1:'1. Gruppe C',t2:'2. Gruppe F'},
+    {key:'r0_2',lbl:'#74',date:'29. Juni 22:30 Â· Boston',t1:'1. Gruppe E',t2:'Bester Dritter'},
+    {key:'r0_3',lbl:'#75',date:'30. Juni 03:00 Â· Monterrey',t1:'1. Gruppe F',t2:'2. Gruppe C'},
+    {key:'r0_4',lbl:'#78',date:'30. Juni 19:00 Â· Dallas',t1:'2. Gruppe E',t2:'2. Gruppe I'},
+    {key:'r0_5',lbl:'#77',date:'30. Juni 23:00 Â· New York/NJ',t1:'1. Gruppe I',t2:'Bester Dritter'},
+    {key:'r0_6',lbl:'#79',date:'01. Juli 03:00 Â· Mexiko-Stadt',t1:'1. Gruppe A',t2:'Bester Dritter'},
+    {key:'r0_7',lbl:'#80',date:'01. Juli 18:00 Â· Atlanta',t1:'1. Gruppe L',t2:'Bester Dritter'},
+    {key:'r0_8',lbl:'#82',date:'01. Juli 22:00 Â· San Francisco',t1:'1. Gruppe G',t2:'Bester Dritter'},
+    {key:'r0_9',lbl:'#81',date:'02. Juli 02:00 Â· Seattle',t1:'1. Gruppe D',t2:'Bester Dritter'},
+    {key:'r0_10',lbl:'#84',date:'02. Juli 21:00 Â· Los Angeles',t1:'1. Gruppe H',t2:'2. Gruppe J'},
+    {key:'r0_11',lbl:'#83',date:'03. Juli 01:00 Â· Toronto',t1:'2. Gruppe K',t2:'2. Gruppe L'},
+    {key:'r0_12',lbl:'#85',date:'03. Juli 05:00 Â· Vancouver',t1:'1. Gruppe B',t2:'Bester Dritter'},
+    {key:'r0_13',lbl:'#88',date:'03. Juli 20:00 Â· Dallas',t1:'2. Gruppe D',t2:'2. Gruppe G'},
+    {key:'r0_14',lbl:'#86',date:'04. Juli 00:00 Â· Miami',t1:'1. Gruppe J',t2:'2. Gruppe H'},
+    {key:'r0_15',lbl:'#87',date:'04. Juli 03:30 Â· Kansas City',t1:'1. Gruppe K',t2:'Bester Dritter'},
   ]},
   {name:'Letzte 16',matches:[
-    {key:'r1_0',lbl:'#90',date:'04. Juli 19:00 · Houston',t1:'Sieger #73',t2:'Sieger #75'},
-    {key:'r1_1',lbl:'#89',date:'04. Juli 23:00 · Philadelphia',t1:'Sieger #74',t2:'Sieger #77'},
-    {key:'r1_2',lbl:'#91',date:'05. Juli 22:00 · New York/NJ',t1:'Sieger #76',t2:'Sieger #78'},
-    {key:'r1_3',lbl:'#92',date:'06. Juli 02:00 · Mexiko-Stadt',t1:'Sieger #79',t2:'Sieger #80'},
-    {key:'r1_4',lbl:'#93',date:'06. Juli 21:00 · Dallas',t1:'Sieger #83',t2:'Sieger #84'},
-    {key:'r1_5',lbl:'#94',date:'07. Juli 02:00 · Seattle',t1:'Sieger #81',t2:'Sieger #82'},
-    {key:'r1_6',lbl:'#95',date:'07. Juli 18:00 · Atlanta',t1:'Sieger #86',t2:'Sieger #88'},
-    {key:'r1_7',lbl:'#96',date:'07. Juli 22:00 · Vancouver',t1:'Sieger #85',t2:'Sieger #87'},
+    {key:'r1_0',lbl:'#90',date:'04. Juli 19:00 Â· Houston',t1:'Sieger #73',t2:'Sieger #75'},
+    {key:'r1_1',lbl:'#89',date:'04. Juli 23:00 Â· Philadelphia',t1:'Sieger #74',t2:'Sieger #77'},
+    {key:'r1_2',lbl:'#91',date:'05. Juli 22:00 Â· New York/NJ',t1:'Sieger #76',t2:'Sieger #78'},
+    {key:'r1_3',lbl:'#92',date:'06. Juli 02:00 Â· Mexiko-Stadt',t1:'Sieger #79',t2:'Sieger #80'},
+    {key:'r1_4',lbl:'#93',date:'06. Juli 21:00 Â· Dallas',t1:'Sieger #83',t2:'Sieger #84'},
+    {key:'r1_5',lbl:'#94',date:'07. Juli 02:00 Â· Seattle',t1:'Sieger #81',t2:'Sieger #82'},
+    {key:'r1_6',lbl:'#95',date:'07. Juli 18:00 Â· Atlanta',t1:'Sieger #86',t2:'Sieger #88'},
+    {key:'r1_7',lbl:'#96',date:'07. Juli 22:00 Â· Vancouver',t1:'Sieger #85',t2:'Sieger #87'},
   ]},
   {name:'Viertelfinale',matches:[
-    {key:'r2_0',lbl:'#97',date:'09. Juli 22:00 · Boston',t1:'Sieger #89',t2:'Sieger #90'},
-    {key:'r2_1',lbl:'#98',date:'10. Juli 21:00 · Los Angeles',t1:'Sieger #93',t2:'Sieger #94'},
-    {key:'r2_2',lbl:'#99',date:'11. Juli 23:00 · Miami',t1:'Sieger #91',t2:'Sieger #92'},
-    {key:'r2_3',lbl:'#100',date:'12. Juli 03:00 · Kansas City',t1:'Sieger #95',t2:'Sieger #96'},
+    {key:'r2_0',lbl:'#97',date:'09. Juli 22:00 Â· Boston',t1:'Sieger #89',t2:'Sieger #90'},
+    {key:'r2_1',lbl:'#98',date:'10. Juli 21:00 Â· Los Angeles',t1:'Sieger #93',t2:'Sieger #94'},
+    {key:'r2_2',lbl:'#99',date:'11. Juli 23:00 Â· Miami',t1:'Sieger #91',t2:'Sieger #92'},
+    {key:'r2_3',lbl:'#100',date:'12. Juli 03:00 Â· Kansas City',t1:'Sieger #95',t2:'Sieger #96'},
   ]},
   {name:'Halbfinale',matches:[
-    {key:'r3_0',lbl:'#101',date:'14. Juli 21:00 · Dallas',t1:'Sieger #97',t2:'Sieger #98'},
-    {key:'r3_1',lbl:'#102',date:'15. Juli 21:00 · Atlanta',t1:'Sieger #99',t2:'Sieger #100'},
+    {key:'r3_0',lbl:'#101',date:'14. Juli 21:00 Â· Dallas',t1:'Sieger #97',t2:'Sieger #98'},
+    {key:'r3_1',lbl:'#102',date:'15. Juli 21:00 Â· Atlanta',t1:'Sieger #99',t2:'Sieger #100'},
   ]},
   {name:'Spiel um Platz 3',matches:[
-    {key:'r4_0',lbl:'#103',date:'18. Juli 23:00 · Miami',t1:'Verlierer #101',t2:'Verlierer #102'},
+    {key:'r4_0',lbl:'#103',date:'18. Juli 23:00 Â· Miami',t1:'Verlierer #101',t2:'Verlierer #102'},
   ]},
-  {name:'🏆 WM-Finale',matches:[
-    {key:'finale',lbl:'#104',date:'19. Juli 21:00 · New York/NJ',t1:'Sieger #101',t2:'Sieger #102'},
+  {name:'ðŸ† WM-Finale',matches:[
+    {key:'finale',lbl:'#104',date:'19. Juli 21:00 Â· New York/NJ',t1:'Sieger #101',t2:'Sieger #102'},
   ]},
 ];
 
@@ -759,7 +759,7 @@ function chkApp(){
 async function chkAdmin(){
   const v=document.getElementById('adminPwIn').value;
   const btn=document.getElementById('adminPwBtn');
-  btn.textContent='Prüfe…';btn.disabled=true;
+  btn.textContent='PrÃ¼feâ€¦';btn.disabled=true;
   try{
     const r=await edge('admin-data',{action:'get_stats',password:v});
     if(r&&!r.error){ADM_PW=v;document.getElementById('adminPwErr').style.display='none';showS('sAdmin');loadAdminData();}
@@ -784,7 +784,7 @@ function togAuth(r, skipNotice=false){
 // LIVE RESULTS
 async function saveTipps(){
   if(!CU)return;
-  if(FROZEN){toast('🔒 Tippspiel ist gesperrt!','error');throw new Error('frozen');}
+  if(FROZEN){toast('ðŸ”’ Tippspiel ist gesperrt!','error');throw new Error('frozen');}
   const now=Date.now();
 
   // Groepsfase: upsert per wedstrijd zodat locked tips niet worden gewist
@@ -796,7 +796,7 @@ async function saveTipps(){
       if(!sv||sv.s1===''||sv.s1===null) continue;
       // Controleer aftraptijd
       const dp=m[2].trim().split('.');
-      const tsParts=m[3].split('·')[0].trim().split(':').map(Number);
+      const tsParts=m[3].split('Â·')[0].trim().split(':').map(Number);
       const mu=new Date(Date.UTC(2026,5,parseInt(dp[0]),tsParts[0]-2,tsParts[1]||0));
       if(now>=mu) continue; // Wedstrijd al begonnen - overslaan maar NIET verwijderen
       try{
@@ -816,7 +816,7 @@ async function saveTipps(){
       if(res&&(res.status==='IN_PLAY'||res.status==='FINISHED')) continue;
       // Controleer aftraptijd via datum string
       try{
-        const dp2=m.date.split('·')[0].trim().split(' ');
+        const dp2=m.date.split('Â·')[0].trim().split(' ');
         const day=parseInt(dp2[0]);
         const mon=dp2[1].includes('Juni')?5:6;
         const koTs=dp2[2]?.split(':').map(Number)||[0,0];
@@ -840,10 +840,10 @@ async function doReg(){
     n=document.getElementById('rgN').value.trim(),e=document.getElementById('rgE').value.trim();
   const err=document.getElementById('rgErr'),btn=document.getElementById('rgBtn');
   err.style.display='none';
-  if(!u||!pw||!n||!e){err.textContent='❌ Bitte alle Felder ausfüllen!';err.style.display='block';return;}
-  if(pw.length<6){err.textContent='❌ Passwort min. 6 Zeichen!';err.style.display='block';return;}
-  if(!/\S+@\S+\.\S+/.test(e)){err.textContent='❌ Ungültige E-Mail!';err.style.display='block';return;}
-  btn.textContent='Wird erstellt…';btn.disabled=true;
+  if(!u||!pw||!n||!e){err.textContent='âŒ Bitte alle Felder ausfÃ¼llen!';err.style.display='block';return;}
+  if(pw.length<6){err.textContent='âŒ Passwort min. 6 Zeichen!';err.style.display='block';return;}
+  if(!/\S+@\S+\.\S+/.test(e)){err.textContent='âŒ UngÃ¼ltige E-Mail!';err.style.display='block';return;}
+  btn.textContent='Wird erstelltâ€¦';btn.disabled=true;
   try{
     const h=await hashPw(pw);
     const r=await sb('users','POST',{username:u,password_hash:h,real_name:n,email:e});
@@ -852,7 +852,7 @@ async function doReg(){
     localStorage.setItem('welcomed_'+CU.id,'false');
     await afterLogin(true);
   }catch(ex){
-    err.textContent=ex.message.includes('unique')||ex.message.includes('duplicate')?'❌ Benutzername oder E-Mail bereits vergeben!':'❌ Fehler: '+ex.message;
+    err.textContent=ex.message.includes('unique')||ex.message.includes('duplicate')?'âŒ Benutzername oder E-Mail bereits vergeben!':'âŒ Fehler: '+ex.message;
     err.style.display='block';btn.textContent='Konto erstellen';btn.disabled=false;
   }
 }
@@ -873,7 +873,7 @@ async function doLogin(){
 async function afterLogin(welcome=false){
   try{const s=localStorage.getItem('draft_'+CU?.id);if(s)DR=JSON.parse(s);}catch{}
   await chkFrozen();await loadLR();await loadMyData();
-  document.getElementById('hUser').textContent='👤 '+CU.username;
+  document.getElementById('hUser').textContent='ðŸ‘¤ '+CU.username;
   if(welcome){showS('sWelcome');}
   else{showS('sApp');buildGroups();buildKO();loadSQ();setTimeout(showWKWinner,800);}
   startCD();
@@ -888,8 +888,8 @@ function doLogout(){CU=null;DR={};showS('sAuth');togAuth(false);}
 async function doReset(){
   const e=document.getElementById('resetEmail').value.trim();
   const btn=document.getElementById('resetBtn'),err=document.getElementById('resetErr'),ok=document.getElementById('resetOk');
-  if(!e){err.textContent='❌ Bitte E-Mail eingeben';err.style.display='block';return;}
-  btn.textContent='Wird gesendet…';btn.disabled=true;
+  if(!e){err.textContent='âŒ Bitte E-Mail eingeben';err.style.display='block';return;}
+  btn.textContent='Wird gesendetâ€¦';btn.disabled=true;
   await edge('send-mail',{type:'password_reset',email:e}).catch(()=>{});
   ok.style.display='block';err.style.display='none';
   btn.textContent='Link senden';btn.disabled=false;
@@ -897,14 +897,14 @@ async function doReset(){
 async function doNewPw(){
   const p1=document.getElementById('newPwIn').value,p2=document.getElementById('newPwIn2').value;
   const err=document.getElementById('newPwErr'),btn=document.getElementById('newPwBtn');
-  if(p1.length<6){err.textContent='❌ Min. 6 Zeichen!';err.style.display='block';return;}
-  if(p1!==p2){err.textContent='❌ Passwörter stimmen nicht überein!';err.style.display='block';return;}
-  btn.textContent='Wird gespeichert…';btn.disabled=true;
+  if(p1.length<6){err.textContent='âŒ Min. 6 Zeichen!';err.style.display='block';return;}
+  if(p1!==p2){err.textContent='âŒ PasswÃ¶rter stimmen nicht Ã¼berein!';err.style.display='block';return;}
+  btn.textContent='Wird gespeichertâ€¦';btn.disabled=true;
   try{
     const r=await edge('admin-data',{action:'reset_password',password:'__public__',token:RESET_TOKEN,newPassword:p1});
-    if(r.ok){toast('✅ Passwort gespeichert! Bitte einloggen.','success');setTimeout(()=>showS('sAuth'),2000);}
-    else{err.textContent='❌ '+(r.error||'Fehler');err.style.display='block';}
-  }catch(ex){err.textContent='❌ '+ex.message;err.style.display='block';}
+    if(r.ok){toast('âœ… Passwort gespeichert! Bitte einloggen.','success');setTimeout(()=>showS('sAuth'),2000);}
+    else{err.textContent='âŒ '+(r.error||'Fehler');err.style.display='block';}
+  }catch(ex){err.textContent='âŒ '+ex.message;err.style.display='block';}
   btn.textContent='Passwort speichern';btn.disabled=false;
 }
 
@@ -928,18 +928,18 @@ async function chkFrozen(){
   }catch{}
 }
 
-// COUNTDOWN — altijd naar volgende wedstrijd
+// COUNTDOWN â€” altijd naar volgende wedstrijd
 function getAllMatches(){
   const all=[];
   GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
     const dp=m[2].trim().split('.');
-    const ts=m[3].split('·')[0].trim().split(':').map(Number);
+    const ts=m[3].split('Â·')[0].trim().split(':').map(Number);
     const utc=new Date(Date.UTC(2026,5,parseInt(dp[0]),ts[0]-2,ts[1]||0));
     all.push({key:`${g.l}_${i}`,t1:m[0],t2:m[1],date:m[2],time:m[3],utc});
   }));
   KO.forEach(r=>r.matches.forEach(m=>{
     // KO tijden zijn al in het data object
-    const parts=m.date.split('·')[0].trim().split(' ');
+    const parts=m.date.split('Â·')[0].trim().split(' ');
     const day=parseInt(parts[0]);
     const month=parts[1]==='Juni'?5:6; // Juli=6
     const ts=parts[2]?.split(':').map(Number)||[0,0];
@@ -971,12 +971,12 @@ function startCD(){
     // Live score van lopende wedstrijd
     const liveRes=live?LR[live.key]:null;
     const liveScore=liveRes&&liveRes.status==='IN_PLAY'
-      ?` <span style="color:var(--red);font-weight:700;animation:pu 1s infinite;display:inline-block;">● LIVE</span> ${F(liveRes.team1||live.t1)} ${liveRes.team1||live.t1} <span style="font-family:'Cinzel',serif;color:var(--gold2)">${liveRes.score1??'–'}:${liveRes.score2??'–'}</span> ${liveRes.team2||live.t2} ${F(liveRes.team2||live.t2)}`
-      :live?` <span style="color:var(--gold2);">⚽ ${F(live.t1)} ${live.t1} – ${F(live.t2)} ${live.t2}</span>`
+      ?` <span style="color:var(--red);font-weight:700;animation:pu 1s infinite;display:inline-block;">â— LIVE</span> ${F(liveRes.team1||live.t1)} ${liveRes.team1||live.t1} <span style="font-family:'Cinzel',serif;color:var(--gold2)">${liveRes.score1??'â€“'}:${liveRes.score2??'â€“'}</span> ${liveRes.team2||live.t2} ${F(liveRes.team2||live.t2)}`
+      :live?` <span style="color:var(--gold2);">âš½ ${F(live.t1)} ${live.t1} â€“ ${F(live.t2)} ${live.t2}</span>`
       :'';
 
     if(!next&&!live){
-      bar.innerHTML='🏆 Das WK 2026 ist beendet!';
+      bar.innerHTML='ðŸ† Das WK 2026 ist beendet!';
       bar.className='cd frozen';
       return;
     }
@@ -985,7 +985,7 @@ function startCD(){
       const d=next.utc-now;
       const days=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m2=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);
       const timeStr=days>0?`${days}T ${h}h ${m2}m ${s}s`:`${h}h ${m2}m ${s}s`;
-      bar.innerHTML=`⏰ <strong>${timeStr}</strong> bis: ${F(next.t1)} ${next.t1} – ${F(next.t2)} ${next.t2}${liveScore?` &nbsp;|&nbsp; ${liveScore}`:''}`;
+      bar.innerHTML=`â° <strong>${timeStr}</strong> bis: ${F(next.t1)} ${next.t1} â€“ ${F(next.t2)} ${next.t2}${liveScore?` &nbsp;|&nbsp; ${liveScore}`:''}`;
       bar.className='cd'+(liveScore?' frozen':'');
     } else if(live){
       bar.innerHTML=liveScore;
@@ -1030,9 +1030,9 @@ function buildGroups(){
     c.innerHTML=`<div class="gch" onclick="togGc('${g.l}')">
       <div class="gcl">${g.l}</div><div class="gci">
       <div class="gclab">Gruppe ${g.l}</div>
-      <div class="gct">${g.teams.map(t=>F(t)+' '+t).join(' · ')}</div>
-      <div class="gcs">✓ Vollständig ausgefüllt</div></div>
-      <div class="gca">▾</div></div>
+      <div class="gct">${g.teams.map(t=>F(t)+' '+t).join(' Â· ')}</div>
+      <div class="gcs">âœ“ VollstÃ¤ndig ausgefÃ¼llt</div></div>
+      <div class="gca">â–¾</div></div>
       <div class="gcb" id="gcb_${g.l}"></div>`;
     lst.appendChild(c);
     const body=document.getElementById('gcb_'+g.l);
@@ -1040,7 +1040,7 @@ function buildGroups(){
       const key=`${g.l}_${i}`,sv=DR[key]||{s1:'',s2:''};
       const res=LR[key];
       const dp=m[2].trim().split('.');
-      const ts=m[3].split('·')[0].trim().split(':').map(Number);
+      const ts=m[3].split('Â·')[0].trim().split(':').map(Number);
       const mu=new Date(Date.UTC(2026,5,parseInt(dp[0]),ts[0]-2,ts[1]||0));
       const lk=FROZEN||Date.now()>=mu;
       const live=res?.status==='IN_PLAY',fin=res?.status==='FINISHED';
@@ -1052,16 +1052,16 @@ function buildGroups(){
             value="${fin?res.score1:(sv.s1!==''&&sv.s1!==null?sv.s1:'')}" placeholder="0"
             ${lk?'readonly':''}
             oninput="DR['${key}']=DR['${key}']||{};DR['${key}'].s1=this.value;chkFl('${g.l}')"/>
-          <span class="sep">–</span>
+          <span class="sep">â€“</span>
           <input type="number" class="sc" min="0" max="20" inputmode="numeric"
             value="${fin?res.score2:(sv.s2!==''&&sv.s2!==null?sv.s2:'')}" placeholder="0"
             ${lk?'readonly':''}
             oninput="DR['${key}']=DR['${key}']||{};DR['${key}'].s2=this.value;chkFl('${g.l}')"/>
         </div>
         <div class="tn r">${F(m[1])} ${m[1]}</div>
-        <div class="mrd">${m[2]} · ${m[3]}${live?'<span class="lb">LIVE</span>':''}${fin?' ✅':''}</div>
+        <div class="mrd">${m[2]} Â· ${m[3]}${live?'<span class="lb">LIVE</span>':''}${fin?' âœ…':''}</div>
         ${lk?`<div style="grid-column:1/-1;">
-          <button class="reveal-btn" onclick="toggleReveal('${key}','${m[0]}','${m[1]}')">👁️ Alle Tipps anzeigen</button>
+          <button class="reveal-btn" onclick="toggleReveal('${key}','${m[0]}','${m[1]}')">ðŸ‘ï¸ Alle Tipps anzeigen</button>
           <div class="reveal-panel" id="${revealId}"><div class="ld" style="padding:10px;"><div class="sp" style="width:20px;height:20px;border-width:2px;"></div></div></div>
         </div>`:''}`;
       body.appendChild(row);
@@ -1098,7 +1098,7 @@ function buildKO(){
       const mc=document.createElement('div');mc.className='km';
       if(!kn){
         mc.innerHTML=`<div class="kl2">Duel ${m.lbl}</div><div class="kd">${m.date}</div>
-          <div class="nvt">⏳ Noch nicht bekannt – wird automatisch eingetragen</div>
+          <div class="nvt">â³ Noch nicht bekannt â€“ wird automatisch eingetragen</div>
           <div style="margin-top:5px;font-size:10px;color:var(--muted);">${m.t1} vs ${m.t2}</div>`;
       }else{
         mc.innerHTML=`<div class="kl2">Duel ${m.lbl}</div><div class="kd">${m.date}</div>
@@ -1113,7 +1113,7 @@ function buildKO(){
               const _s1b=parseInt(DR['${m.key}'].s1||0),_s2b=parseInt(DR['${m.key}'].s2);
               if(!isNaN(_s1b)&&!isNaN(_s2b))DR['${m.key}'].winner=_s1b>_s2b?'${t1}':_s2b>_s1b?'${t2}':'DRAW';"/></div>
           <div class="wl" style="font-size:10px;color:var(--muted);margin-top:4px;">
-            ⏱️ Score na 120 min (inkl. Verlängerung)
+            â±ï¸ Score na 120 min (inkl. VerlÃ¤ngerung)
           </div>`;
       }
       grid.appendChild(mc);
@@ -1123,7 +1123,7 @@ function buildKO(){
 function updFS(){
   const t1=document.getElementById('sqFT1').value||'Finalist 1',t2=document.getElementById('sqFT2').value||'Finalist 2';
   const sel=document.getElementById('sqFW'),cur=sel.value;
-  sel.innerHTML=`<option value="">— Sieger wählen —</option><option value="${t1}" ${cur===t1?'selected':''}>${t1}</option><option value="${t2}" ${cur===t2?'selected':''}>${t2}</option>`;
+  sel.innerHTML=`<option value="">â€” Sieger wÃ¤hlen â€”</option><option value="${t1}" ${cur===t1?'selected':''}>${t1}</option><option value="${t2}" ${cur===t2?'selected':''}>${t2}</option>`;
 }
 
 // SONDERFRAGEN
@@ -1153,9 +1153,9 @@ async function saveSQ(){
   if(!CU)return;
   // Check bevriezing zowel lokaal als server-side
   if(SQ_FRZ||Date.now()>=FIRST_MATCH){
-    toast('🔒 Sonderfragen sind gesperrt!','error');return;
+    toast('ðŸ”’ Sonderfragen sind gesperrt!','error');return;
   }
-  const btn=document.getElementById('saveSQBtn');btn.textContent='Wird gespeichert…';btn.disabled=true;
+  const btn=document.getElementById('saveSQBtn');btn.textContent='Wird gespeichertâ€¦';btn.disabled=true;
   try{
     const d={user_id:CU.id,
       champion:document.getElementById('sqWM').value,
@@ -1178,22 +1178,22 @@ async function saveSQ(){
       champion:d.champion,topscorer:d.topscorer_name,topscorer_country:d.topscorer_country,
       first_goal:d.first_goal_name,austria_topscorer:d.austria_topscorer,
       goals_group:d.goals_group,goals_total:d.goals_total}).catch(()=>{});
-    toast('✅ Gespeichert! Bestätigungsmail wurde gesendet.','success');
-  }catch(ex){toast('❌ Fehler: '+ex.message,'error');}
-  btn.textContent='✅ Sonderfragen speichern';btn.disabled=false;
+    toast('âœ… Gespeichert! BestÃ¤tigungsmail wurde gesendet.','success');
+  }catch(ex){toast('âŒ Fehler: '+ex.message,'error');}
+  btn.textContent='âœ… Sonderfragen speichern';btn.disabled=false;
 }
 
 // SAVE TIPPS
 async function loadMTP(){
   if(!CU)return;
-  const el=document.getElementById('mtp');el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
+  const el=document.getElementById('mtp');el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladenâ€¦</div>`;
   try{
     const gt=await sb(`group_tipps?user_id=eq.${CU.id}&select=match_key,score1,score2`);
     const kt=await sb(`ko_tipps?user_id=eq.${CU.id}&select=*`);
     const ft=await sb(`finale_tipps?user_id=eq.${CU.id}&select=*`);
     const mp=await sb(`manual_points?user_id=eq.${CU.id}&select=*`);
     let h='';
-    h+=`<div class="sb"><div class="sbt">⚽ Gruppenphase</div>`;
+    h+=`<div class="sb"><div class="sbt">âš½ Gruppenphase</div>`;
     let gc=0;
     GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
       const t=(gt||[]).find(x=>x.match_key===`${g.l}_${i}`);
@@ -1201,41 +1201,41 @@ async function loadMTP(){
       if(t){
         let ic='';
         if(res?.status==='FINISHED'){
-          if(t.score1===res.score1&&t.score2===res.score2)ic='🎯 +10';
-          else{const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0,rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;ic=tw===rw?'✅ +5':'❌ 0';}
+          if(t.score1===res.score1&&t.score2===res.score2)ic='ðŸŽ¯ +10';
+          else{const tw=t.score1>t.score2?1:t.score1<t.score2?-1:0,rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;ic=tw===rw?'âœ… +5':'âŒ 0';}
         }
-        h+=`<div class="sr"><span class="st2">${F(m[0])} ${m[0]} – ${F(m[1])} ${m[1]}</span><span class="ss">${t.score1}:${t.score2}<span class="ssp">${ic}</span></span></div>`;gc++;
+        h+=`<div class="sr"><span class="st2">${F(m[0])} ${m[0]} â€“ ${F(m[1])} ${m[1]}</span><span class="ss">${t.score1}:${t.score2}<span class="ssp">${ic}</span></span></div>`;gc++;
       }
     }));
     if(!gc)h+=`<div class="empty">Keine Gruppenspiele eingetragen</div>`;
     h+=`</div>`;
     // KO
-    h+=`<div class="sb"><div class="sbt">🥊 K.O.-Runde</div>`;
+    h+=`<div class="sb"><div class="sbt">ðŸ¥Š K.O.-Runde</div>`;
     let kc=0;
     (kt||[]).forEach(t=>{
       const res=LR[t.match_key];
       // KO: alleen score telt, niet winner
       const _tw=t.score1>t.score2?1:t.score1<t.score2?-1:0;
       const _rw=res?.score1>res?.score2?1:res?.score1<res?.score2?-1:0;
-      const ic=res?.status==='FINISHED'?(_tw===_rw?(t.score1===res.score1&&t.score2===res.score2?'🎯 +10':'✅ +5'):'❌ 0'):'⏳';
-      h+=`<div class="sr"><span class="st2">${F(t.team1)} ${t.team1||'?'} – ${F(t.team2)} ${t.team2||'?'}</span><span class="ss">${t.score1||0}:${t.score2||0} <span class="ssp">${ic}</span></span></div>`;kc++;
+      const ic=res?.status==='FINISHED'?(_tw===_rw?(t.score1===res.score1&&t.score2===res.score2?'ðŸŽ¯ +10':'âœ… +5'):'âŒ 0'):'â³';
+      h+=`<div class="sr"><span class="st2">${F(t.team1)} ${t.team1||'?'} â€“ ${F(t.team2)} ${t.team2||'?'}</span><span class="ss">${t.score1||0}:${t.score2||0} <span class="ssp">${ic}</span></span></div>`;kc++;
     });
     if(!kc)h+=`<div class="empty">Keine K.O.-Tipps</div>`;
     h+=`</div>`;
     // Sonderfragen
     const sq=ft?.[0];
-    if(sq){h+=`<div class="sb"><div class="sbt">⭐ Sonderfragen</div>
-      <div class="sr"><span>🏆 Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'—'} ${LR['finale']?.status==='FINISHED'?(fuzzyMatch(sq.champion,LR['finale']?.winner)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>⚡ Torschütze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'}) ${LR['finale']?.topscorer?(fuzzyMatch(sq.topscorer_name,LR['finale']?.topscorer)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>⚽ Erster Torschütze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'—'} ${LR['finale']?.first_goal?(fuzzyMatch(sq.first_goal_name,LR['finale']?.first_goal)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>🇦🇹 Topscorer Österreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'—'} ${LR['finale']?.austria_topscorer?(fuzzyMatch(sq.austria_topscorer,LR['finale']?.austria_topscorer)?'✅':'❌'):''}</span></div>
-      <div class="sr"><span>🔢 Tore Gruppe (20 Pkt)</span><span class="ss">${sq.goals_group||'—'}</span></div>
-      <div class="sr"><span>🔢 Tore WK (20 Pkt)</span><span class="ss">${sq.goals_total||'—'}</span></div>
-      <div class="sr"><span>🏆 Finale</span><span class="ss">${sq.team1||'?'} ${sq.score1||0}:${sq.score2||0} ${sq.team2||'?'}</span></div>
+    if(sq){h+=`<div class="sb"><div class="sbt">â­ Sonderfragen</div>
+      <div class="sr"><span>ðŸ† Weltmeister (60 Pkt)</span><span class="ss">${sq.champion||'â€”'} ${LR['finale']?.status==='FINISHED'?(fuzzyMatch(sq.champion,LR['finale']?.winner)?'âœ…':'âŒ'):''}</span></div>
+      <div class="sr"><span>âš¡ TorschÃ¼tze (50 Pkt)</span><span class="ss">${sq.topscorer_name||'â€”'} (${sq.topscorer_country||'â€”'}) ${LR['finale']?.topscorer?(fuzzyMatch(sq.topscorer_name,LR['finale']?.topscorer)?'âœ…':'âŒ'):''}</span></div>
+      <div class="sr"><span>âš½ Erster TorschÃ¼tze (30 Pkt)</span><span class="ss">${sq.first_goal_name||'â€”'} ${LR['finale']?.first_goal?(fuzzyMatch(sq.first_goal_name,LR['finale']?.first_goal)?'âœ…':'âŒ'):''}</span></div>
+      <div class="sr"><span>ðŸ‡¦ðŸ‡¹ Topscorer Ã–sterreich (20 Pkt)</span><span class="ss">${sq.austria_topscorer||'â€”'} ${LR['finale']?.austria_topscorer?(fuzzyMatch(sq.austria_topscorer,LR['finale']?.austria_topscorer)?'âœ…':'âŒ'):''}</span></div>
+      <div class="sr"><span>ðŸ”¢ Tore Gruppe (20 Pkt)</span><span class="ss">${sq.goals_group||'â€”'}</span></div>
+      <div class="sr"><span>ðŸ”¢ Tore WK (20 Pkt)</span><span class="ss">${sq.goals_total||'â€”'}</span></div>
+      <div class="sr"><span>ðŸ† Finale</span><span class="ss">${sq.team1||'?'} ${sq.score1||0}:${sq.score2||0} ${sq.team2||'?'}</span></div>
     </div>`;}
     // Handmatige punten
     if(mp&&mp.length){
-      h+=`<div class="sb"><div class="sbt">✏️ Manuelle Punkte</div>`;
+      h+=`<div class="sb"><div class="sbt">âœï¸ Manuelle Punkte</div>`;
       mp.forEach(p=>{h+=`<div class="sr"><span class="st2">${p.reason}</span><span class="ss" style="color:${p.points>=0?'var(--greenlt)':'var(--red)'};">${p.points>=0?'+':''}${p.points} Pkt</span></div>`;});
       h+=`</div>`;
     }
@@ -1245,13 +1245,13 @@ async function loadMTP(){
 
 // RANGLISTE
 async function loadLB(){
-  document.getElementById('lbEl').innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
+  document.getElementById('lbEl').innerHTML=`<div class="ld"><div class="sp"></div>Wird geladenâ€¦</div>`;
   document.getElementById('wwEl').innerHTML='';
   try{
     const users=await sb('users?select=id,username,created_at&order=created_at.asc');
     if(!users||!users.length){document.getElementById('lbEl').innerHTML=`<div class="empty">Noch keine Teilnehmer.</div>`;return;}
     await loadLR();
-    // ── BATCH QUERIES - alle data in één keer ophalen ──
+    // â”€â”€ BATCH QUERIES - alle data in Ã©Ã©n keer ophalen â”€â”€
     const wk=getWS();
     const [allGT,allKT,allFT,allMP,allSQAppr,sqSettingsRaw]=await Promise.all([
       sb('group_tipps?select=user_id,match_key,score1,score2').catch(()=>[]),
@@ -1318,9 +1318,9 @@ async function loadLB(){
       }
 
       scores.push({id:u.id,username:u.username,pts,exact,wPts,
-        champ:fq?.champion||'—',ts:fq?.topscorer_name||'—'});
+        champ:fq?.champion||'â€”',ts:fq?.topscorer_name||'â€”'});
     }
-    // ── GESAMTTORE: dichtstbij wint 20 punten ──────────
+    // â”€â”€ GESAMTTORE: dichtstbij wint 20 punten â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Gebruik settings tabel (admin ingevoerd) of API data
     const realGroup=sqSettings['goals_group']?parseInt(sqSettings['goals_group']):(LR['goals_result']?.goals_group_total||null);
     const realTotal=sqSettings['goals_total']?parseInt(sqSettings['goals_total']):(LR['goals_result']?.goals_wk_total||null);
@@ -1367,8 +1367,8 @@ async function loadLB(){
     scores.sort((a,b)=>b.pts-a.pts||b.exact-a.exact);
     // Week winnaar
     const ww=scores.reduce((a,b)=>b.wPts>a.wPts?b:a,scores[0]);
-    if(ww?.wPts>0)document.getElementById('wwEl').innerHTML=`<div class="ww"><div class="wwt">⭐ Wochenbester</div><div class="wwn">${ww.username}</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">${ww.wPts} Punkte diese Woche</div></div>`;
-    const md=['🥇','🥈','🥉'];
+    if(ww?.wPts>0)document.getElementById('wwEl').innerHTML=`<div class="ww"><div class="wwt">â­ Wochenbester</div><div class="wwn">${ww.username}</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">${ww.wPts} Punkte diese Woche</div></div>`;
+    const md=['ðŸ¥‡','ðŸ¥ˆ','ðŸ¥‰'];
     const nc=['#FFD700','#C0C0C0','#CD7F32'];
     let h=`<div style="display:flex;flex-direction:column;gap:9px;">`;
     scores.forEach((s,i)=>{
@@ -1380,7 +1380,7 @@ async function loadLB(){
         <div class="lrk" style="font-size:${i<3?'22':'18'}px">${md[i]||i+1}</div>
         <div style="flex:1">
           <div class="lnm" style="color:${col};font-size:${i===0?'16':'13'}px;">${s.username}${me?' <span style="color:var(--gold);font-size:10px;">(Du)</span>':''}</div>
-          ${me?`<div class="lmt">🏆 ${s.champ} · ⚡ ${s.ts} · 🎯 ${s.exact}x exakt</div>`:''}
+          ${me?`<div class="lmt">ðŸ† ${s.champ} Â· âš¡ ${s.ts} Â· ðŸŽ¯ ${s.exact}x exakt</div>`:''}
         </div>
         <div style="text-align:right">
           <div class="lpt" style="color:${i<3?col:'var(--gold2)'};">${s.pts}</div>
@@ -1393,7 +1393,7 @@ async function loadLB(){
   }catch(ex){
     // Nog geen wedstrijden gespeeld of netwerk fout
     document.getElementById('lbEl').innerHTML=`<div class="empty">
-      <div style="font-size:32px;margin-bottom:12px;">⏳</div>
+      <div style="font-size:32px;margin-bottom:12px;">â³</div>
       <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);margin-bottom:8px;">Noch keine Spiele</div>
       <div style="font-size:13px;color:var(--muted);">Die Rangliste wird automatisch aktualisiert sobald die ersten Partien gespielt wurden.</div>
     </div>`;
@@ -1402,24 +1402,24 @@ async function loadLB(){
 function getWS(){const n=new Date(),d=n.getDay(),diff=n.getDate()-d+(d===0?-6:1);return new Date(n.setDate(diff));}
 
 // API SYNC
-const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südkorea','South Korea':'Südkorea','Czechia':'Tschechien','Canada':'Kanada','Bosnia and Herzegovina':'Bosnien & H.','Bosnia-Herzegovina':'Bosnien & H.','Bosnia-H.':'Bosnien & H.',
-  'Korea Republic':'Südkorea','South Korea':'Südkorea','Korea DPR':'Nordkorea',
-  'Elfenbeinküste':'Elfenbeinküste','Ivory Coast':'Elfenbeinküste',
+const TM={'Mexico':'Mexiko','South Africa':'SÃ¼dafrika','Korea Republic':'SÃ¼dkorea','South Korea':'SÃ¼dkorea','Czechia':'Tschechien','Canada':'Kanada','Bosnia and Herzegovina':'Bosnien & H.','Bosnia-Herzegovina':'Bosnien & H.','Bosnia-H.':'Bosnien & H.',
+  'Korea Republic':'SÃ¼dkorea','South Korea':'SÃ¼dkorea','Korea DPR':'Nordkorea',
+  'ElfenbeinkÃ¼ste':'ElfenbeinkÃ¼ste','Ivory Coast':'ElfenbeinkÃ¼ste',
   'DR Congo':'DR Kongo','Congo DR':'DR Kongo','Democratic Republic of Congo':'DR Kongo',
-  'Curaçao':'Curaçao','Curacao':'Curaçao',
-  'Cape Verde':'Kaapverdië','Cape Verde Islands':'Kaapverdië','Cape Verde Islands':'Kaapverdië',
+  'CuraÃ§ao':'CuraÃ§ao','Curacao':'CuraÃ§ao',
+  'Cape Verde':'KaapverdiÃ«','Cape Verde Islands':'KaapverdiÃ«','Cape Verde Islands':'KaapverdiÃ«',
   'Saudi Arabia':'Saudi-Arabien',
-  'South Africa':'Südafrika',
+  'South Africa':'SÃ¼dafrika',
   'New Zealand':'Neuseeland',
   'Czechia':'Tschechien','Czech Republic':'Tschechien',
-  'Haiti':'Haïti',
-  'Turkey':'Türkei',
+  'Haiti':'HaÃ¯ti',
+  'Turkey':'TÃ¼rkei',
   'Belgium':'Belgien',
-  'Egypt':'Ägypten',
+  'Egypt':'Ã„gypten',
   'France':'Frankreich',
   'Argentina':'Argentinien',
   'Algeria':'Algerien',
-  'Austria':'Österreich',
+  'Austria':'Ã–sterreich',
   'Jordan':'Jordanien',
   'Uzbekistan':'Usbekistan',
   'Colombia':'Kolumbien',
@@ -1450,7 +1450,7 @@ const TM={'Mexico':'Mexiko','South Africa':'Südafrika','Korea Republic':'Südko
   'United States':'USA','USA':'USA',
   'Qatar':'Katar',
   'Iran':'Iran',
-  'Cameroon':'Kamerun','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'Haïti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'Türkei','Germany':'Deutschland','Curaçao':'Curaçao','Ivory Coast':'Elfenbeinküste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ägypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'Kaapverdië','Cape Verde Islands':'Kaapverdië','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Österreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
+  'Cameroon':'Kamerun','Qatar':'Katar','Switzerland':'Schweiz','Brazil':'Brasilien','Morocco':'Marokko','Haiti':'HaÃ¯ti','Scotland':'Schottland','United States':'USA','Paraguay':'Paraguay','Australia':'Australien','Turkey':'TÃ¼rkei','Germany':'Deutschland','CuraÃ§ao':'CuraÃ§ao','Ivory Coast':'ElfenbeinkÃ¼ste','Ecuador':'Ecuador','Netherlands':'Niederlande','Japan':'Japan','Sweden':'Schweden','Tunisia':'Tunesien','Belgium':'Belgien','Egypt':'Ã„gypten','Iran':'Iran','New Zealand':'Neuseeland','Spain':'Spanien','Cape Verde':'KaapverdiÃ«','Cape Verde Islands':'KaapverdiÃ«','Saudi Arabia':'Saudi-Arabien','Uruguay':'Uruguay','France':'Frankreich','Senegal':'Senegal','Iraq':'Irak','Norway':'Norwegen','Argentina':'Argentinien','Algeria':'Algerien','Austria':'Ã–sterreich','Jordan':'Jordanien','Portugal':'Portugal','DR Congo':'DR Kongo','Uzbekistan':'Usbekistan','Colombia':'Kolumbien','England':'England','Croatia':'Kroatien','Ghana':'Ghana','Panama':'Panama'};
 const NT=t=>TM[t]||t;
 const KO_KEYS_MAP={
   '2026-06-28T19:00:00Z':'r0_0','2026-06-29T17:00:00Z':'r0_1',
@@ -1544,7 +1544,7 @@ async function procAPI(data){
 
 
 async function syncAPI(){try{const d=await edge('football-api',{});if(d&&!d.error)procAPI(d);}catch{}}
-async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DELETE').catch(()=>{});await syncAPI();toast('🔄 Synchronisiert!','success');}
+async function forceSync(){await sb("api_cache?cache_key=eq.wc2026_matches",'DELETE').catch(()=>{});await syncAPI();toast('ðŸ”„ Synchronisiert!','success');}
 
 // ADMIN
 function aTab(n){
@@ -1577,7 +1577,7 @@ async function loadAUsers(){
 async function loadAllBreakdown(){
   const el=document.getElementById('allBreakdown');
   if(!el) return;
-  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladen…</div>';
+  el.innerHTML='<div class="ld"><div class="sp"></div>Wird geladenâ€¦</div>';
   await loadLR();
   try{
     const [users,allGT,allKT,allFT,allMP,sqSettingsRaw]=await Promise.all([
@@ -1609,10 +1609,10 @@ async function loadAllBreakdown(){
     let h='<table style="width:100%;border-collapse:collapse;font-size:12px;">';
     h+='<thead><tr style="border-bottom:2px solid var(--gold);">';
     h+='<th style="text-align:left;padding:6px 8px;color:var(--gold2);">TEILNEHMER</th>';
-    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">⚽ GP</th>';
-    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">🥊 KO</th>';
-    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">⭐ SQ</th>';
-    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">✏️ MP</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">âš½ GP</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">ðŸ¥Š KO</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">â­ SQ</th>';
+    h+='<th style="text-align:right;padding:6px 8px;color:var(--muted);">âœï¸ MP</th>';
     h+='<th style="text-align:right;padding:6px 8px;color:var(--gold2);">TOTAL</th>';
     h+='</tr></thead><tbody>';
 
@@ -1671,7 +1671,7 @@ async function loadAllBreakdown(){
 async function loadAUSel(){
   try{
     const users=await edge('admin-data',{action:'get_users',password:ADM_PW});
-    const sel=document.getElementById('aUSel');sel.innerHTML='<option value="">— Teilnehmer wählen —</option>';
+    const sel=document.getElementById('aUSel');sel.innerHTML='<option value="">â€” Teilnehmer wÃ¤hlen â€”</option>';
     (users||[]).forEach(u=>{sel.innerHTML+=`<option value="${u.id}">${u.username} (${u.real_name})</option>`;});
   }catch{}
 }
@@ -1683,18 +1683,18 @@ async function loadUTipps(uid){
     const data=await edge('admin-data',{action:'get_user_tipps',password:ADM_PW,userId:uid});
     const {user,group_tipps:gt,ko_tipps:kt,finale_tipps:ft,manual_points:mp,approvals:ap}=data;
     let h=`<div style="padding:11px;background:var(--bg3);border-radius:8px;margin-bottom:14px;font-size:13px;">
-      <strong>${user?.username}</strong> · ${user?.real_name}<br>
+      <strong>${user?.username}</strong> Â· ${user?.real_name}<br>
       <a href="mailto:${user?.email}" style="color:var(--gold);font-size:12px;">${user?.email}</a>
     </div>`;
 
     const apprMap={};(ap||[]).forEach(a=>apprMap[a.match_key]=a);
 
-    // ── GROEPSWEDSTRIJDEN ───────────────────────────────
-    h+=`<div class="sb"><div class="sbt">⚽ Gruppenphase</div>
+    // â”€â”€ GROEPSWEDSTRIJDEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    h+=`<div class="sb"><div class="sbt">âš½ Gruppenphase</div>
       <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
         <div style="font-size:10px;color:var(--muted);letter-spacing:1px;">SPIEL</div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>✅ 5Pkt</div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>🎯 10Pkt</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>âœ… 5Pkt</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>ðŸŽ¯ 10Pkt</div>
       </div>`;
     const sortedGT=(gt||[]).sort((a,b)=>{
       const [al,ai]=a.match_key.split('_');
@@ -1717,11 +1717,11 @@ async function loadUTipps(uid){
         const rw=res.score1>res.score2?1:res.score1<res.score2?-1:0;
         if(tw===rw){autoW=true;if(t.score1===res.score1&&t.score2===res.score2)autoE=true;}
       }
-      const autoIcon=autoE?'🎯':autoW?'✅':'';
+      const autoIcon=autoE?'ðŸŽ¯':autoW?'âœ…':'';
       h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
         <div>
-          <div style="font-size:12px;font-weight:700;">${F(m[0])} ${m[0]} – ${F(m[1])} ${m[1]}</div>
-          <div style="font-size:11px;color:var(--gold2);font-family:'Cinzel',serif;">${t.score1}:${t.score2} <span style="color:var(--muted);font-family:'Lato',sans-serif;">${autoIcon?'Auto: '+autoIcon:'⏳'}</span></div>
+          <div style="font-size:12px;font-weight:700;">${F(m[0])} ${m[0]} â€“ ${F(m[1])} ${m[1]}</div>
+          <div style="font-size:11px;color:var(--gold2);font-family:'Cinzel',serif;">${t.score1}:${t.score2} <span style="color:var(--muted);font-family:'Lato',sans-serif;">${autoIcon?'Auto: '+autoIcon:'â³'}</span></div>
         </div>
         <div style="text-align:center;width:70px;">
           <input type="checkbox" ${chkW||autoW?'checked':''} 
@@ -1738,12 +1738,12 @@ async function loadUTipps(uid){
     if(!(gt||[]).length)h+=`<div class="empty">Keine Gruppenspiele eingetragen</div>`;
     h+=`</div>`;
 
-    // ── KO TIPPS ────────────────────────────────────────
-    h+=`<div class="sb"><div class="sbt">🥊 K.O.-Runde</div>
+    // â”€â”€ KO TIPPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    h+=`<div class="sb"><div class="sbt">ðŸ¥Š K.O.-Runde</div>
       <div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
         <div style="font-size:10px;color:var(--muted);letter-spacing:1px;">DUEL</div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>✅ 5Pkt</div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>🎯 10Pkt</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">SIEGER<br>âœ… 5Pkt</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:70px;">EXAKT<br>ðŸŽ¯ 10Pkt</div>
       </div>`;
     (kt||[]).forEach(t=>{
       const res=LR[t.match_key];
@@ -1755,11 +1755,11 @@ async function loadUTipps(uid){
         const _rw2=res.score1>res.score2?1:res.score1<res.score2?-1:0;
         if(_tw2===_rw2){autoW=true;if(t.score1===res.score1&&t.score2===res.score2)autoE=true;}
       }
-      const autoIcon=autoE?'🎯':autoW?'✅':'';
+      const autoIcon=autoE?'ðŸŽ¯':autoW?'âœ…':'';
       h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
         <div>
-          <div style="font-size:12px;font-weight:700;">${F(t.team1||'')} ${t.team1||'?'} – ${F(t.team2||'')} ${t.team2||'?'}</div>
-          <div style="font-size:11px;color:var(--gold2);font-family:'Cinzel',serif;">${t.score1||0}:${t.score2||0} · Sieger: ${t.winner||'—'} <span style="color:var(--muted);font-family:'Lato',sans-serif;">${autoIcon?'Auto: '+autoIcon:'⏳'}</span></div>
+          <div style="font-size:12px;font-weight:700;">${F(t.team1||'')} ${t.team1||'?'} â€“ ${F(t.team2||'')} ${t.team2||'?'}</div>
+          <div style="font-size:11px;color:var(--gold2);font-family:'Cinzel',serif;">${t.score1||0}:${t.score2||0} Â· Sieger: ${t.winner||'â€”'} <span style="color:var(--muted);font-family:'Lato',sans-serif;">${autoIcon?'Auto: '+autoIcon:'â³'}</span></div>
         </div>
         <div style="text-align:center;width:70px;">
           <input type="checkbox" ${apprMap[t.match_key]?.override_points===5||autoW?'checked':''} 
@@ -1776,23 +1776,23 @@ async function loadUTipps(uid){
     if(!(kt||[]).length)h+=`<div class="empty">Keine K.O.-Tipps</div>`;
     h+=`</div>`;
 
-    // ── SONDERFRAGEN ────────────────────────────────────
+    // â”€â”€ SONDERFRAGEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const sq=ft?.[0];
     if(sq){
       const sqFields=[
-        {key:'sq_weltmeister',label:'🏆 Weltmeister',pts:60,val:sq.champion||'—'},
-        {key:'sq_topscorer',label:'⚡ Torschützenkönig',pts:50,val:`${sq.topscorer_name||'—'} (${sq.topscorer_country||'—'})`},
-        {key:'sq_firstgoal',label:'⚽ Erster Torschütze',pts:30,val:`${sq.first_goal_name||'—'} (${sq.first_goal_country||'—'})`},
-        {key:'sq_austria',label:'🇦🇹 Topscorer Österreich',pts:20,val:sq.austria_topscorer||'—'},
-        {key:'sq_goals_group',label:'🔢 Tore Gruppenphase',pts:20,val:sq.goals_group||'—'},
-        {key:'sq_goals_total',label:'🔢 Tore ganzes WK — Top 3: 🥇20 · 🥈15 · 🥉10',pts:20,val:sq.goals_total||'—'},
-        {key:'sq_final_winner',label:'🏆 Finale – Richtiger Sieger',pts:10,val:`${sq.team1||'?'} – ${sq.team2||'?'} · Sieger: ${sq.winner||'—'}`},
-        {key:'sq_final_exact',label:'🏆 Finale – Genauer Endstand',pts:25,val:`${sq.score1||0}:${sq.score2||0}`},
+        {key:'sq_weltmeister',label:'ðŸ† Weltmeister',pts:60,val:sq.champion||'â€”'},
+        {key:'sq_topscorer',label:'âš¡ TorschÃ¼tzenkÃ¶nig',pts:50,val:`${sq.topscorer_name||'â€”'} (${sq.topscorer_country||'â€”'})`},
+        {key:'sq_firstgoal',label:'âš½ Erster TorschÃ¼tze',pts:30,val:`${sq.first_goal_name||'â€”'} (${sq.first_goal_country||'â€”'})`},
+        {key:'sq_austria',label:'ðŸ‡¦ðŸ‡¹ Topscorer Ã–sterreich',pts:20,val:sq.austria_topscorer||'â€”'},
+        {key:'sq_goals_group',label:'ðŸ”¢ Tore Gruppenphase',pts:20,val:sq.goals_group||'â€”'},
+        {key:'sq_goals_total',label:'ðŸ”¢ Tore ganzes WK â€” Top 3: ðŸ¥‡20 Â· ðŸ¥ˆ15 Â· ðŸ¥‰10',pts:20,val:sq.goals_total||'â€”'},
+        {key:'sq_final_winner',label:'ðŸ† Finale â€“ Richtiger Sieger',pts:10,val:`${sq.team1||'?'} â€“ ${sq.team2||'?'} Â· Sieger: ${sq.winner||'â€”'}`},
+        {key:'sq_final_exact',label:'ðŸ† Finale â€“ Genauer Endstand',pts:25,val:`${sq.score1||0}:${sq.score2||0}`},
       ];
-      h+=`<div class="sb"><div class="sbt">⭐ Sonderfragen</div>
+      h+=`<div class="sb"><div class="sbt">â­ Sonderfragen</div>
         <div style="display:grid;grid-template-columns:1fr auto;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
           <div style="font-size:10px;color:var(--muted);letter-spacing:1px;">FRAGE & ANTWORT</div>
-          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:80px;">RICHTIG ✅</div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-align:center;width:80px;">RICHTIG âœ…</div>
         </div>`;
       sqFields.forEach(f=>{
         const appr=apprMap[f.key];
@@ -1812,20 +1812,20 @@ async function loadUTipps(uid){
       h+=`</div>`;
     }
 
-    // ── HANDMATIGE PUNTEN ───────────────────────────────
-    h+=`<div class="sb"><div class="sbt">✏️ Manuelle Punkte</div>`;
+    // â”€â”€ HANDMATIGE PUNTEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    h+=`<div class="sb"><div class="sbt">âœï¸ Manuelle Punkte</div>`;
     if(mp&&mp.length){mp.forEach(p=>{h+=`<div class="sr"><span class="st2">${p.reason}</span>
       <span style="display:flex;align-items:center;gap:6px;">
         <span class="ss" style="color:${p.points>=0?'var(--greenlt)':'var(--red)'};">${p.points>=0?'+':''}${p.points}</span>
-        <button onclick="delMP('${p.id}','${uid}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;">🗑️</button>
+        <button onclick="delMP('${p.id}','${uid}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;">ðŸ—‘ï¸</button>
       </span></div>`;});}
     h+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:6px;margin-top:10px;">
-      <input type="text" id="mpReason_${uid}" placeholder="Grund…" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:13px;min-height:40px;" />
+      <input type="text" id="mpReason_${uid}" placeholder="Grundâ€¦" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:13px;min-height:40px;" />
       <input type="number" id="mpPts_${uid}" placeholder="Pkt" style="width:60px;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;text-align:center;font-size:14px;min-height:40px;" />
       <button class="btn bg" style="height:40px;font-size:10px;padding:0 12px;" onclick="addMP('${uid}')">+</button>
     </div></div>`;
 
-    // ── PUNTEN BREAKDOWN ────────────────────────────────
+    // â”€â”€ PUNTEN BREAKDOWN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     await loadLR(); // Zorg dat LR up-to-date is
     const [allGTu,allKTu,allFTu,allMPu,sqSettingsRaw2]=await Promise.all([
       sb(`group_tipps?user_id=eq.${uid}&select=match_key,score1,score2`).catch(()=>[]),
@@ -1880,8 +1880,8 @@ async function loadUTipps(uid){
 
     // Goals top 3 - haal alle tipps op om rangorde te bepalen
     const goalsFields=[
-      {key:'goals_group',topPts:[20,15,10],label:'⚽ Tore Gruppenphase'},
-      {key:'goals_total',topPts:[20,15,10],label:'⚽ Tore WK gesamt'},
+      {key:'goals_group',topPts:[20,15,10],label:'âš½ Tore Gruppenphase'},
+      {key:'goals_total',topPts:[20,15,10],label:'âš½ Tore WK gesamt'},
     ];
     for(const f of goalsFields){
       const real=sqSettings2[f.key];
@@ -1910,25 +1910,25 @@ async function loadUTipps(uid){
     const totalPts=gpPts+koPts+sqPts+mpPts;
 
     h+=`<div class="sb" style="margin-top:14px;border-color:var(--gold);">
-      <div class="sbt" style="color:var(--gold2);">📊 Punkte-Breakdown</div>
+      <div class="sbt" style="color:var(--gold2);">ðŸ“Š Punkte-Breakdown</div>
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:6px 8px;">⚽ Gruppenphase</td>
-          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${gpExact}× exakt + ${Math.round((gpPts-gpExact*10)/5)}× richtig</td>
+          <td style="padding:6px 8px;">âš½ Gruppenphase</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${gpExact}Ã— exakt + ${Math.round((gpPts-gpExact*10)/5)}Ã— richtig</td>
           <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${gpPts}</td>
         </tr>
         <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:6px 8px;">🥊 K.O. + Finale</td>
-          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${koExact}× exakt + ${Math.round((koPts-koExact*10)/5)}× richtig</td>
+          <td style="padding:6px 8px;">ðŸ¥Š K.O. + Finale</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${koExact}Ã— exakt + ${Math.round((koPts-koExact*10)/5)}Ã— richtig</td>
           <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${koPts}</td>
         </tr>
         <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:6px 8px;">⭐ Sonderfragen</td>
-          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${sqDetails.join(', ')||'—'}</td>
+          <td style="padding:6px 8px;">â­ Sonderfragen</td>
+          <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${sqDetails.join(', ')||'â€”'}</td>
           <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${sqPts}</td>
         </tr>
         ${mpPts>0?`<tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:6px 8px;">✏️ Manuell</td>
+          <td style="padding:6px 8px;">âœï¸ Manuell</td>
           <td style="padding:6px 8px;color:var(--muted);font-size:11px;"></td>
           <td style="padding:6px 8px;text-align:right;font-family:'Cinzel',serif;color:var(--gold2);">+${mpPts}</td>
         </tr>`:''}
@@ -1947,14 +1947,14 @@ async function loadUTipps(uid){
 async function saveMatchAppr(uid, matchKey, pts, checked, note){
   try{
     await edge('admin-data',{action:'approve_match',password:ADM_PW,userId:uid,matchKey,approved:checked,overridePoints:checked?pts:0,note});
-    toast(checked?`✅ +${pts} Pkt vergeben!`:`↩️ Zurückgenommen`,'success');
-  }catch(ex){toast('❌ '+ex.message,'error');}
+    toast(checked?`âœ… +${pts} Pkt vergeben!`:`â†©ï¸ ZurÃ¼ckgenommen`,'success');
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function loadSQOverview(){
   const el=document.getElementById('sqOverview');
   if(!el)return;
-  el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladen…</div>`;
+  el.innerHTML=`<div class="ld"><div class="sp"></div>Wird geladenâ€¦</div>`;
   try{
     const [users,tipps,sqRes]=await Promise.all([
       sb('users?select=id,username&order=username.asc'),
@@ -1967,12 +1967,12 @@ async function loadSQOverview(){
     (sqRes||[]).filter(r=>r.key&&r.key.startsWith('sq_result_')).forEach(r=>sqResults[r.key.replace('sq_result_','')]=r.value);
 
     const fields=[
-      {key:'austria_topscorer',label:'🇦🇹 Topscorer Österreich',pts:20,settingKey:'austria_topscorer',type:'name'},
-      {key:'champion',label:'🏆 Weltmeister',pts:60,settingKey:'champion',type:'name'},
-      {key:'topscorer_name',label:'⚡ Torschütze',pts:50,settingKey:'topscorer_name',type:'name'},
-      {key:'first_goal_name',label:'🥇 Erster Torschütze',pts:30,settingKey:'first_goal_name',type:'name'},
-      {key:'goals_group',label:'⚽ Tore Gruppenphase',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_group',type:'closest3'},
-      {key:'goals_total',label:'⚽ Tore gesamt WK (nach WK)',pts:'🥇20 · 🥈15 · 🥉10',settingKey:'goals_total',type:'closest3'},
+      {key:'austria_topscorer',label:'ðŸ‡¦ðŸ‡¹ Topscorer Ã–sterreich',pts:20,settingKey:'austria_topscorer',type:'name'},
+      {key:'champion',label:'ðŸ† Weltmeister',pts:60,settingKey:'champion',type:'name'},
+      {key:'topscorer_name',label:'âš¡ TorschÃ¼tze',pts:50,settingKey:'topscorer_name',type:'name'},
+      {key:'first_goal_name',label:'ðŸ¥‡ Erster TorschÃ¼tze',pts:30,settingKey:'first_goal_name',type:'name'},
+      {key:'goals_group',label:'âš½ Tore Gruppenphase',pts:'ðŸ¥‡20 Â· ðŸ¥ˆ15 Â· ðŸ¥‰10',settingKey:'goals_group',type:'closest3'},
+      {key:'goals_total',label:'âš½ Tore gesamt WK (nach WK)',pts:'ðŸ¥‡20 Â· ðŸ¥ˆ15 Â· ðŸ¥‰10',settingKey:'goals_total',type:'closest3'},
     ];
 
     let h='';
@@ -1990,15 +1990,15 @@ async function loadSQOverview(){
           <span>${f.label} <span style="color:var(--muted);font-size:11px;">(${f.pts} Pkt)</span></span>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
-          <input type="text" id="sqr_${f.settingKey}" value="${realResult}" placeholder="Echtes Ergebnis eingeben…"
+          <input type="text" id="sqr_${f.settingKey}" value="${realResult}" placeholder="Echtes Ergebnis eingebenâ€¦"
             style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-size:13px;min-height:40px;"/>
           <button onclick="saveSQResult('${f.settingKey}')" class="btn bg" style="height:40px;white-space:nowrap;">
-            💾 Speichern
+            ðŸ’¾ Speichern
           </button>
         </div>`;
 
       if(realResult){
-        h+=`<div style="font-size:12px;color:var(--greenlt);margin-bottom:8px;">✅ Ergebnis: <strong>${realResult}</strong></div>`;
+        h+=`<div style="font-size:12px;color:var(--greenlt);margin-bottom:8px;">âœ… Ergebnis: <strong>${realResult}</strong></div>`;
       }
 
       // Bereken punten per deelnemer
@@ -2006,7 +2006,7 @@ async function loadSQOverview(){
       users.forEach(u=>{
         const t=tipps.find(x=>x.user_id===u.id);
         const val=t?.[f.key];
-        const valStr=val!=null?String(val):'—';
+        const valStr=val!=null?String(val):'â€”';
         userRows.push({username:u.username,val:valStr,num:val!=null?parseInt(val):null});
       });
 
@@ -2043,16 +2043,16 @@ async function loadSQOverview(){
         :userRows;
 
       sortedRows.forEach(r=>{
-        let ptsStr='—',icon='',diffStr='';
-        if(realResult&&r.val!=='—'){
+        let ptsStr='â€”',icon='',diffStr='';
+        if(realResult&&r.val!=='â€”'){
           if(isGoals&&realNum!=null){
             ptsStr=r.pts>0?`+${r.pts}`:'0';
-            icon=r.pts>0?(r.rank===1?'🥇':r.rank===2?'🥈':'🥉'):'';
-            diffStr=r.diff!=null?`±${r.diff}`:'';
+            icon=r.pts>0?(r.rank===1?'ðŸ¥‡':r.rank===2?'ðŸ¥ˆ':'ðŸ¥‰'):'';
+            diffStr=r.diff!=null?`Â±${r.diff}`:'';
           } else {
             const match=fuzzyMatch(r.val,realResult);
             ptsStr=match?`+${f.pts}`:'0';
-            icon=match?'✅':'❌';
+            icon=match?'âœ…':'âŒ';
           }
         }
         h+=`<tr style="border-bottom:1px solid var(--border);">
@@ -2077,9 +2077,9 @@ async function saveSQResult(key){
   try{
     await sb('settings?key=eq.sq_result_'+key,'DELETE');
     await sb('settings','POST',{key:'sq_result_'+key,value:val});
-    toast('✅ Gespeichert!','success');
+    toast('âœ… Gespeichert!','success');
     loadSQOverview();
-  }catch(ex){toast('❌ '+ex.message,'error');}
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 
@@ -2088,8 +2088,8 @@ async function saveSQApproval(uid, sqKey, pts, checked){
     await edge('admin-data',{action:'approve_match',password:ADM_PW,userId:uid,matchKey:sqKey,approved:checked,overridePoints:checked?pts:0,note:'Admin goedgekeurd'});
     const stEl=document.getElementById(`sqst_${uid}_${sqKey}`);
     if(stEl) stEl.innerHTML=checked?`<span style="color:var(--greenlt);font-size:11px;">+${pts} Pkt vergeben</span>`:'';
-    toast(checked?`✅ +${pts} Punkte vergeben!`:'↩️ Punkte zurückgenommen','success');
-  }catch(ex){toast('❌ '+ex.message,'error');}
+    toast(checked?`âœ… +${pts} Punkte vergeben!`:'â†©ï¸ Punkte zurÃ¼ckgenommen','success');
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function saveApproval(uid,matchKey){
@@ -2099,25 +2099,25 @@ async function saveApproval(uid,matchKey){
   const ov=sel?.value!==''?parseInt(sel.value):null;
   try{
     await edge('admin-data',{action:'approve_match',password:ADM_PW,userId:uid,matchKey,approved:true,overridePoints:ov,note:note?.value||''});
-    toast('✅ Genehmigt!','success');
-  }catch(ex){toast('❌ '+ex.message,'error');}
+    toast('âœ… Genehmigt!','success');
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function addMP(uid){
   const reason=document.getElementById(`mpReason_${uid}`).value.trim();
   const pts=parseInt(document.getElementById(`mpPts_${uid}`).value);
-  if(!reason||isNaN(pts)){toast('❌ Grund und Punkte angeben!','error');return;}
+  if(!reason||isNaN(pts)){toast('âŒ Grund und Punkte angeben!','error');return;}
   try{
     await edge('admin-data',{action:'add_manual_points',password:ADM_PW,userId:uid,points:pts,reason});
-    toast(`✅ ${pts>=0?'+':''}${pts} Punkte hinzugefügt!`,'success');
+    toast(`âœ… ${pts>=0?'+':''}${pts} Punkte hinzugefÃ¼gt!`,'success');
     loadUTipps(uid);
-  }catch(ex){toast('❌ '+ex.message,'error');}
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function delMP(id,uid){
-  if(!confirm('Eintrag löschen?'))return;
-  try{await edge('admin-data',{action:'delete_manual_points',password:ADM_PW,id});toast('🗑️ Gelöscht','success');loadUTipps(uid);}
-  catch(ex){toast('❌ '+ex.message,'error');}
+  if(!confirm('Eintrag lÃ¶schen?'))return;
+  try{await edge('admin-data',{action:'delete_manual_points',password:ADM_PW,id});toast('ðŸ—‘ï¸ GelÃ¶scht','success');loadUTipps(uid);}
+  catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function loadCtrl(){
@@ -2127,15 +2127,15 @@ async function loadCtrl(){
   GROUPS.forEach(g=>g.matches.forEach((m,i)=>{
     const key=`${g.l}_${i}`,res=LR[key];
     if(!res||res.status!=='FINISHED')return;has=true;
-    h+=`<div class="cm"><div class="cmh">Gruppe ${g.l}: ${m[0]} – ${m[1]}</div>
+    h+=`<div class="cm"><div class="cmh">Gruppe ${g.l}: ${m[0]} â€“ ${m[1]}</div>
       <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold2);">${res.score1} : ${res.score2}</div>
       <div style="font-size:11px;color:var(--muted);">Sieger: ${res.winner||'Unentschieden'}</div></div>`;
   }));
   KO.forEach(r=>r.matches.forEach(m=>{
     const res=LR[m.key];if(!res||res.status!=='FINISHED')return;has=true;
-    h+=`<div class="cm"><div class="cmh">${m.lbl}: ${res.team1||m.t1} – ${res.team2||m.t2}</div>
+    h+=`<div class="cm"><div class="cmh">${m.lbl}: ${res.team1||m.t1} â€“ ${res.team2||m.t2}</div>
       <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold2);">${res.score1} : ${res.score2}</div>
-      <div style="font-size:11px;color:var(--muted);">Sieger: ${res.winner||'—'}</div></div>`;
+      <div style="font-size:11px;color:var(--muted);">Sieger: ${res.winner||'â€”'}</div></div>`;
   }));
   if(!has)h=`<div class="empty">Noch keine abgeschlossenen Spiele.</div>`;
   el.innerHTML=h;
@@ -2150,9 +2150,9 @@ async function saveGoalsResult(groupGoals, totalGoals){
       goals_wk_total:parseInt(totalGoals)||null,
       status:'FINISHED'
     });
-    toast('✅ Gesamttore gespeichert!','success');
+    toast('âœ… Gesamttore gespeichert!','success');
     await loadLR();
-  }catch(ex){toast('❌ '+ex.message,'error');}
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function loadOv(){
@@ -2161,7 +2161,7 @@ async function loadOv(){
   // Gesamttore invoer voor admin
   const goalsRes=LR['goals_result']||{};
   h+=`<div style="background:var(--bg2);border:1px solid var(--gold);border-radius:var(--r);padding:14px;margin-bottom:20px;">
-    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);margin-bottom:12px;">🔢 Gesamttore eintragen</div>
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);margin-bottom:12px;">ðŸ”¢ Gesamttore eintragen</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
       <div>
         <label style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:4px;">Tore Gruppenphase (72 Spiele)</label>
@@ -2175,7 +2175,7 @@ async function loadOv(){
       </div>
     </div>
     <button class="btn bg" onclick="saveGoalsResult(document.getElementById('goalsGroup').value,document.getElementById('goalsTotal').value)">
-      💾 Gesamttore speichern
+      ðŸ’¾ Gesamttore speichern
     </button>
   </div>`;
   KO.forEach(round=>{
@@ -2183,7 +2183,7 @@ async function loadOv(){
     round.matches.forEach(m=>{
       const r=LR[m.key]||{};
       h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;">
-        <div style="font-size:12px;font-weight:700;margin-bottom:7px;">${m.lbl} · ${m.date}</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:7px;">${m.lbl} Â· ${m.date}</div>
         <div style="display:grid;grid-template-columns:1fr 46px;gap:6px;margin-bottom:5px;">
           <input type="text" id="ov_${m.key}_t1" value="${r.team1||''}" placeholder="${m.t1}" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 9px;border-radius:6px;font-size:13px;min-height:40px;"/>
           <input type="number" id="ov_${m.key}_s1" value="${r.score1??''}" placeholder="0" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px;border-radius:6px;text-align:center;font-size:15px;min-height:40px;"/>
@@ -2193,13 +2193,13 @@ async function loadOv(){
           <input type="number" id="ov_${m.key}_s2" value="${r.score2??''}" placeholder="0" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px;border-radius:6px;text-align:center;font-size:15px;min-height:40px;"/>
         </div>
         <select id="ov_${m.key}_w" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px;border-radius:6px;margin-bottom:7px;min-height:38px;">
-          <option value="">— Sieger (optional) —</option>
+          <option value="">â€” Sieger (optional) â€”</option>
           <option value="${r.team1||m.t1}" ${r.winner===(r.team1||m.t1)?'selected':''}>${r.team1||m.t1}</option>
           <option value="${r.team2||m.t2}" ${r.winner===(r.team2||m.t2)?'selected':''}>${r.team2||m.t2}</option>
         </select>
         <div style="display:flex;gap:7px;align-items:center;">
           <button class="btn bg" style="height:38px;font-size:10px;padding:0 14px;" onclick="saveOv('${m.key}')">Speichern</button>
-          <span id="ov_ok_${m.key.replace(/[^a-z0-9]/gi,'_')}" style="font-size:11px;color:var(--greenlt);display:none;">✓ Gespeichert</span>
+          <span id="ov_ok_${m.key.replace(/[^a-z0-9]/gi,'_')}" style="font-size:11px;color:var(--greenlt);display:none;">âœ“ Gespeichert</span>
         </div>
       </div>`;
     });
@@ -2220,8 +2220,8 @@ async function saveOv(key){
     // Ververs live results EN herbouw KO UI
     await loadLR();
     buildKO();
-    toast('✅ Gespeichert!','success');
-  }catch(ex){toast('❌ '+ex.message,'error');}
+    toast('âœ… Gespeichert!','success');
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 async function loadASettings(){
@@ -2229,44 +2229,44 @@ async function loadASettings(){
     const r=await edge('admin-data',{action:'get_stats',password:ADM_PW});
     const sm={};(r?.settings||[]).forEach(s=>sm[s.key]=s.value);
     const frz=sm['tipp_frozen']==='true';
-    document.getElementById('frzSt').innerHTML=frz?`<div style="color:var(--red);font-weight:700;">🔒 Tippspiel ist GESPERRT</div>`:`<div style="color:var(--greenlt);font-weight:700;">✅ Tippspiel ist offen</div>`;
-    document.getElementById('frzBtn').textContent=frz?'🔓 Entsperren':'🔒 Jetzt sperren';
+    document.getElementById('frzSt').innerHTML=frz?`<div style="color:var(--red);font-weight:700;">ðŸ”’ Tippspiel ist GESPERRT</div>`:`<div style="color:var(--greenlt);font-weight:700;">âœ… Tippspiel ist offen</div>`;
+    document.getElementById('frzBtn').textContent=frz?'ðŸ”“ Entsperren':'ðŸ”’ Jetzt sperren';
     document.getElementById('frzBtn').className='btn '+(frz?'bgg':'br');
     document.getElementById('apiSt').textContent=sm['last_api_sync']?`Letzte Sync: ${new Date(sm['last_api_sync']).toLocaleString('de-AT')}`:'Noch keine Synchronisation';
     const users=r?.users||[],ft=r?.finale_tipps||[];
     const cc={};ft.forEach(f=>{if(f.champion)cc[f.champion]=(cc[f.champion]||0)+1;});
     const tc=Object.entries(cc).sort((a,b)=>b[1]-a[1])[0];
     document.getElementById('stEl').innerHTML=`<div style="display:flex;flex-direction:column;gap:7px;">
-      <div>👥 Teilnehmer: <strong style="color:var(--gold2)">${users.length}</strong></div>
-      <div>🏆 Meistgetippter Weltmeister: <strong style="color:var(--gold2)">${tc?tc[0]+' ('+tc[1]+'x)':'—'}</strong></div>
+      <div>ðŸ‘¥ Teilnehmer: <strong style="color:var(--gold2)">${users.length}</strong></div>
+      <div>ðŸ† Meistgetippter Weltmeister: <strong style="color:var(--gold2)">${tc?tc[0]+' ('+tc[1]+'x)':'â€”'}</strong></div>
     </div>`;
   }catch{}
 }
 async function togFreeze(){
-  try{const r=await edge('admin-data',{action:'toggle_freeze',password:ADM_PW});toast(r.frozen?'🔒 Gesperrt!':'🔓 Entsperrt!',r.frozen?'error':'success');await loadASettings();}
-  catch(ex){toast('❌ '+ex.message,'error');}
+  try{const r=await edge('admin-data',{action:'toggle_freeze',password:ADM_PW});toast(r.frozen?'ðŸ”’ Gesperrt!':'ðŸ”“ Entsperrt!',r.frozen?'error':'success');await loadASettings();}
+  catch(ex){toast('âŒ '+ex.message,'error');}
 }
 async function sendRem(){
-  toast('📧 Erinnerungen werden gesendet…','success');
-  try{await edge('admin-data',{action:'send_reminders',password:ADM_PW});toast('📧 Fertig!','success');}
-  catch(ex){toast('❌ '+ex.message,'error');}
+  toast('ðŸ“§ Erinnerungen werden gesendetâ€¦','success');
+  try{await edge('admin-data',{action:'send_reminders',password:ADM_PW});toast('ðŸ“§ Fertig!','success');}
+  catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TESTMODUS
-// ══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 async function initTestMode(){
   const sel=document.getElementById('testMatchSel');
   if(!sel)return;
   // Laad eerst live resultaten
   await loadLR();
-  sel.innerHTML='<option value="">— Spiel wählen —</option>';
+  sel.innerHTML='<option value="">â€” Spiel wÃ¤hlen â€”</option>';
   GROUPS.forEach(g=>{
     g.matches.forEach((m,i)=>{
       const key=`${g.l}_${i}`;
       const res=LR[key];
-      const st=res?.status==='FINISHED'?` ✅ (${res.score1}:${res.score2})`:(res?.is_test?' 🧪 Test':'');
-      sel.innerHTML+=`<option value="${key}">[Gr.${g.l}] ${m[0]} – ${m[1]}${st}</option>`;
+      const st=res?.status==='FINISHED'?` âœ… (${res.score1}:${res.score2})`:(res?.is_test?' ðŸ§ª Test':'');
+      sel.innerHTML+=`<option value="${key}">[Gr.${g.l}] ${m[0]} â€“ ${m[1]}${st}</option>`;
     });
   });
   sel.onchange=()=>{
@@ -2287,8 +2287,8 @@ async function initTestMode(){
 async function runTest(){
   const sel=document.getElementById('testMatchSel'),key=sel.value;
   const s1=parseInt(document.getElementById('testS1').value),s2=parseInt(document.getElementById('testS2').value);
-  if(!key){toast('❌ Bitte ein Spiel wählen!','error');return;}
-  if(isNaN(s1)||isNaN(s2)){toast('❌ Bitte Ergebnis eingeben!','error');return;}
+  if(!key){toast('âŒ Bitte ein Spiel wÃ¤hlen!','error');return;}
+  if(isNaN(s1)||isNaN(s2)){toast('âŒ Bitte Ergebnis eingeben!','error');return;}
   const parts=key.split('_'),g=GROUPS.find(x=>x.l===parts[0]),m=g?.matches[parseInt(parts[1])];
   if(!m)return;
   const t1=m[0],t2=m[1],winner=s1>s2?t1:s2>s1?t2:'DRAW';
@@ -2296,12 +2296,12 @@ async function runTest(){
     await sb(`results?match_key=eq.${key}`,'DELETE');
     await sb('results','POST',{match_key:key,team1:t1,team2:t2,score1:s1,score2:s2,winner,status:'FINISHED',is_test:true});
     await loadLR();
-    toast('✅ Testergebnis gespeichert!','success');
+    toast('âœ… Testergebnis gespeichert!','success');
     const users=await sb('users?select=id,username');
     const el=document.getElementById('testResult');el.style.display='block';
     let h=`<div style="background:var(--bg3);border:1px solid var(--gold);border-radius:8px;padding:14px;">
       <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--gold2);margin-bottom:10px;">
-        📊 ${FL[t1]||''} ${t1} ${s1}:${s2} ${FL[t2]||''} ${t2}
+        ðŸ“Š ${FL[t1]||''} ${t1} ${s1}:${s2} ${FL[t2]||''} ${t2}
       </div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Sieger: ${winner==='DRAW'?'Unentschieden':winner}</div>
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
@@ -2315,14 +2315,14 @@ async function runTest(){
       const tip=gt?.[0];
       if(!tip){h+=`<tr><td style="padding:5px 8px;border-bottom:1px solid var(--border);">${u.username}</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:center;color:var(--muted);">kein Tipp</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right;color:var(--red);">0</td></tr>`;continue;}
       const tw=tip.score1>tip.score2?t1:tip.score1<tip.score2?t2:'DRAW';
-      let pts=0,icon='❌';
-      if(tw===winner){pts=tip.score1===s1&&tip.score2===s2?10:5;icon=pts===10?'🎯':'✅';}
+      let pts=0,icon='âŒ';
+      if(tw===winner){pts=tip.score1===s1&&tip.score2===s2?10:5;icon=pts===10?'ðŸŽ¯':'âœ…';}
       const pc=pts===10?'var(--gold2)':pts===5?'var(--greenlt)':'var(--red)';
       h+=`<tr><td style="padding:5px 8px;border-bottom:1px solid var(--border);font-weight:700;">${u.username}</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:center;">${icon} ${tip.score1}:${tip.score2}</td><td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right;font-family:'Cinzel',serif;font-size:16px;color:${pc};">+${pts}</td></tr>`;
     }
     h+=`</tbody></table></div>`;
     el.innerHTML=h;loadTestList();
-  }catch(ex){toast('❌ Fehler: '+ex.message,'error');}
+  }catch(ex){toast('âŒ Fehler: '+ex.message,'error');}
 }
 
 async function loadTestList(){
@@ -2331,18 +2331,18 @@ async function loadTestList(){
     const res=await sb('results?is_test=eq.true&select=match_key,team1,team2,score1,score2');
     if(!res||!res.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;">Keine Testdaten vorhanden.</div>';return;}
     let h='<div style="display:flex;flex-direction:column;gap:6px;">';
-    res.forEach(r=>{h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg3);border-radius:6px;font-size:12px;"><span>${r.team1||'?'} – ${r.team2||'?'}</span><span style="font-family:'Cinzel',serif;color:var(--gold2);">${r.score1}:${r.score2}</span><span style="color:var(--red);font-size:10px;">🧪 Test</span></div>`;});
+    res.forEach(r=>{h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg3);border-radius:6px;font-size:12px;"><span>${r.team1||'?'} â€“ ${r.team2||'?'}</span><span style="font-family:'Cinzel',serif;color:var(--gold2);">${r.score1}:${r.score2}</span><span style="color:var(--red);font-size:10px;">ðŸ§ª Test</span></div>`;});
     h+='</div>';el.innerHTML=h;
   }catch{el.innerHTML='<div style="color:var(--muted);font-size:13px;">Keine Testdaten vorhanden.</div>';}
 }
 
 async function clearTestData(){
-  if(!confirm('Alle Testdaten löschen?'))return;
+  if(!confirm('Alle Testdaten lÃ¶schen?'))return;
   try{
     await sb('results?is_test=eq.true','DELETE');
     await loadLR();document.getElementById('testResult').style.display='none';
-    loadTestList();buildGroups();buildKO();toast('🗑️ Testdaten gelöscht!','success');
-  }catch(ex){toast('❌ '+ex.message,'error');}
+    loadTestList();buildGroups();buildKO();toast('ðŸ—‘ï¸ Testdaten gelÃ¶scht!','success');
+  }catch(ex){toast('âŒ '+ex.message,'error');}
 }
 
 // CONFETTI
@@ -2422,17 +2422,18 @@ async function showWKWinner(){
   // Content
   const content=document.createElement('div');
   content.style.cssText='text-align:center;z-index:1;position:relative;';
-  content.innerHTML='<div style="font-size:80px;margin-bottom:10px;">🏆</div>'
+  content.innerHTML='<div style="font-size:80px;margin-bottom:10px;">ðŸ†</div>'
     +'<div style="font-family:Cinzel,serif;font-size:14px;letter-spacing:4px;color:#c8922a;margin-bottom:8px;">WM 2026 TIPPSPIEL</div>'
     +'<div style="font-family:Cinzel,serif;font-size:42px;color:#e8b84b;margin-bottom:4px;">GEWINNER</div>'
     +'<div style="font-family:Cinzel,serif;font-size:56px;color:white;font-weight:700;margin-bottom:20px;text-shadow:0 0 30px #c8922a;">'+winner+'</div>'
-    +'<div style="font-size:13px;color:#7a8f6a;margin-bottom:30px;">Gasthaus Bärenbichl · WM 2026</div>'
+    +'<div style="font-size:13px;color:#7a8f6a;margin-bottom:30px;">Gasthaus BÃ¤renbichl Â· WM 2026</div>'
     +'<button onclick="var o=document.getElementById(\x27wkWinnerOverlay\x27);cancelAnimationFrame(window._fwFrame);if(o)o.remove();" '
     +'style="background:#c8922a;color:#1a0e04;border:none;padding:14px 32px;border-radius:8px;font-family:Cinzel,serif;font-size:16px;cursor:pointer;font-weight:700;">'
-    +'🎮 Zum Tippspiel</button>';
+    +'ðŸŽ® Zum Tippspiel</button>';
   overlay.appendChild(content);
   window._fwFrame=fwFrame;
   document.body.appendChild(overlay);
 }
-
->
+</script>
+</body>
+</html>
